@@ -1,85 +1,119 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "@/assets/hero-bg.jpg";
+import { motion } from "framer-motion";
+import { SplineScene } from "@/components/ui/splite";
+
+const stats = [
+  { number: "50+", label: "Projects Delivered" },
+  { number: "25+", label: "Global Clients" },
+  { number: "5+", label: "Years in Business" },
+];
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-primary-glow/30 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-12">
+      {/* Single restrained background blob */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="absolute top-1/3 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[36rem] bg-primary/10 rounded-full blur-[140px]"
+        />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center">
-        <div className="max-w-4xl mx-auto animate-slide-up">
-          {/* Badge */}
-          <div className="inline-flex items-center space-x-2 bg-card/50 backdrop-blur-sm border border-primary/30 rounded-full px-6 py-3 mb-8 animate-glow-pulse">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium">AI & Software Solutions</span>
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          {/* Text column */}
+          <div className="text-center lg:text-left">
+            {/* Eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.35em] text-muted-foreground mb-8"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              AI &amp; Software Solutions
+            </motion.div>
+
+            {/* Main Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+              className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 leading-[1.05]"
+            >
+              <span className="text-foreground">Building Future-Ready</span>
+              <br />
+              <span className="text-muted-foreground">AI &amp; Software Solutions.</span>
+            </motion.h1>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
+            >
+              PopupGenix is a custom software and AI solutions company that helps businesses grow
+              through innovative technology. We build SaaS platforms, CRM and ERP systems, mobile
+              and web applications, and advanced AI/ML solutions including predictive analytics
+              and intelligent automation.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
+            >
+              <Link to="/contact" className="w-full sm:w-auto">
+                <Button variant="hero" size="xl" className="group w-full sm:w-auto">
+                  Start Your Project
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              <a href="#portfolio" className="w-full sm:w-auto">
+                <Button variant="outline" size="xl" className="group w-full sm:w-auto">
+                  <Zap className="w-5 h-5" />
+                  View Portfolio
+                </Button>
+              </a>
+            </motion.div>
           </div>
 
-          {/* Main Heading */}
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Building Future-Ready
-            </span>
-            <br />
-            <span className="text-foreground">AI & Software Solutions</span>
-            <span className="text-4xl md:text-5xl lg:text-6xl ml-4"></span>
-          </h1>
-
-          {/* Description */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed">
-            PopupGenix is a custom software and AI solutions company that helps businesses grow 
-            through innovative technology. We build SaaS platforms, CRM systems (customer relationship 
-            management), ERP systems (enterprise resource planning), mobile and web applications, 
-            and advanced AI/ML solutions including predictive analytics and intelligent automation. 
-            Our mission is to deliver scalable, user-friendly technology that drives exceptional 
-            efficiency and measurable results.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-16">
-            <Link to="/contact">
-              <Button variant="hero" size="xl" className="group">
-                Start Your Project
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
-            <a href="#portfolio">
-              <Button variant="neon" size="xl" className="group">
-                <Zap className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                View Portfolio
-              </Button>
-            </a>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <div className="text-center animate-fade-in" style={{ animationDelay: "0.5s" }}>
-              <div className="text-3xl font-bold text-accent mb-2">50+</div>
-              <div className="text-muted-foreground">Projects Delivered</div>
-            </div>
-            <div className="text-center animate-fade-in" style={{ animationDelay: "0.7s" }}>
-              <div className="text-3xl font-bold text-accent mb-2">25+</div>
-              <div className="text-muted-foreground">Global Clients</div>
-            </div>
-            <div className="text-center animate-fade-in" style={{ animationDelay: "0.9s" }}>
-              <div className="text-3xl font-bold text-accent mb-2">5+</div>
-              <div className="text-muted-foreground">Years in Business</div>
-            </div>
-          </div>
+          {/* 3D Spline scene */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="relative h-[320px] sm:h-[420px] lg:h-[500px] rounded-3xl border border-border bg-card overflow-hidden dark:border-white/5 dark:bg-white/[0.02]"
+          >
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+            />
+          </motion.div>
         </div>
-      </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-accent/50 rounded-full">
-          <div className="w-1 h-3 bg-accent rounded-full mx-auto mt-2 animate-pulse"></div>
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-16 lg:mt-24">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 + index * 0.1, ease: "easeOut" }}
+              className="text-center"
+            >
+              <div className="text-3xl font-black tracking-tight text-foreground mb-1">{stat.number}</div>
+              <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{stat.label}</div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

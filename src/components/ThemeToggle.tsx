@@ -1,6 +1,7 @@
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
@@ -16,17 +17,33 @@ const ThemeToggle = () => {
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-      className="relative p-2 rounded-xl border transition-all duration-300 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-      style={{
-        background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-        borderColor: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
-      }}
+      className="relative flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground transition-colors duration-300 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
-      {isDark ? (
-        <Sun className="w-4 h-4 text-yellow-400" />
-      ) : (
-        <Moon className="w-4 h-4 text-primary" />
-      )}
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.span
+            key="sun"
+            initial={{ opacity: 0, rotate: -90, scale: 0.6 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 90, scale: 0.6 }}
+            transition={{ duration: 0.25 }}
+            className="absolute inline-flex"
+          >
+            <Sun className="h-4 w-4" />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="moon"
+            initial={{ opacity: 0, rotate: 90, scale: 0.6 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: -90, scale: 0.6 }}
+            transition={{ duration: 0.25 }}
+            className="absolute inline-flex"
+          >
+            <Moon className="h-4 w-4" />
+          </motion.span>
+        )}
+      </AnimatePresence>
     </button>
   );
 };

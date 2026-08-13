@@ -1,375 +1,164 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import { 
-  ExternalLink, 
-  Sparkles,
-  ArrowRight,
-  Zap
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { ExternalLink, ArrowRight } from "lucide-react";
+
+const projects = [
+  {
+    title: "Clarify AI",
+    category: "AI Platform",
+    description: "Advanced AI-powered data analysis platform that transforms complex datasets into actionable insights.",
+    image: "/portfolio/clarify.png",
+    tags: ["AI/ML", "Data Analytics", "Python", "React"],
+    link: "https://www.clarify.ai/"
+  },
+  {
+    title: "Klevere AI",
+    category: "SaaS Platform",
+    description: "Business intelligence platform leveraging AI for predictive analytics and automated reporting.",
+    image: "/portfolio/klevere.png",
+    tags: ["AI", "Business Intelligence", "SaaS", "Analytics"],
+    link: "https://www.klevere.ai/"
+  },
+  {
+    title: "BlackGPT",
+    category: "AI Chatbot",
+    description: "Advanced conversational AI chatbot with specialized knowledge base and natural language understanding.",
+    image: "/portfolio/blackgpt.png",
+    tags: ["AI", "NLP", "Chatbot", "Machine Learning"],
+    link: "https://blackgpt.us/"
+  },
+  {
+    title: "Inno AI",
+    category: "Business AI",
+    description: "Comprehensive AI suite for business automation, from customer service to process optimization.",
+    image: "/portfolio/inno.jpg",
+    tags: ["AI", "Automation", "Business", "Enterprise"],
+    link: "https://inno-ai-main-qk95hz.laravel.cloud/"
+  }
+];
 
 const Portfolio = () => {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const projects = [
-    {
-      title: "Clarify AI",
-      category: "AI Platform",
-      description: "Advanced AI-powered data analysis platform that transforms complex datasets into actionable insights.",
-      image: "/portfolio/clarify.png",
-      tags: ["AI/ML", "Data Analytics", "Python", "React"],
-      challenge: "Making complex data analysis accessible to non-technical users",
-      approach: "Natural language processing for intuitive data queries",
-      outcome: "300% increase in data-driven decision making",
-      link: "https://www.clarify.ai/"
-    },
-    {
-      title: "Klevere AI",
-      category: "SaaS Platform",
-      description: "Business intelligence platform leveraging AI for predictive analytics and automated reporting.",
-      image: "/portfolio/klevere.png",
-      tags: ["AI", "Business Intelligence", "SaaS", "Analytics"],
-      challenge: "Complex business data analysis and forecasting",
-      approach: "Predictive AI models for business intelligence",
-      outcome: "85% improvement in forecast accuracy",
-      link: "https://www.klevere.ai/"
-    },
-    {
-      title: "BlackGPT",
-      category: "AI Chatbot",
-      description: "Advanced conversational AI chatbot with specialized knowledge base and natural language understanding.",
-      image: "/portfolio/blackgpt.png",
-      tags: ["AI", "NLP", "Chatbot", "Machine Learning"],
-      challenge: "Creating culturally aware and context-sensitive AI",
-      approach: "Fine-tuned language models with specialized training",
-      outcome: "95% user satisfaction with conversation quality",
-      link: "https://blackgpt.us/"
-    },
-    {
-      title: "Inno AI",
-      category: "Business AI",
-      description: "Comprehensive AI suite for business automation, from customer service to process optimization.",
-      image: "/portfolio/inno.jpg",
-      tags: ["AI", "Automation", "Business", "Enterprise"],
-      challenge: "End-to-end business process automation",
-      approach: "Modular AI systems for different business functions",
-      outcome: "60% reduction in manual processes",
-      link: "https://inno-ai-main-qk95hz.laravel.cloud/"
-    }
-  ];
-
   return (
-    <section ref={sectionRef} id="portfolio" className="py-24 relative overflow-hidden">
-      {/* Digital Grid Background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(rgba(33, 150, 243, 0.15) 2px, transparent 2px),
-            linear-gradient(90deg, rgba(33, 150, 243, 0.15) 2px, transparent 2px)
-          `,
-          backgroundSize: '60px 60px',
-          animation: 'grid-move 20s linear infinite'
-        }} />
-      </div>
-
-      {/* Animated Gradient Waves */}
-      <div className="absolute inset-0 opacity-20">
-        {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-full h-2"
-            style={{
-              top: `${15 + i * 25}%`,
-              background: 'linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.4), rgba(33, 150, 243, 0.4), transparent)',
-              animation: `wave-horizontal ${5 + i * 2}s ease-in-out infinite`,
-              animationDelay: `${i * 0.8}s`
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Glowing Orbs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '6s' }}></div>
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-accent/10 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s', animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-purple-500/10 rounded-full blur-[140px] animate-pulse" style={{ animationDuration: '7s', animationDelay: '1s' }}></div>
-      </div>
-
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(30)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              background: i % 3 === 0 ? 'rgba(138, 43, 226, 0.6)' : i % 3 === 1 ? 'rgba(33, 150, 243, 0.6)' : 'rgba(16, 185, 129, 0.6)',
-              animation: `float-particle ${8 + Math.random() * 12}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 5}s`,
-              boxShadow: '0 0 10px currentColor'
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
+    <section id="portfolio" className="py-24 md:py-32">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Header */}
-        <div className={`text-center mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <div className="inline-flex items-center space-x-2 backdrop-blur-md rounded-full px-6 py-3 mb-6 animate-fade-in border"
-               style={{ 
-                 background: 'rgba(255, 255, 255, 0.05)',
-                 borderColor: 'rgba(138, 43, 226, 0.4)',
-                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(138, 43, 226, 0.3)'
-               }}>
-            <Sparkles className="w-4 h-4 text-accent animate-pulse" />
-            <span className="text-sm font-medium">Our Work</span>
-            <Zap className="w-4 h-4 text-primary animate-pulse" style={{ animationDelay: '0.5s' }} />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.35em] text-muted-foreground mb-6">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            Our Work
           </div>
-          
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
+
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 text-foreground">
             Portfolio Showcase
           </h2>
-          
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover how we've transformed businesses across industries with our 
+
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            Discover how we've transformed businesses across industries with our
             innovative AI and software solutions that deliver measurable results.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Portfolio Grid - Futuristic Glassmorphism Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-5xl mx-auto">
-          {projects.map((project, index) => {
-            const isHovered = hoveredCard === index;
-            
-            return (
-              <div
-                key={project.title}
-                className={`relative backdrop-blur-xl rounded-3xl border overflow-hidden transition-all duration-700 group cursor-pointer ${
-                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-                }`}
-                style={{
-                  background: 'var(--glass-bg)',
-                  borderColor: isHovered ? 'rgba(138, 43, 226, 0.6)' : 'var(--glass-border)',
-                  boxShadow: isHovered
-                    ? '0 0 50px rgba(138, 43, 226, 0.5), var(--shadow-glass)'
-                    : 'var(--shadow-glass)',
-                  transitionDelay: `${index * 0.15}s`,
-                  transform: isHovered ? 'translateY(-12px) scale(1.02)' : 'translateY(0) scale(1)'
-                }}
-                onMouseEnter={() => setHoveredCard(index)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                {/* Animated Border Glow */}
-                <div
-                  className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(33, 150, 243, 0.3), rgba(16, 185, 129, 0.3))',
-                    backgroundSize: '200% 200%',
-                    animation: isHovered ? 'gradient-border 3s ease infinite' : 'none',
-                    filter: 'blur(20px)'
-                  }}
+        {/* Portfolio Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16 max-w-5xl mx-auto">
+          {projects.map((project, index) => (
+            <motion.div
+              key={project.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="group relative rounded-3xl border border-border bg-card overflow-hidden dark:border-white/5 dark:bg-white/[0.02]"
+            >
+              <div className="relative h-56 overflow-hidden">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
                 />
-
-                {/* Project Image with Parallax Effect */}
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover transition-all duration-700"
-                    style={{
-                      transform: isHovered ? 'scale(1.15)' : 'scale(1)',
-                      filter: isHovered ? 'brightness(1.1) contrast(1.1)' : 'brightness(1) contrast(1)'
-                    }}
-                    loading="lazy"
-                  />
-                  
-                  {/* Gradient Overlay */}
-                  <div
-                    className="absolute inset-0 transition-opacity duration-700"
-                    style={{
-                      background: 'linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%)',
-                      opacity: isHovered ? 0.8 : 0.5
-                    }}
-                  />
-
-                  {/* Animated Overlay Info */}
-                  <div
-                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500"
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.8)',
-                      backdropFilter: 'blur(10px)'
-                    }}
-                  >
-                    <div className="text-center p-6">
-                      <h4 className="text-lg font-bold text-white mb-2">Project Details</h4>
-                      <p className="text-sm text-gray-300 mb-4">{project.challenge}</p>
-                      <div className="flex items-center justify-center space-x-2">
-                        <ExternalLink className="w-4 h-4 text-accent animate-pulse" />
-                        <span className="text-accent text-sm font-medium">Click to Explore</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* External Link Button */}
-                  <div
-                    className="absolute top-4 right-4 transition-all duration-500"
-                    style={{
-                      opacity: isHovered ? 1 : 0,
-                      transform: isHovered ? 'scale(1)' : 'scale(0.8)'
-                    }}
-                  >
-                    <button
-                      className="p-3 backdrop-blur-md rounded-xl border transition-all duration-300 hover:scale-110"
-                      style={{
-                        background: 'rgba(33, 150, 243, 0.2)',
-                        borderColor: 'rgba(33, 150, 243, 0.5)',
-                        boxShadow: '0 0 20px rgba(33, 150, 243, 0.4)'
-                      }}
-                      onClick={() => window.open(project.link, '_blank')}
-                      aria-label={`Open ${project.title}`}
-                    >
-                      <ExternalLink className="w-4 h-4 text-white" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Project Content */}
-                <div className="relative p-6 z-10">
-                  <h3
-                    className="text-xl font-bold mb-3 transition-colors duration-300 text-foreground"
-                    style={{
-                      color: isHovered ? 'rgba(16, 185, 129, 1)' : undefined
-                    }}
-                  >
-                    {project.title}
-                  </h3>
-
-                  <p className="text-muted-foreground mb-4 leading-relaxed text-sm">
-                    {project.description}
-                  </p>
-
-                  {/* Animated Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tags.map((tag, tagIndex) => (
-                      <span
-                        key={tag}
-                        className="px-3 py-1 text-xs rounded-lg border transition-all duration-300 hover:scale-110"
-                        style={{
-                          background: isHovered
-                            ? 'rgba(33, 150, 243, 0.2)'
-                            : 'rgba(33, 150, 243, 0.1)',
-                          borderColor: isHovered
-                            ? 'rgba(33, 150, 243, 0.5)'
-                            : 'rgba(33, 150, 243, 0.3)',
-                          color: 'rgba(33, 150, 243, 1)',
-                          boxShadow: isHovered ? '0 0 15px rgba(33, 150, 243, 0.4)' : 'none',
-                          animation: isHovered ? `tag-pulse ${1 + tagIndex * 0.2}s ease-in-out infinite` : 'none'
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Glowing Gradient Button */}
-                  <button
-                    className="w-full py-3 px-6 rounded-xl text-sm font-medium transition-all duration-500 relative overflow-hidden group/btn"
-                    style={{
-                      background: isHovered
-                        ? 'linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(33, 150, 243, 0.3))'
-                        : 'var(--glass-bg)',
-                      border: isHovered
-                        ? '2px solid rgba(138, 43, 226, 0.6)'
-                        : '1px solid var(--glass-border)',
-                      boxShadow: isHovered
-                        ? '0 0 30px rgba(138, 43, 226, 0.5), inset 0 0 20px rgba(138, 43, 226, 0.2)'
-                        : 'none'
-                    }}
-                    onClick={() => window.open(project.link, '_blank')}
-                  >
-                    <span className="relative z-10 flex items-center justify-center">
-                      View the Project
-                      <ArrowRight
-                        className="w-4 h-4 ml-2 transition-transform duration-300"
-                        style={{
-                          transform: isHovered ? 'translateX(4px)' : 'translateX(0)'
-                        }}
-                      />
-                    </span>
-                    {/* Animated shine effect */}
-                    <div
-                      className="absolute inset-0 transition-transform duration-1000"
-                      style={{
-                        background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-                        transform: isHovered ? 'translateX(100%)' : 'translateX(-100%)'
-                      }}
-                    />
-                  </button>
-                </div>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${project.title}`}
+                  className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-background/90 backdrop-blur border border-border opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
+                >
+                  <ExternalLink className="w-4 h-4 text-foreground" />
+                </a>
               </div>
-            );
-          })}
+
+              <div className="p-6">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary mb-2">
+                  {project.category}
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-foreground">
+                  {project.title}
+                </h3>
+                <p className="text-muted-foreground mb-5 leading-relaxed text-sm">
+                  {project.description}
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1 text-xs rounded-full border border-border text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-foreground group/btn"
+                >
+                  View the Project
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                </a>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* CTA Section - Premium Glass Card */}
-        <div className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '1s' }}>
-          <div
-            className="backdrop-blur-xl p-12 rounded-3xl border transition-all duration-500 max-w-4xl mx-auto hover:scale-[1.02]"
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.boxShadow = '0 0 60px rgba(138, 43, 226, 0.6), 0 8px 32px rgba(0, 0, 0, 0.4)';
-              e.currentTarget.style.borderColor = 'rgba(138, 43, 226, 0.6)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            }}
-          >
-            <h3 className="text-3xl font-bold mb-4 text-foreground">
-              Ready to Join Our Success Stories?
-            </h3>
-            <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Let's create the next breakthrough solution together. Our proven track record
-              speaks for itself – now let's write your success story.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Link to="/contact">
-                <Button variant="hero" size="lg" className="hover:scale-110 transition-transform duration-300">
-                  Start Your Project
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Button variant="outline" size="lg" className="hover:scale-110 transition-transform duration-300">
+        {/* CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center rounded-3xl border border-border bg-card p-12 md:p-16 max-w-4xl mx-auto dark:border-white/5 dark:bg-white/[0.02]"
+        >
+          <h3 className="text-3xl md:text-4xl font-black tracking-tighter mb-4 text-foreground">
+            Ready to Join Our Success Stories?
+          </h3>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Let's create the next breakthrough solution together. Our proven track record
+            speaks for itself – now let's write your success story.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/contact">
+              <Button variant="hero" size="lg">
+                Start Your Project
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="outline" size="lg">
                 Schedule Consultation
               </Button>
-            </div>
+            </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

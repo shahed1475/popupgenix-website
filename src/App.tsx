@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { ThemeProvider } from "next-themes";
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -34,7 +33,6 @@ const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <Toaster />
     <Sonner />
-    <AnimatedBackground mode="particles" particleCount={80} />
       <BrowserRouter>
         <ScrollToHash />
         <Routes>

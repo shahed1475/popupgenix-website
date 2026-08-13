@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+deploy
+deploy.zip
+dev-server.out.log
+dev-server.err.log
 
 # Environment variables
 .env

@@ -1,4 +1,5 @@
 import { Mail, MessageCircle, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface ContactSectionProps {
   title?: string;
@@ -16,23 +17,24 @@ const ContactSection = ({
   className = "",
 }: ContactSectionProps) => {
   return (
-    <section className={`py-16 bg-gradient-card ${className}`}>
-      <div className="container mx-auto px-6 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">{title}</h2>
+    <section className={`py-24 md:py-32 bg-secondary/30 ${className}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="max-w-7xl mx-auto px-6 lg:px-12 text-center"
+      >
+        <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4 text-foreground">{title}</h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">{subtitle}</p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             href={EMAIL_HREF}
             aria-label="Email PopupGenix"
-            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold text-white transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            style={{
-              background: "linear-gradient(135deg, rgba(138,43,226,0.35), rgba(33,150,243,0.35))",
-              border: "1.5px solid rgba(138,43,226,0.5)",
-              boxShadow: "0 0 20px rgba(138,43,226,0.2), 0 4px 16px rgba(0,0,0,0.3)",
-            }}
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-bold uppercase tracking-wide bg-foreground text-background transition-opacity duration-300 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            <Mail className="w-5 h-5 shrink-0" />
+            <Mail className="w-4 h-4 shrink-0" />
             Email Us
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </a>
@@ -42,19 +44,14 @@ const ContactSection = ({
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Chat with PopupGenix on WhatsApp"
-            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold text-white transition-all duration-300 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
-            style={{
-              background: "linear-gradient(135deg, rgba(37,211,102,0.3), rgba(18,140,60,0.35))",
-              border: "1.5px solid rgba(37,211,102,0.5)",
-              boxShadow: "0 0 20px rgba(37,211,102,0.2), 0 4px 16px rgba(0,0,0,0.3)",
-            }}
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-full text-sm font-bold uppercase tracking-wide bg-background border border-foreground/20 text-foreground transition-colors duration-300 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
-            <MessageCircle className="w-5 h-5 shrink-0" />
+            <MessageCircle className="w-4 h-4 shrink-0" />
             Chat on WhatsApp
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

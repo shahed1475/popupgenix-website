@@ -5,22 +5,19 @@ import {
   MapPin,
   Facebook,
   Twitter,
-  Linkedin,
-  ArrowRight
+  Linkedin
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import PaymentLogos from "@/components/PaymentLogos";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   const quickLinks = [
-    { name: "About Us", href: "/#about", isAnchor: false },
-    { name: "Services", href: "/#services", isAnchor: false },
-    { name: "Portfolio", href: "/#portfolio", isAnchor: false },
-    { name: "Pricing", href: "/pricing", isAnchor: false },
-    { name: "Blog", href: "/blog", isAnchor: false },
-    { name: "Contact", href: "/contact", isAnchor: false }
+    { name: "About Us", href: "/#about" },
+    { name: "Services", href: "/#services" },
+    { name: "Portfolio", href: "/#portfolio" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "/contact" }
   ];
 
   const services = [
@@ -38,63 +35,56 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-gradient-card border-t border-border/50 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-accent/5 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="container mx-auto px-6 relative z-10">
+    <footer className="bg-background border-t border-border">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Main Footer Content */}
         <div className="py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
             {/* Company Info */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <img 
-                  src="/lovable-uploads/840fc8c0-fd1f-46ff-b59e-8c30eeebac75.png" 
-                  alt="PopupGenix Logo" 
-                  className="h-10 w-auto"
+                <img
+                  src="/lovable-uploads/840fc8c0-fd1f-46ff-b59e-8c30eeebac75.png"
+                  alt="PopupGenix Logo"
+                  className="h-9 w-auto"
                 />
               </div>
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                PopupGenix creates cutting-edge AI and software solutions that drive business growth 
+                PopupGenix creates cutting-edge AI and software solutions that drive business growth
                 and deliver exceptional user experiences through intelligent, scalable technology.
               </p>
               <div className="space-y-3">
-                <div className="flex items-center space-x-3 text-foreground font-medium">
-                  <Mail className="w-4 h-4 text-accent" />
+                <div className="flex items-center gap-3 text-foreground text-sm font-medium">
+                  <Mail className="w-4 h-4 text-primary" />
                   <span>hello@popupgenix.com</span>
                 </div>
-                <div className="flex items-center space-x-3 text-foreground font-medium">
-                  <Phone className="w-4 h-4 text-accent" />
+                <div className="flex items-center gap-3 text-foreground text-sm font-medium">
+                  <Phone className="w-4 h-4 text-primary" />
                   <span>+1 479 689 1012</span>
                 </div>
-                <div className="flex items-center space-x-3 text-foreground font-medium">
-                  <MapPin className="w-4 h-4 text-accent" />
+                <div className="flex items-center gap-3 text-foreground text-sm font-medium">
+                  <MapPin className="w-4 h-4 text-primary" />
                   <span>1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110, USA</span>
                 </div>
               </div>
-              
+
               {/* Payment Partners */}
-              <div className="mt-8 pt-6 border-t border-border/30">
+              <div className="mt-8 pt-6 border-t border-border">
                 <PaymentLogos variant="color" size="md" />
               </div>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-lg font-semibold mb-6 text-foreground">Quick Links</h4>
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6 text-foreground">Quick Links</h4>
               <ul className="space-y-3">
                 {quickLinks.map((link) => (
                   <li key={link.name}>
-                    <Link 
+                    <Link
                       to={link.href}
-                      className="text-muted-foreground hover:text-accent transition-colors duration-300 relative group"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
                     >
                       {link.name}
-                      <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></span>
                     </Link>
                   </li>
                 ))}
@@ -103,16 +93,15 @@ const Footer = () => {
 
             {/* Services */}
             <div>
-              <h4 className="text-lg font-semibold mb-6 text-foreground">Services</h4>
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6 text-foreground">Services</h4>
               <ul className="space-y-3">
                 {services.map((service) => (
                   <li key={service.name}>
-                    <Link 
+                    <Link
                       to={service.href}
-                      className="text-muted-foreground hover:text-accent transition-colors duration-300 relative group"
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300"
                     >
                       {service.name}
-                      <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></span>
                     </Link>
                   </li>
                 ))}
@@ -121,8 +110,8 @@ const Footer = () => {
 
             {/* Connect & Social */}
             <div>
-              <h4 className="text-lg font-semibold mb-6 text-foreground">Connect With Us</h4>
-              <div className="flex space-x-4 mb-6">
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6 text-foreground">Connect With Us</h4>
+              <div className="flex gap-3 mb-6">
                 {socialLinks.map((social) => {
                   const IconComponent = social.icon;
                   return (
@@ -132,9 +121,9 @@ const Footer = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.label}
-                      className="p-3 bg-card border border-border rounded-lg hover:border-primary/30 hover:shadow-neon transition-all duration-300 group"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-border hover:border-primary/40 hover:bg-secondary transition-colors duration-300"
                     >
-                      <IconComponent className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors" />
+                      <IconComponent className="w-4 h-4 text-muted-foreground" />
                     </a>
                   );
                 })}
@@ -146,54 +135,38 @@ const Footer = () => {
               </Link>
             </div>
 
-            {/* Legal & Trust - moved to last position */}
+            {/* Legal & Trust */}
             <div className="order-last lg:order-none">
-              <h4 className="text-lg font-semibold mb-6 text-foreground">Legal & Trust</h4>
+              <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-6 text-foreground">Legal & Trust</h4>
               <ul className="space-y-3 mb-6">
                 <li>
-                  <Link 
-                    to="/privacy"
-                    className="text-muted-foreground hover:text-accent transition-colors duration-300 relative group"
-                  >
+                  <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     Privacy Policy
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    to="/terms-and-conditions"
-                    className="text-muted-foreground hover:text-accent transition-colors duration-300 relative group"
-                  >
+                  <Link to="/terms-and-conditions" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     Terms & Conditions
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    to="/refund-policy"
-                    className="text-muted-foreground hover:text-accent transition-colors duration-300 relative group"
-                  >
+                  <Link to="/refund-policy" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     Refund Policy
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
                 <li>
-                  <Link 
-                    to="/cookie-policy"
-                    className="text-muted-foreground hover:text-accent transition-colors duration-300 relative group"
-                  >
+                  <Link to="/cookie-policy" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                     Cookie Policy
-                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-accent group-hover:w-full transition-all duration-300"></span>
                   </Link>
                 </li>
               </ul>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                   <span>99.99% Uptime Guaranteed</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                   <span>30-Day Refund Policy</span>
                 </div>
               </div>
@@ -202,28 +175,28 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="py-8 border-t border-border/30">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+        <div className="py-8 border-t border-border">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-muted-foreground text-sm">
               © 2025 PopupGenix.com – All Rights Reserved
             </p>
-            <div className="flex items-center space-x-6 text-sm">
-              <Link to="/privacy" className="text-muted-foreground hover:text-accent transition-colors">
+            <div className="flex items-center gap-6 text-sm">
+              <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/terms-and-conditions" className="text-muted-foreground hover:text-accent transition-colors">
+              <Link to="/terms-and-conditions" className="text-muted-foreground hover:text-foreground transition-colors">
                 Terms & Conditions
               </Link>
-              <Link to="/refund-policy" className="text-muted-foreground hover:text-accent transition-colors">
+              <Link to="/refund-policy" className="text-muted-foreground hover:text-foreground transition-colors">
                 Refund Policy
               </Link>
-              <Link to="/cookie-policy" className="text-muted-foreground hover:text-accent transition-colors">
+              <Link to="/cookie-policy" className="text-muted-foreground hover:text-foreground transition-colors">
                 Cookie Policy
               </Link>
             </div>
           </div>
-          <div className="mt-6 pt-6 border-t border-border/30">
-            <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
                 PopupGenix is committed to secure, fair, and reliable services. By using our platform, you agree to our Privacy Policy and Terms of Use.
               </p>
