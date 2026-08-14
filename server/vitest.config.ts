@@ -5,7 +5,4 @@ export default defineConfig({
     environment: 'node',
     globals: false,
   },
-  css: {
-    postcss: false,
-  },
 });
