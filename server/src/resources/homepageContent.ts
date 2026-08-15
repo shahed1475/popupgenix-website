@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import type { AuthMiddleware } from '../auth/middleware.js';
 
+const HOMEPAGE_CONTENT_ID = '00000000-0000-0000-0000-000000000001';
+
 const contentSchema = z.object({
   hero_title: z.string().default(''),
   hero_subtitle: z.string().default(''),
@@ -23,7 +25,9 @@ export function createHomepageContentRouter(pool: Pool, auth: AuthMiddleware): R
   router.get(
     '/',
     asyncHandler(async (_req, res) => {
-      const result = await pool.query('SELECT * FROM homepage_content ORDER BY created_at ASC LIMIT 1');
+      const result = await pool.query('SELECT * FROM homepage_content WHERE id = $1', [
+        HOMEPAGE_CONTENT_ID,
+      ]);
       res.json(result.rows[0] ?? null);
     })
   );
@@ -34,39 +38,27 @@ export function createHomepageContentRouter(pool: Pool, auth: AuthMiddleware): R
     auth.requireAdmin,
     asyncHandler(async (req, res) => {
       const body = contentSchema.parse(req.body);
-      const existing = await pool.query('SELECT id FROM homepage_content ORDER BY created_at ASC LIMIT 1');
-
-      if (existing.rows[0]) {
-        const result = await pool.query(
-          `UPDATE homepage_content SET
-             hero_title=$1, hero_subtitle=$2, hero_cta_primary=$3, hero_cta_secondary=$4,
-             about_title=$5, about_description=$6, clients_count=$7, projects_count=$8,
-             satisfaction_rate=$9, team_size=$10, updated_at = now()
-           WHERE id = $11 RETURNING *`,
-          [
-            body.hero_title,
-            body.hero_subtitle,
-            body.hero_cta_primary,
-            body.hero_cta_secondary,
-            body.about_title,
-            body.about_description,
-            body.clients_count,
-            body.projects_count,
-            body.satisfaction_rate,
-            body.team_size,
-            existing.rows[0].id,
-          ]
-        );
-        res.json(result.rows[0]);
-        return;
-      }
 
       const result = await pool.query(
         `INSERT INTO homepage_content
-          (hero_title, hero_subtitle, hero_cta_primary, hero_cta_secondary, about_title,
+          (id, hero_title, hero_subtitle, hero_cta_primary, hero_cta_secondary, about_title,
            about_description, clients_count, projects_count, satisfaction_rate, team_size)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         ON CONFLICT (id) DO UPDATE SET
+           hero_title = EXCLUDED.hero_title,
+           hero_subtitle = EXCLUDED.hero_subtitle,
+           hero_cta_primary = EXCLUDED.hero_cta_primary,
+           hero_cta_secondary = EXCLUDED.hero_cta_secondary,
+           about_title = EXCLUDED.about_title,
+           about_description = EXCLUDED.about_description,
+           clients_count = EXCLUDED.clients_count,
+           projects_count = EXCLUDED.projects_count,
+           satisfaction_rate = EXCLUDED.satisfaction_rate,
+           team_size = EXCLUDED.team_size,
+           updated_at = now()
+         RETURNING *`,
         [
+          HOMEPAGE_CONTENT_ID,
           body.hero_title,
           body.hero_subtitle,
           body.hero_cta_primary,
@@ -79,7 +71,8 @@ export function createHomepageContentRouter(pool: Pool, auth: AuthMiddleware): R
           body.team_size,
         ]
       );
-      res.status(201).json(result.rows[0]);
+
+      res.json(result.rows[0]);
     })
   );
 

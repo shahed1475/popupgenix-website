@@ -48,7 +48,7 @@ describe('homepage content resource', () => {
       .put('/api/homepage-content')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ hero_title: 'Build faster', clients_count: 12 });
-    expect(created.status).toBe(201);
+    expect(created.status).toBe(200);
     expect(created.body.hero_title).toBe('Build faster');
 
     const updated = await request(app)
@@ -82,7 +82,7 @@ describe('homepage content resource', () => {
       .put('/api/homepage-content')
       .set('Authorization', `Bearer ${adminToken}`)
       .send({ hero_title: 'Test content', clients_count: 5 });
-    expect(created.status).toBe(201);
+    expect(created.status).toBe(200);
 
     // Non-admin tries to PUT
     const forbiddenPut = await request(app)
