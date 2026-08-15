@@ -65,4 +65,56 @@ describe('services resource', () => {
       .set('Authorization', `Bearer ${adminToken}`);
     expect(deleted.status).toBe(204);
   });
+
+  it('rejects non-admin POST, PATCH, and DELETE on services', async () => {
+    const passwordHash = '$2a$12$abcdefghijklmnopqrstuv';
+    const admin = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin@drickly.test', $1, true) RETURNING id`,
+      [passwordHash]
+    );
+    const nonAdmin = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('user@drickly.test', $1, false) RETURNING id`,
+      [passwordHash]
+    );
+
+    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const nonAdminToken = signAuthToken({ sub: nonAdmin.rows[0].id, email: 'user@drickly.test', isAdmin: false }, SECRET, '1h');
+    const app = buildApp();
+
+    // Admin creates a service for testing PATCH/DELETE
+    const created = await request(app)
+      .post('/api/services')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Test Service', description: 'For testing' });
+    const serviceId = created.body.id as string;
+
+    // Non-admin tries to POST
+    const forbiddenPost = await request(app)
+      .post('/api/services')
+      .set('Authorization', `Bearer ${nonAdminToken}`)
+      .send({ title: 'Not allowed', description: 'Hacking attempt' });
+    expect(forbiddenPost.status).toBe(403);
+
+    // Non-admin tries to PATCH
+    const forbiddenPatch = await request(app)
+      .patch(`/api/services/${serviceId}`)
+      .set('Authorization', `Bearer ${nonAdminToken}`)
+      .send({ title: 'Updated Title' });
+    expect(forbiddenPatch.status).toBe(403);
+
+    // Non-admin tries to DELETE
+    const forbiddenDelete = await request(app)
+      .delete(`/api/services/${serviceId}`)
+      .set('Authorization', `Bearer ${nonAdminToken}`);
+    expect(forbiddenDelete.status).toBe(403);
+
+    // Admin can PATCH (happy path)
+    const patchedByAdmin = await request(app)
+      .patch(`/api/services/${serviceId}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Updated Title', description: 'Updated description' });
+    expect(patchedByAdmin.status).toBe(200);
+    expect(patchedByAdmin.body.title).toBe('Updated Title');
+    expect(patchedByAdmin.body.description).toBe('Updated description');
+  });
 });
