@@ -13,7 +13,7 @@ const pool = new Pool({ connectionString });
 
 afterAll(async () => {
   await pool.query('DROP TABLE IF EXISTS migration_test_widgets');
-  await pool.query('DROP TABLE IF EXISTS schema_migrations');
+  await pool.query("DELETE FROM schema_migrations WHERE filename = '0001_create_widgets.sql'");
   await pool.end();
 });
 
