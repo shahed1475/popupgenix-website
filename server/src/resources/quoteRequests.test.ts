@@ -1,12 +1,11 @@
 import express from 'express';
 import request from 'supertest';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
 import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { truncateAll } from '../test/setupTestDb.js';
-import { getGlobalTestPool } from '../test/globalPool.js';
+import { createTestPool, truncateAll } from '../test/setupTestDb.js';
 import { createQuoteRequestsRouter } from './quoteRequests.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -21,8 +20,12 @@ function buildApp() {
 }
 
 beforeEach(async () => {
-  pool = await getGlobalTestPool();
+  pool = await createTestPool();
   await truncateAll(pool);
+});
+
+afterAll(async () => {
+  await pool.end();
 });
 
 describe('quote requests resource', () => {
