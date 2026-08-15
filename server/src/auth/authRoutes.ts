@@ -39,6 +39,26 @@ function toPublicUser(row: UserRow) {
   };
 }
 
+async function createUser(
+  pool: Pool,
+  email: string,
+  password: string,
+  fullName: string | null | undefined,
+  isAdmin: boolean
+): Promise<UserRow> {
+  const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+  if (existing.rows[0]) {
+    throw new HttpError(409, 'An account with this email already exists');
+  }
+  const passwordHash = await hashPassword(password);
+  const result = await pool.query<UserRow>(
+    `INSERT INTO users (email, password_hash, full_name, is_admin)
+     VALUES ($1, $2, $3, $4) RETURNING *`,
+    [email, passwordHash, fullName ?? null, isAdmin]
+  );
+  return result.rows[0];
+}
+
 export function createAuthRoutes(
   pool: Pool,
   auth: AuthMiddleware,
@@ -67,17 +87,8 @@ export function createAuthRoutes(
         throw new HttpError(403, 'Signup is currently disabled');
       }
       const body = signupSchema.parse(req.body);
-      const existing = await pool.query('SELECT id FROM users WHERE email = $1', [body.email]);
-      if (existing.rows[0]) {
-        throw new HttpError(409, 'An account with this email already exists');
-      }
-      const passwordHash = await hashPassword(body.password);
-      const result = await pool.query<UserRow>(
-        `INSERT INTO users (email, password_hash, full_name, is_admin)
-         VALUES ($1, $2, $3, false) RETURNING *`,
-        [body.email, passwordHash, body.full_name ?? null]
-      );
-      res.status(201).json(toPublicUser(result.rows[0]));
+      const user = await createUser(pool, body.email, body.password, body.full_name, false);
+      res.status(201).json(toPublicUser(user));
     })
   );
 
@@ -132,17 +143,8 @@ export function createAuthRoutes(
     auth.requireAdmin,
     asyncHandler(async (req, res) => {
       const body = signupSchema.parse(req.body);
-      const existing = await pool.query('SELECT id FROM users WHERE email = $1', [body.email]);
-      if (existing.rows[0]) {
-        throw new HttpError(409, 'An account with this email already exists');
-      }
-      const passwordHash = await hashPassword(body.password);
-      const result = await pool.query<UserRow>(
-        `INSERT INTO users (email, password_hash, full_name, is_admin)
-         VALUES ($1, $2, $3, false) RETURNING *`,
-        [body.email, passwordHash, body.full_name ?? null]
-      );
-      res.status(201).json(toPublicUser(result.rows[0]));
+      const user = await createUser(pool, body.email, body.password, body.full_name, false);
+      res.status(201).json(toPublicUser(user));
     })
   );
 
