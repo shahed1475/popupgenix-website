@@ -1,6 +1,6 @@
 import express from 'express';
 import request from 'supertest';
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
 import { signAuthToken } from '../auth/tokens.js';
@@ -20,8 +20,11 @@ function buildApp() {
   return app;
 }
 
-beforeEach(async () => {
+beforeAll(async () => {
   pool = await createTestPool();
+});
+
+beforeEach(async () => {
   await truncateAll(pool);
   const passwordHash = '$2a$12$abcdefghijklmnopqrstuv';
   const admin = await pool.query(
@@ -51,6 +54,14 @@ describe('invoices resource', () => {
       });
     expect(created.status).toBe(201);
     expect(created.body.line_items).toHaveLength(1);
+    // The POST response must echo DB-inserted line item rows (with id/invoice_id/created_at),
+    // not the bare request payload, so the shape matches what GET/PATCH return.
+    expect(created.body.line_items[0].service_name).toBe('Design');
+    expect(Number(created.body.line_items[0].rate)).toBe(500);
+    expect(Number(created.body.line_items[0].amount)).toBe(500);
+    expect(created.body.line_items[0].id).toBeDefined();
+    expect(created.body.line_items[0].invoice_id).toBe(created.body.id);
+    expect(created.body.line_items[0].created_at).toBeDefined();
     const invoiceId = created.body.id as string;
 
     const fetched = await request(app).get(`/api/invoices/${invoiceId}`).set('Authorization', `Bearer ${adminToken}`);

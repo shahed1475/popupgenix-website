@@ -34,14 +34,17 @@ async function insertLineItems(
   client: PoolClient,
   invoiceId: string,
   items: z.infer<typeof lineItemSchema>[]
-): Promise<void> {
+): Promise<Record<string, unknown>[]> {
+  const inserted: Record<string, unknown>[] = [];
   for (const item of items) {
-    await client.query(
+    const result = await client.query(
       `INSERT INTO invoice_line_items (invoice_id, service_name, description, quantity, rate, amount)
-       VALUES ($1,$2,$3,$4,$5,$6)`,
+       VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
       [invoiceId, item.service_name, item.description ?? null, item.quantity, item.rate, item.amount]
     );
+    inserted.push(result.rows[0]);
   }
+  return inserted;
 }
 
 export function createInvoicesRouter(pool: Pool, auth: AuthMiddleware): Router {
@@ -103,9 +106,9 @@ export function createInvoicesRouter(pool: Pool, auth: AuthMiddleware): Router {
           ]
         );
         const invoice = result.rows[0];
-        await insertLineItems(client, invoice.id, body.line_items);
+        const insertedLineItems = await insertLineItems(client, invoice.id, body.line_items);
         await client.query('COMMIT');
-        res.status(201).json({ ...invoice, line_items: body.line_items });
+        res.status(201).json({ ...invoice, line_items: insertedLineItems });
       } catch (err) {
         await client.query('ROLLBACK');
         throw err;
