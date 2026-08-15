@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "build:scripts": "tsc -p tsconfig.scripts.json",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "db:migrate": "tsx src/db/migrate-cli.ts",

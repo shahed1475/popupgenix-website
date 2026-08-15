@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createApp } from './app.js';
 import { createTestPool, truncateAll } from './test/setupTestDb.js';
@@ -7,8 +7,11 @@ import { createTestPool, truncateAll } from './test/setupTestDb.js';
 const SECRET = 'test-secret-value-that-is-long-enough';
 let pool: Pool;
 
-beforeEach(async () => {
+beforeAll(async () => {
   pool = await createTestPool();
+});
+
+beforeEach(async () => {
   await truncateAll(pool);
 });
 
@@ -20,6 +23,15 @@ describe('GET /health', () => {
   it('returns ok', async () => {
     const app = createApp(pool, SECRET, '1h');
     const response = await request(app).get('/health');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ status: 'ok' });
+  });
+});
+
+describe('GET /api/health', () => {
+  it('returns ok (this is the path nginx proxies and the deploy smoke test hits)', async () => {
+    const app = createApp(pool, SECRET, '1h');
+    const response = await request(app).get('/api/health');
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ status: 'ok' });
   });

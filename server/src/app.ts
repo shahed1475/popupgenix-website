@@ -20,6 +20,10 @@ export function createApp(pool: Pool, jwtSecret: string, jwtExpiresIn: string): 
     res.json({ status: 'ok' });
   });
 
+  app.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   app.use('/api/auth', createAuthRoutes(pool, auth, jwtSecret, jwtExpiresIn));
   app.use('/api/projects', createProjectsRouter(pool, auth));
   app.use('/api/services', createServicesRouter(pool, auth));

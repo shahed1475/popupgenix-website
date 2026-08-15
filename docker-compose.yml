@@ -10,6 +10,11 @@ services:
       POSTGRES_PASSWORD: ${DRICKLY_DB_PASSWORD}
     volumes:
       - drickly-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U drickly_app -d drickly"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - drickly
 
@@ -24,7 +29,8 @@ services:
       PORT: 4000
       NODE_ENV: production
     depends_on:
-      - drickly-db
+      drickly-db:
+        condition: service_healthy
     networks:
       - drickly
 
