@@ -1,6 +1,6 @@
 import express from 'express';
 import request from 'supertest';
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from './middleware.js';
 import { createAuthRoutes } from './authRoutes.js';
@@ -18,8 +18,11 @@ function buildApp() {
   return app;
 }
 
-beforeEach(async () => {
+beforeAll(async () => {
   pool = await createTestPool();
+});
+
+beforeEach(async () => {
   await truncateAll(pool);
 });
 

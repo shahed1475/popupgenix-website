@@ -1,6 +1,6 @@
 import express from 'express';
 import request from 'supertest';
-import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
 import { signAuthToken } from '../auth/tokens.js';
@@ -19,8 +19,11 @@ function buildApp() {
   return app;
 }
 
-beforeEach(async () => {
+beforeAll(async () => {
   pool = await createTestPool();
+});
+
+beforeEach(async () => {
   await truncateAll(pool);
 });
 
@@ -73,6 +76,51 @@ describe('feedback / testimonials resource', () => {
 
     const publicAfterDelete = await request(app).get('/api/testimonials');
     expect(publicAfterDelete.body).toHaveLength(0);
+  });
+
+  it("forces client_email to the authenticated non-admin submitter's JWT email, ignoring a spoofed body value", async () => {
+    const passwordHash = '$2a$12$abcdefghijklmnopqrstuv';
+    const victim = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('victim@drickly.test', $1, false) RETURNING id`,
+      [passwordHash]
+    );
+    const attacker = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('attacker@drickly.test', $1, false) RETURNING id`,
+      [passwordHash]
+    );
+    const victimToken = signAuthToken(
+      { sub: victim.rows[0].id, email: 'victim@drickly.test', isAdmin: false },
+      SECRET,
+      '1h'
+    );
+    const attackerToken = signAuthToken(
+      { sub: attacker.rows[0].id, email: 'attacker@drickly.test', isAdmin: false },
+      SECRET,
+      '1h'
+    );
+    const app = buildApp();
+
+    const submitted = await request(app)
+      .post('/api/testimonials')
+      .set('Authorization', `Bearer ${attackerToken}`)
+      .send({
+        client_name: 'Attacker',
+        client_email: 'victim@drickly.test', // spoofed — should be overridden server-side
+        rating: 1,
+        testimonial: 'Planted testimonial',
+      });
+    expect(submitted.status).toBe(201);
+    expect(submitted.body.client_email).toBe('attacker@drickly.test');
+
+    const victimsOwn = await request(app)
+      .get('/api/testimonials/mine')
+      .set('Authorization', `Bearer ${victimToken}`);
+    expect(victimsOwn.body).toHaveLength(0);
+
+    const attackersOwn = await request(app)
+      .get('/api/testimonials/mine')
+      .set('Authorization', `Bearer ${attackerToken}`);
+    expect(attackersOwn.body).toHaveLength(1);
   });
 
   it('blocks anonymous requests to POST (401)', async () => {

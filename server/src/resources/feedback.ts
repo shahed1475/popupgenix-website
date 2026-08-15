@@ -62,12 +62,16 @@ export function createFeedbackRouter(pool: Pool, auth: AuthMiddleware): Router {
     auth.requireAuth,
     asyncHandler(async (req, res) => {
       const body = createFeedbackSchema.parse(req.body);
+      // Authenticated non-admin submitters cannot plant a testimonial under someone else's
+      // email — their JWT email always wins. Admins may submit on a client's behalf, so the
+      // body-supplied email is trusted only for them.
+      const clientEmail = req.user!.isAdmin ? body.client_email : req.user!.email;
       const result = await pool.query(
         `INSERT INTO feedback (client_name, client_email, client_company, project_id, rating, testimonial)
          VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
         [
           body.client_name,
-          body.client_email,
+          clientEmail,
           body.client_company ?? null,
           body.project_id ?? null,
           body.rating,

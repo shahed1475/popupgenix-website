@@ -1,11 +1,18 @@
 import { Router } from 'express';
+import bcrypt from 'bcryptjs';
 import type { Pool } from 'pg';
 import { z } from 'zod';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { HttpError } from '../lib/httpError.js';
+import { createRateLimiter } from '../lib/rateLimit.js';
 import { hashPassword, verifyPassword } from './password.js';
 import { signAuthToken } from './tokens.js';
 import type { AuthMiddleware } from './middleware.js';
+
+// Precomputed once so a "no such user" login attempt still pays the bcrypt.compare cost —
+// otherwise the early-return-on-missing-user path responds measurably faster than a wrong
+// password on a real account, leaking whether an email is registered via response timing.
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync('dummy-password-for-timing-safety', 12);
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -66,6 +73,9 @@ export function createAuthRoutes(
   jwtExpiresIn: string
 ): Router {
   const router = Router();
+  // 10 requests/IP/minute is generous for legitimate use but bounds credential-stuffing and
+  // signup-spam bursts against these two endpoints.
+  const authRateLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
   router.get(
     '/signup-enabled',
@@ -79,6 +89,7 @@ export function createAuthRoutes(
 
   router.post(
     '/signup',
+    authRateLimiter,
     asyncHandler(async (req, res) => {
       const flag = await pool.query(
         `SELECT setting_value FROM admin_settings WHERE setting_key = 'admin_signup_enabled'`
@@ -94,11 +105,16 @@ export function createAuthRoutes(
 
   router.post(
     '/login',
+    authRateLimiter,
     asyncHandler(async (req, res) => {
       const body = loginSchema.parse(req.body);
       const result = await pool.query<UserRow>('SELECT * FROM users WHERE email = $1', [body.email]);
       const user = result.rows[0];
-      if (!user || !(await verifyPassword(body.password, user.password_hash))) {
+      // Always run the bcrypt comparison, even for a nonexistent email, against a dummy hash —
+      // otherwise this branch returns before doing any hashing work and a timing side-channel
+      // reveals whether the email is registered.
+      const passwordValid = await verifyPassword(body.password, user?.password_hash ?? DUMMY_PASSWORD_HASH);
+      if (!user || !passwordValid) {
         throw new HttpError(401, 'Invalid email or password');
       }
       const token = signAuthToken(
