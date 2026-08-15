@@ -1,0 +1,49 @@
+# docker-compose.yml (repo root)
+services:
+  drickly-db:
+    image: postgres:15-alpine
+    container_name: drickly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: drickly
+      POSTGRES_USER: drickly_app
+      POSTGRES_PASSWORD: ${DRICKLY_DB_PASSWORD}
+    volumes:
+      - drickly-db-data:/var/lib/postgresql/data
+    networks:
+      - drickly
+
+  drickly-api:
+    build: ./server
+    container_name: drickly-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://drickly_app:${DRICKLY_DB_PASSWORD}@drickly-db:5432/drickly
+      JWT_SECRET: ${DRICKLY_JWT_SECRET}
+      JWT_EXPIRES_IN: 7d
+      PORT: 4000
+      NODE_ENV: production
+    depends_on:
+      - drickly-db
+    networks:
+      - drickly
+
+  drickly-frontend:
+    build: .
+    container_name: drickly-frontend
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - drickly-api
+    networks:
+      - drickly
+
+networks:
+  drickly:
+    name: drickly
+    driver: bridge
+
+volumes:
+  drickly-db-data:
+    name: drickly-db-data
