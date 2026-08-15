@@ -1,9 +1,4 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { Pool } from 'pg';
-import { runMigrations } from '../db/migrate.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export async function createTestPool(): Promise<Pool> {
   const connectionString = process.env.TEST_DATABASE_URL;
@@ -11,7 +6,6 @@ export async function createTestPool(): Promise<Pool> {
     throw new Error('TEST_DATABASE_URL must be set to run integration tests — see Global Constraints.');
   }
   const pool = new Pool({ connectionString });
-  await runMigrations(pool, path.resolve(__dirname, '../../db/migrations'));
   return pool;
 }
 
