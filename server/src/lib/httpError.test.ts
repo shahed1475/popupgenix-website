@@ -35,4 +35,43 @@ describe('errorHandler', () => {
     errorHandler(new Error('boom'), {} as Request, res, vi.fn());
     expect(res.status).toHaveBeenCalledWith(500);
   });
+
+  it('maps a Postgres invalid_text_representation error (bad UUID) to a 400', () => {
+    const res = mockRes();
+    const err = Object.assign(new Error('invalid input syntax for type uuid'), { code: '22P02' });
+    errorHandler(err, {} as Request, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Invalid ID format' });
+  });
+
+  it('maps a Postgres invalid_datetime_format error to a 400', () => {
+    const res = mockRes();
+    const err = Object.assign(new Error('invalid input syntax for type date'), { code: '22007' });
+    errorHandler(err, {} as Request, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Invalid date format' });
+  });
+
+  it('maps a Postgres unique_violation error to a 409', () => {
+    const res = mockRes();
+    const err = Object.assign(new Error('duplicate key value'), { code: '23505' });
+    errorHandler(err, {} as Request, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Resource already exists' });
+  });
+
+  it('maps a Postgres foreign_key_violation error to a 400', () => {
+    const res = mockRes();
+    const err = Object.assign(new Error('violates foreign key constraint'), { code: '23503' });
+    errorHandler(err, {} as Request, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Referenced resource does not exist' });
+  });
+
+  it('falls back to 500 for an unmapped pg-shaped error code', () => {
+    const res = mockRes();
+    const err = Object.assign(new Error('some other pg error'), { code: '55006' });
+    errorHandler(err, {} as Request, res, vi.fn());
+    expect(res.status).toHaveBeenCalledWith(500);
+  });
 });
