@@ -81,4 +81,59 @@ describe('projects resource', () => {
     const deleted = await request(app).delete(`/api/projects/${projectId}`).set('Authorization', `Bearer ${adminToken}`);
     expect(deleted.status).toBe(204);
   });
+
+  it('rejects non-admin PATCH and DELETE on any project', async () => {
+    const passwordHash = '$2a$12$abcdefghijklmnopqrstuv';
+    const admin = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin@drickly.test', $1, true) RETURNING id`,
+      [passwordHash]
+    );
+    const clientA = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('a@drickly.test', $1, false) RETURNING id`,
+      [passwordHash]
+    );
+    const clientB = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('b@drickly.test', $1, false) RETURNING id`,
+      [passwordHash]
+    );
+
+    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const clientAToken = signAuthToken({ sub: clientA.rows[0].id, email: 'a@drickly.test', isAdmin: false }, SECRET, '1h');
+    const clientBToken = signAuthToken({ sub: clientB.rows[0].id, email: 'b@drickly.test', isAdmin: false }, SECRET, '1h');
+
+    const app = buildApp();
+
+    // Create a project owned by clientA
+    const created = await request(app)
+      .post('/api/projects')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ title: 'Site Redesign', description: 'Full redesign', category: 'web', client_user_id: clientA.rows[0].id });
+    const projectId = created.body.id as string;
+
+    // ClientA tries to PATCH their own project
+    const clientAPatchOwn = await request(app)
+      .patch(`/api/projects/${projectId}`)
+      .set('Authorization', `Bearer ${clientAToken}`)
+      .send({ completion_percentage: 50 });
+    expect(clientAPatchOwn.status).toBe(403);
+
+    // ClientB tries to PATCH another client's project
+    const clientBPatchOther = await request(app)
+      .patch(`/api/projects/${projectId}`)
+      .set('Authorization', `Bearer ${clientBToken}`)
+      .send({ completion_percentage: 50 });
+    expect(clientBPatchOther.status).toBe(403);
+
+    // ClientA tries to DELETE their own project
+    const clientADeleteOwn = await request(app)
+      .delete(`/api/projects/${projectId}`)
+      .set('Authorization', `Bearer ${clientAToken}`);
+    expect(clientADeleteOwn.status).toBe(403);
+
+    // ClientB tries to DELETE another client's project
+    const clientBDeleteOther = await request(app)
+      .delete(`/api/projects/${projectId}`)
+      .set('Authorization', `Bearer ${clientBToken}`);
+    expect(clientBDeleteOther.status).toBe(403);
+  });
 });
