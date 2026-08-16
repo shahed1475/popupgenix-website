@@ -17,6 +17,8 @@ interface LeadCompanyRow {
   company_description: string | null;
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function processResearchTask(
   pool: Pool,
   ai: AIProvider,
@@ -26,6 +28,9 @@ export async function processResearchTask(
   const leadId = task.payload.lead_id;
   if (typeof leadId !== "string") {
     return failTask(pool, task, "Task payload is missing lead_id");
+  }
+  if (!UUID_RE.test(leadId)) {
+    return failTask(pool, task, `Task payload lead_id "${leadId}" is not a valid UUID`);
   }
 
   const { rows } = await pool.query<LeadCompanyRow>(
@@ -55,41 +60,53 @@ export async function processResearchTask(
     });
     const finishedAt = new Date();
 
-    await pool.query(
-      `INSERT INTO research (subject_type, subject_id, summary, findings, confidence, source, created_by)
-       VALUES ('company', $1, $2, $3, $4, $5, 'agent')`,
-      [
-        row.company_id,
-        output.aiSummary,
-        JSON.stringify({
-          technology: output.technology,
-          revenueEstimate: output.revenueEstimate,
-          employees: output.employees,
-          growth: output.growth,
-          hiring: output.hiring,
-          funding: output.funding,
-          painPoints: output.painPoints,
-          buyingSignals: output.buyingSignals,
-        }),
-        output.confidence,
-        providerName,
-      ]
-    );
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
 
-    await pool.query(
-      `INSERT INTO agent_runs (task_id, status, provider, started_at, finished_at, output, duration_ms)
-       VALUES ($1, 'succeeded', $2, $3, $4, $5, $6)`,
-      [
-        task.id,
-        providerName,
-        startedAt,
-        finishedAt,
-        JSON.stringify(output),
-        finishedAt.getTime() - startedAt.getTime(),
-      ]
-    );
+      await client.query(
+        `INSERT INTO research (subject_type, subject_id, summary, findings, confidence, source, created_by)
+         VALUES ('company', $1, $2, $3, $4, $5, 'agent')`,
+        [
+          row.company_id,
+          output.aiSummary,
+          JSON.stringify({
+            technology: output.technology,
+            revenueEstimate: output.revenueEstimate,
+            employees: output.employees,
+            growth: output.growth,
+            hiring: output.hiring,
+            funding: output.funding,
+            painPoints: output.painPoints,
+            buyingSignals: output.buyingSignals,
+          }),
+          output.confidence,
+          providerName,
+        ]
+      );
 
-    await pool.query("UPDATE agent_tasks SET status = 'succeeded' WHERE id = $1", [task.id]);
+      await client.query(
+        `INSERT INTO agent_runs (task_id, status, provider, started_at, finished_at, output, duration_ms)
+         VALUES ($1, 'succeeded', $2, $3, $4, $5, $6)`,
+        [
+          task.id,
+          providerName,
+          startedAt,
+          finishedAt,
+          JSON.stringify(output),
+          finishedAt.getTime() - startedAt.getTime(),
+        ]
+      );
+
+      await client.query("UPDATE agent_tasks SET status = 'succeeded' WHERE id = $1", [task.id]);
+
+      await client.query("COMMIT");
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
 
     return { taskId: task.id, status: "succeeded" };
   } catch (error) {

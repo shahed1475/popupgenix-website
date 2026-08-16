@@ -27,9 +27,14 @@ export async function runResearchTask(
   let succeeded = 0;
   let failed = 0;
   for (const task of tasks) {
-    const result = await processResearchTask(pool, ai, providerName, task);
-    if (result.status === "succeeded") succeeded++;
-    else failed++;
+    try {
+      const result = await processResearchTask(pool, ai, providerName, task);
+      if (result.status === "succeeded") succeeded++;
+      else failed++;
+    } catch (error) {
+      console.error(`Unhandled error processing research task ${task.id}:`, error);
+      failed++;
+    }
   }
 
   return { claimed: tasks.length, succeeded, failed };
@@ -38,6 +43,11 @@ export async function runResearchTask(
 async function main(): Promise<void> {
   const taskEnv = loadTaskEnv();
   const workerEnv = loadWorkerEnv();
+  if (workerEnv.provider === "mock") {
+    console.warn(
+      "WARNING: AI_PROVIDER is not set to 'claude' — using MockAIProvider. Research results will be fabricated placeholder data, not real AI analysis. Set AI_PROVIDER=claude for production use."
+    );
+  }
   const ai = createAIProvider(workerEnv);
   const pool = createPool(taskEnv.databaseUrl);
   try {

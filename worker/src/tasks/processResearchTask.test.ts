@@ -94,6 +94,23 @@ describe("processResearchTask — failure paths", () => {
     expect(taskRow.rows[0].attempts).toBe(1);
   });
 
+  it("fails the task and retries when lead_id is not a well-formed UUID", async () => {
+    await pool.query(
+      "INSERT INTO agent_tasks (task_type, status, payload) VALUES ('research', 'pending', $1)",
+      [JSON.stringify({ lead_id: "not-a-uuid" })]
+    );
+    const [task] = await claimResearchTasks(pool, "worker-1", 1);
+
+    const result = await processResearchTask(pool, mockAi, "mock", task);
+
+    expect(result.status).toBe("failed");
+    expect(result.error).toMatch(/not a valid UUID/);
+
+    const taskRow = await pool.query("SELECT status, attempts FROM agent_tasks WHERE id = $1", [task.id]);
+    expect(taskRow.rows[0].status).toBe("pending");
+    expect(taskRow.rows[0].attempts).toBe(1);
+  });
+
   it("marks the task permanently failed once max_attempts is reached", async () => {
     await pool.query(
       "INSERT INTO agent_tasks (task_type, status, payload, attempts, max_attempts) VALUES ('research', 'pending', '{}', 2, 3)"

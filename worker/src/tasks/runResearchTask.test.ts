@@ -29,6 +29,13 @@ async function seedPendingResearchTask() {
   ]);
 }
 
+async function seedMalformedResearchTask() {
+  await pool.query(
+    "INSERT INTO agent_tasks (task_type, status, payload) VALUES ('research', 'pending', $1)",
+    [JSON.stringify({ lead_id: "not-a-uuid" })]
+  );
+}
+
 describe("runResearchTask", () => {
   it("claims and processes a batch of pending research tasks end to end", async () => {
     await seedPendingResearchTask();
@@ -49,5 +56,14 @@ describe("runResearchTask", () => {
   it("returns zeros when there is nothing pending", async () => {
     const summary = await runResearchTask(pool, mockAi, "mock", 5);
     expect(summary).toEqual({ claimed: 0, succeeded: 0, failed: 0 });
+  });
+
+  it("does not abort the batch when one task has a malformed lead_id", async () => {
+    await seedPendingResearchTask();
+    await seedMalformedResearchTask();
+
+    const summary = await runResearchTask(pool, mockAi, "mock", 2);
+
+    expect(summary).toEqual({ claimed: 2, succeeded: 1, failed: 1 });
   });
 });
