@@ -19,13 +19,15 @@ describe("ClaudeAIProvider", () => {
         parse: async () => ({
           stop_reason: "end_turn",
           parsed_output: {
-            summary: "Acme is a mid-size SaaS company.",
-            companySizeEstimate: "51-200",
-            industry: "Software",
-            techStack: ["React", "Postgres"],
-            fundingStage: "Series B",
+            technology: ["React", "Postgres"],
+            revenueEstimate: "$10M-$50M",
+            employees: "51-200",
+            growth: "rapid",
+            hiring: ["Software Engineer", "Product Manager"],
+            funding: "Series B",
             painPoints: ["Slow onboarding"],
-            icpFitSignals: ["Uses modern stack"],
+            buyingSignals: ["Uses modern stack"],
+            aiSummary: "Acme is a mid-size SaaS company.",
             confidence: 0.8,
           },
         }),
@@ -41,7 +43,7 @@ describe("ClaudeAIProvider", () => {
       rawContext: null,
     });
 
-    expect(result.summary).toBe("Acme is a mid-size SaaS company.");
+    expect(result.aiSummary).toBe("Acme is a mid-size SaaS company.");
     expect(result.confidence).toBe(0.8);
   });
 
