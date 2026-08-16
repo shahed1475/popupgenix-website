@@ -34,3 +34,15 @@ Copy `.env.example` to `.env` and fill in values to enable Claude.
    `MockAIProvider` automatically — no other code changes are needed, because all
    business logic only ever depends on the `AIProvider` interface, never on either
    implementation directly.
+
+## Running the research task
+
+`npm run task:research` claims up to `WORKER_RESEARCH_BATCH_SIZE` pending `agent_tasks`
+rows of type `research`, gathers company intelligence via the configured `AIProvider`, and
+writes the result to the `research` table (plus an `agent_runs` log row and the lead's
+status transition to `researching`). It's a one-shot script — run it on a cron schedule
+(e.g. every 5 minutes), not as a long-running daemon.
+
+Requires `WORKER_DATABASE_URL` (see `.env.example`) in addition to the `AI_PROVIDER`
+variables above. `npm run task:research:dev` runs it directly from TypeScript via `tsx`
+for local testing; `npm run build && npm run task:research` is the production path.
