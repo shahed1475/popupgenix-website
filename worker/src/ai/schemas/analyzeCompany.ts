@@ -11,13 +11,15 @@ export const analyzeCompanyInputSchema = z.object({
 export type AnalyzeCompanyInput = z.infer<typeof analyzeCompanyInputSchema>;
 
 export const analyzeCompanyOutputSchema = z.object({
-  summary: nonEmptyString,
-  companySizeEstimate: z.string().nullable().optional(),
-  industry: z.string().nullable().optional(),
-  techStack: z.array(z.string()),
-  fundingStage: z.string().nullable().optional(),
+  technology: z.array(z.string()),
+  revenueEstimate: z.string().nullable().optional(),
+  employees: z.string().nullable().optional(),
+  growth: z.string().nullable().optional(),
+  hiring: z.array(z.string()),
+  funding: z.string().nullable().optional(),
   painPoints: z.array(z.string()),
-  icpFitSignals: z.array(z.string()),
+  buyingSignals: z.array(z.string()),
+  aiSummary: nonEmptyString,
   confidence: confidenceSchema,
 });
 export type AnalyzeCompanyOutput = z.infer<typeof analyzeCompanyOutputSchema>;

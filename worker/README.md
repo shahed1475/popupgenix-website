@@ -24,7 +24,13 @@ whole test suite runs offline.
 | `ANTHROPIC_MODEL` | only if `AI_PROVIDER=claude` | — | no default is assumed; startup fails with a clear `AIProviderConfigError` if missing |
 | `ANTHROPIC_EFFORT` | no | `medium` | one of `low`, `medium`, `high`, `xhigh`, `max` |
 
-Copy `.env.example` to `.env` and fill in values to enable Claude.
+`.env.example` documents which variables exist, but nothing in this package loads `.env`
+files automatically (no `dotenv`, no `--env-file`) — these are read directly from
+`process.env`. Copy `.env.example` to `.env` as a reference for the values you need, then
+actually export them into the environment that runs the script — e.g.
+`export $(cat .env | grep -v '^#' | xargs) && npm run task:research` on POSIX shells, or
+set them directly in the cron job's environment / systemd unit / whatever process runs
+the worker. Simply having a `.env` file on disk has no effect.
 
 ## Switching to Claude later
 
@@ -34,3 +40,25 @@ Copy `.env.example` to `.env` and fill in values to enable Claude.
    `MockAIProvider` automatically — no other code changes are needed, because all
    business logic only ever depends on the `AIProvider` interface, never on either
    implementation directly.
+
+## Running the research task
+
+`npm run task:research` claims up to `WORKER_RESEARCH_BATCH_SIZE` pending `agent_tasks`
+rows of type `research`, gathers company intelligence via the configured `AIProvider`, and
+writes the result to the `research` table (plus an `agent_runs` log row and the lead's
+status transition to `researching`). It's a one-shot script — run it on a cron schedule
+(e.g. every 5 minutes), not as a long-running daemon.
+
+Requires `WORKER_DATABASE_URL` (see `.env.example`) in addition to the `AI_PROVIDER`
+variables above. `npm run task:research:dev` runs it directly from TypeScript via `tsx`
+for local testing; `npm run build && npm run task:research` is the production path.
+
+`task:research` uses whatever `AI_PROVIDER` is configured in the environment, which
+defaults to `mock` if unset. Production use requires explicitly setting
+`AI_PROVIDER=claude` (plus `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL`) — otherwise the
+worker prints a warning and writes fabricated mock research into the real `research`
+table. Double-check this before pointing the script at a production database.
+
+**Troubleshooting:** if this reports `claimed=0` while you know pending research tasks
+exist, your database role is likely being filtered by RLS rather than bypassing it —
+verify the role behind `WORKER_DATABASE_URL` has `BYPASSRLS` (see `.env.example`).

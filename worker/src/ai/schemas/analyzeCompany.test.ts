@@ -21,13 +21,15 @@ describe("analyzeCompanyInputSchema", () => {
 
 describe("analyzeCompanyOutputSchema", () => {
   const valid = {
-    summary: "Acme is a SaaS company.",
-    companySizeEstimate: "11-50",
-    industry: "Software",
-    techStack: ["React"],
-    fundingStage: "Series A",
+    technology: ["React"],
+    revenueEstimate: "$1M-$5M",
+    employees: "11-50",
+    growth: "steady",
+    hiring: ["Software Engineer"],
+    funding: "Series A",
     painPoints: ["Manual work"],
-    icpFitSignals: ["Good fit"],
+    buyingSignals: ["Recently raised funding"],
+    aiSummary: "Acme is a SaaS company.",
     confidence: 0.7,
   };
 
@@ -39,8 +41,20 @@ describe("analyzeCompanyOutputSchema", () => {
     expect(() => analyzeCompanyOutputSchema.parse({ ...valid, confidence: 1.5 })).toThrow();
   });
 
-  it("rejects a missing summary", () => {
-    const { summary: _summary, ...rest } = valid;
+  it("rejects a missing aiSummary", () => {
+    const { aiSummary: _aiSummary, ...rest } = valid;
     expect(() => analyzeCompanyOutputSchema.parse(rest)).toThrow();
+  });
+
+  it("accepts null for optional string fields", () => {
+    expect(() =>
+      analyzeCompanyOutputSchema.parse({
+        ...valid,
+        revenueEstimate: null,
+        employees: null,
+        growth: null,
+        funding: null,
+      })
+    ).not.toThrow();
   });
 });

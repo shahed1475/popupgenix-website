@@ -13,7 +13,7 @@ describe("MockAIProvider", () => {
       description: null,
       rawContext: null,
     });
-    expect(result.summary).toContain("Acme");
+    expect(result.aiSummary).toContain("Acme");
     expect(result.confidence).toBeGreaterThanOrEqual(0);
     expect(result.confidence).toBeLessThanOrEqual(1);
   });

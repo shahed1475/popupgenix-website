@@ -35,13 +35,15 @@ export class MockAIProvider implements AIProvider {
   async analyzeCompany(rawInput: AnalyzeCompanyInput): Promise<AnalyzeCompanyOutput> {
     const input = parseOrThrow(analyzeCompanyInputSchema, rawInput);
     return parseOrThrow(analyzeCompanyOutputSchema, {
-      summary: `${input.companyName} is a company in the ${input.industry ?? "unknown"} industry (mock analysis).`,
-      companySizeEstimate: "11-50",
-      industry: input.industry ?? null,
-      techStack: ["Unknown"],
-      fundingStage: null,
+      technology: ["Unknown"],
+      revenueEstimate: null,
+      employees: "11-50",
+      growth: null,
+      hiring: [],
+      funding: null,
       painPoints: ["Manual processes", "Scaling challenges"],
-      icpFitSignals: ["Matches target industry"],
+      buyingSignals: ["Matches target industry"],
+      aiSummary: `${input.companyName} is a company in the ${input.industry ?? "unknown"} industry (mock analysis).`,
       confidence: 0.5,
     }, "Output");
   }
