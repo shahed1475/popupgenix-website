@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { deleteContactSubmission, listContactSubmissions } from "@/lib/api/contactSubmissions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -30,13 +30,8 @@ export default function MessagesManager() {
 
   const loadMessages = async () => {
     try {
-      const { data, error } = await supabase
-        .from("contact_submissions")
-        .select("id, created_at, name, email, budget_range, message, status, priority")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setMessages(data || []);
+      const data = await listContactSubmissions();
+      setMessages(data);
     } catch (err) {
       console.error("Error loading messages:", err);
       toast({
@@ -64,8 +59,7 @@ export default function MessagesManager() {
   const deleteSelected = async () => {
     if (selected.length === 0) return;
     try {
-      const { error } = await supabase.from("contact_submissions").delete().in("id", selected);
-      if (error) throw error;
+      await Promise.all(selected.map((id) => deleteContactSubmission(id)));
       toast({ title: "Deleted", description: "Selected messages were deleted." });
       setSelected([]);
       await loadMessages();
