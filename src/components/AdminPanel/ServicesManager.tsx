@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { createService, deleteService, listServices, updateService } from "@/lib/api/services";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,13 +43,8 @@ export default function ServicesManager() {
 
   const loadServices = async () => {
     try {
-      const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .order('order_index');
-
-      if (error) throw error;
-      setServices(data || []);
+      const data = await listServices();
+      setServices([...data].sort((a, b) => a.order_index - b.order_index));
     } catch (error) {
       console.error('Error loading services:', error);
       toast({
@@ -64,32 +59,28 @@ export default function ServicesManager() {
 
   const saveService = async () => {
     if (!editingService) return;
-    
+
     setSaving(true);
     try {
+      const { id, ...fields } = editingService;
       const serviceData = {
-        ...editingService,
-        features: editingService.features.filter(f => f.trim() !== '')
+        ...fields,
+        features: fields.features.filter(f => f.trim() !== '')
       };
 
-      const { error } = editingService.id
-        ? await supabase
-            .from('services')
-            .update(serviceData)
-            .eq('id', editingService.id)
-        : await supabase
-            .from('services')
-            .insert([{ ...serviceData, order_index: services.length }]);
-
-      if (error) throw error;
+      if (id) {
+        await updateService(id, serviceData);
+      } else {
+        await createService({ ...serviceData, order_index: services.length });
+      }
 
       await loadServices();
       setIsDialogOpen(false);
       setEditingService(null);
-      
+
       toast({
         title: "Success",
-        description: `Service ${editingService.id ? 'updated' : 'created'} successfully!`,
+        description: `Service ${id ? 'updated' : 'created'} successfully!`,
       });
     } catch (error) {
       console.error('Error saving service:', error);
@@ -103,17 +94,11 @@ export default function ServicesManager() {
     }
   };
 
-  const deleteService = async (id: string) => {
+  const handleDeleteService = async (id: string) => {
     if (!confirm('Are you sure you want to delete this service?')) return;
 
     try {
-      const { error } = await supabase
-        .from('services')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await deleteService(id);
       await loadServices();
       toast({
         title: "Success",
@@ -131,12 +116,7 @@ export default function ServicesManager() {
 
   const toggleServiceStatus = async (service: Service) => {
     try {
-      const { error } = await supabase
-        .from('services')
-        .update({ active: !service.active })
-        .eq('id', service.id);
-
-      if (error) throw error;
+      await updateService(service.id, { active: !service.active });
       await loadServices();
     } catch (error) {
       console.error('Error updating service status:', error);
@@ -360,7 +340,7 @@ export default function ServicesManager() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => deleteService(service.id)}
+                  onClick={() => handleDeleteService(service.id)}
                   className="border-red-600 text-red-400 hover:bg-red-600/10"
                 >
                   <Trash2 className="h-3 w-3" />
