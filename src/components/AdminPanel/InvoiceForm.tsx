@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { createInvoice } from "@/lib/api/invoices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -100,37 +100,19 @@ export default function InvoiceForm() {
       const subtotal = calculateSubtotal();
       const total = calculateTotal();
 
-      // Insert invoice
-      const { data: invoice, error: invoiceError } = await supabase
-        .from("invoices")
-        .insert([
-          {
-            ...formData,
-            subtotal,
-            total,
-            status: "pending",
-          },
-        ])
-        .select()
-        .single();
-
-      if (invoiceError) throw invoiceError;
-
-      // Insert line items
-      const lineItemsData = lineItems.map((item) => ({
-        invoice_id: invoice.id,
-        service_name: item.service_name,
-        description: item.description,
-        quantity: item.quantity,
-        rate: item.rate,
-        amount: item.amount,
-      }));
-
-      const { error: lineItemsError } = await supabase
-        .from("invoice_line_items")
-        .insert(lineItemsData);
-
-      if (lineItemsError) throw lineItemsError;
+      await createInvoice({
+        ...formData,
+        subtotal,
+        total,
+        status: "pending",
+        line_items: lineItems.map((item) => ({
+          service_name: item.service_name,
+          description: item.description,
+          quantity: item.quantity,
+          rate: item.rate,
+          amount: item.amount,
+        })),
+      });
 
       toast({
         title: "Success",
