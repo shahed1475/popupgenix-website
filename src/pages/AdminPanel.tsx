@@ -21,7 +21,6 @@ import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const ADMIN_EMAIL = "shahedalfahad19@gmail.com";
-const ADMIN_PASSWORD = "Fahad@70342@popupgenix";
 
 export default function AdminPanel() {
   const { toast } = useToast();
@@ -61,25 +60,21 @@ export default function AdminPanel() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-      toast({
-        title: "Invalid Credentials",
-        description: "Invalid login credentials. Please try again.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     setIsLoggingIn(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
-      
+
+      if (data.user?.email !== ADMIN_EMAIL) {
+        await supabase.auth.signOut();
+        throw new Error("This account is not authorized for admin access.");
+      }
+
       toast({
         title: "Success",
         description: "Logged in successfully",
