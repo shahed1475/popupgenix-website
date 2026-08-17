@@ -20,6 +20,7 @@ const invoiceSchema = z.object({
   client_company: z.string().nullable().optional(),
   client_phone: z.string().nullable().optional(),
   client_address: z.string().nullable().optional(),
+  issue_date: z.string().optional(),
   due_date: z.string(),
   subtotal: z.number().default(0),
   discount: z.number().default(0),
@@ -87,8 +88,8 @@ export function createInvoicesRouter(pool: Pool, auth: AuthMiddleware): Router {
         const result = await client.query(
           `INSERT INTO invoices
             (invoice_number, client_name, client_email, client_company, client_phone, client_address,
-             due_date, subtotal, discount, tax, total, status, payment_instructions)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`,
+             issue_date, due_date, subtotal, discount, tax, total, status, payment_instructions)
+           VALUES ($1,$2,$3,$4,$5,$6, COALESCE($7::timestamptz, now()), $8,$9,$10,$11,$12,$13,$14) RETURNING *`,
           [
             body.invoice_number,
             body.client_name,
@@ -96,6 +97,7 @@ export function createInvoicesRouter(pool: Pool, auth: AuthMiddleware): Router {
             body.client_company ?? null,
             body.client_phone ?? null,
             body.client_address ?? null,
+            body.issue_date ?? null,
             body.due_date,
             body.subtotal,
             body.discount,
