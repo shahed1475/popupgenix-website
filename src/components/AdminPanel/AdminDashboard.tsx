@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiClient } from "@/lib/api/client";
+import { listContactSubmissions } from "@/lib/api/contactSubmissions";
+import { listAdminFeedback } from "@/lib/api/feedback";
+import { listProjects } from "@/lib/api/projects";
+import { listServices } from "@/lib/api/services";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   Users, 
@@ -38,30 +42,25 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      // Load various stats in parallel
-      const [
-        clientsData,
-        projectsData,
-        testimonialsData,
-        servicesData,
-        messagesData,
-        activityData
-      ] = await Promise.all([
-        supabase.from('profiles').select('id', { count: 'exact' }),
-        supabase.from('projects').select('id', { count: 'exact' }),
-        supabase.from('feedback').select('id', { count: 'exact' }).eq('status', 'pending'),
-        supabase.from('services').select('id', { count: 'exact' }).eq('active', true),
-        supabase.from('contact_submissions').select('id', { count: 'exact' }),
-        supabase.from('contact_submissions').select('id, name, email, message, created_at, status').order('created_at', { ascending: false }).limit(5)
+      const [clients, projects, testimonials, services, submissions] = await Promise.all([
+        apiClient.get<{ id: string }[]>('/auth/users'),
+        listProjects(),
+        listAdminFeedback(),
+        listServices(),
+        listContactSubmissions(),
       ]);
 
+      const recentActivity = [...submissions]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5);
+
       setStats({
-        totalClients: clientsData.count || 0,
-        activeProjects: projectsData.count || 0,
-        pendingTestimonials: testimonialsData.count || 0,
-        totalServices: servicesData.count || 0,
-        recentMessages: messagesData.count || 0,
-        recentActivity: activityData.data || []
+        totalClients: clients.length,
+        activeProjects: projects.length,
+        pendingTestimonials: testimonials.filter((t) => t.status === 'pending').length,
+        totalServices: services.filter((s) => s.active).length,
+        recentMessages: submissions.length,
+        recentActivity,
       });
     } catch (error) {
       console.error('Error loading dashboard data:', error);
