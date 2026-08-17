@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { AdminUser, getCurrentUser, login } from "@/lib/api/auth";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminPanel/AdminSidebar";
 import AdminDashboard from "@/components/AdminPanel/AdminDashboard";
@@ -24,7 +24,7 @@ const ADMIN_EMAIL = "shahedalfahad19@gmail.com";
 
 export default function AdminPanel() {
   const { toast } = useToast();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState("");
@@ -32,30 +32,13 @@ export default function AdminPanel() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.email === ADMIN_EMAIL) {
-        setUser(session.user);
+    getCurrentUser().then((currentUser) => {
+      if (currentUser?.email === ADMIN_EMAIL) {
+        setUser(currentUser);
         setIsAdmin(true);
       }
       setLoading(false);
     });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email === ADMIN_EMAIL) {
-        setUser(session.user);
-        setIsAdmin(true);
-      } else {
-        setUser(null);
-        setIsAdmin(false);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -63,17 +46,14 @@ export default function AdminPanel() {
 
     setIsLoggingIn(true);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const loggedInUser = await login(email, password);
 
-      if (error) throw error;
-
-      if (data.user?.email !== ADMIN_EMAIL) {
-        await supabase.auth.signOut();
+      if (loggedInUser.email !== ADMIN_EMAIL) {
         throw new Error("This account is not authorized for admin access.");
       }
+
+      setUser(loggedInUser);
+      setIsAdmin(true);
 
       toast({
         title: "Success",
