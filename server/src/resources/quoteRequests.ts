@@ -80,5 +80,18 @@ export function createQuoteRequestsRouter(pool: Pool, auth: AuthMiddleware): Rou
     })
   );
 
+  router.delete(
+    '/:id',
+    auth.requireAuth,
+    auth.requireAdmin,
+    asyncHandler(async (req, res) => {
+      const result = await pool.query('DELETE FROM quote_requests WHERE id = $1 RETURNING id', [
+        req.params.id,
+      ]);
+      if (!result.rows[0]) throw new HttpError(404, 'Quote request not found');
+      res.status(204).send();
+    })
+  );
+
   return router;
 }

@@ -76,5 +76,18 @@ export function createContactSubmissionsRouter(pool: Pool, auth: AuthMiddleware)
     })
   );
 
+  router.delete(
+    '/:id',
+    auth.requireAuth,
+    auth.requireAdmin,
+    asyncHandler(async (req, res) => {
+      const result = await pool.query('DELETE FROM contact_submissions WHERE id = $1 RETURNING id', [
+        req.params.id,
+      ]);
+      if (!result.rows[0]) throw new HttpError(404, 'Contact submission not found');
+      res.status(204).send();
+    })
+  );
+
   return router;
 }

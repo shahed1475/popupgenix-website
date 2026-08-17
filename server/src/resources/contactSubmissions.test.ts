@@ -95,4 +95,30 @@ describe('contact submissions resource', () => {
       .send({ status: 'resolved' });
     expect(patched.status).toBe(403);
   });
+
+  it('allows admins to delete a submission and returns 404 for a missing one', async () => {
+    const app = buildApp();
+
+    const submitted = await request(app)
+      .post('/api/contact-submissions')
+      .send({ name: 'Jane', email: 'jane@example.com', message: 'Hello there' });
+    expect(submitted.status).toBe(201);
+
+    const passwordHash = '$2a$12$abcdefghijklmnopqrstuv';
+    const admin = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin2@drickly.test', $1, true) RETURNING id`,
+      [passwordHash]
+    );
+    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
+
+    const deleted = await request(app)
+      .delete(`/api/contact-submissions/${submitted.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(deleted.status).toBe(204);
+
+    const missing = await request(app)
+      .delete(`/api/contact-submissions/${submitted.body.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(missing.status).toBe(404);
+  });
 });
