@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { AdminUser, getCurrentUser, login } from "@/lib/api/auth";
+import { AdminUser, getCurrentUser, login, logout } from "@/lib/api/auth";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminPanel/AdminSidebar";
 import AdminDashboard from "@/components/AdminPanel/AdminDashboard";
@@ -49,6 +49,7 @@ export default function AdminPanel() {
       const loggedInUser = await login(email, password);
 
       if (loggedInUser.email !== ADMIN_EMAIL) {
+        logout();
         throw new Error("This account is not authorized for admin access.");
       }
 
