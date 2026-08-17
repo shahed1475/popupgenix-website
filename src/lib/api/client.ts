@@ -37,7 +37,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   const response = await fetch(`/api${path}`, { ...init, headers });
 
-  if (response.status === 401) {
+  if (response.status === 401 && token) {
     clearToken();
     window.location.href = '/admin';
     throw new ApiError(401, 'Session expired');

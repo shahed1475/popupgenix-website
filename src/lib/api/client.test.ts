@@ -131,4 +131,21 @@ describe('apiClient', () => {
     expect(getToken()).toBeNull();
     expect(win.location.href).toBe('/admin');
   });
+
+  it('on a 401 with no token present (e.g. a failed login), does not redirect — throws a normal ApiError', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'Invalid email or password' }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+    const win = { location: { href: '' } };
+    vi.stubGlobal('window', win);
+
+    await expect(apiClient.post('/auth/login', { email: 'x@example.com', password: 'wrong' })).rejects.toMatchObject(
+      new ApiError(401, 'Invalid email or password')
+    );
+
+    expect(win.location.href).toBe('');
+  });
 });
