@@ -251,7 +251,10 @@ git commit -m "chore: add Supabase CLI local stack and RLS test harness scaffold
   `public.create_organization(_name text, _slug text) uuid` (RPC-callable — creates the org row
   and the caller's `owner` membership atomically, bypassing the direct-INSERT RLS bootstrap
   problem: a brand-new org has no members yet, so no one could otherwise pass the membership
-  INSERT policy's "must already be an org admin" check).
+  INSERT policy's "must already be an org admin" check), and a `prevent_owner_lockout` trigger on
+  `memberships` (see Step 3) — without it, an owner demoting or removing themselves as the last
+  owner would permanently orphan the organization's ownership tier, since the INSERT/UPDATE
+  policies require an *existing* owner to ever create a new one.
 
 - [ ] **Step 1: Write the failing tests for organization creation and RLS**
 
@@ -490,6 +493,68 @@ describe("memberships RLS", () => {
     expect(data).toBeNull();
   });
 });
+
+describe("owner-lockout prevention", () => {
+  it("blocks the last owner from deleting their own membership", async () => {
+    const { orgId, ownerClient, ownerId } = await createOrgWithOwner();
+
+    const { error } = await ownerClient
+      .from("memberships")
+      .delete()
+      .eq("organization_id", orgId)
+      .eq("user_id", ownerId);
+    expect(error).not.toBeNull();
+
+    const { data: stillThere } = await ownerClient
+      .from("memberships")
+      .select("role")
+      .eq("organization_id", orgId)
+      .eq("user_id", ownerId)
+      .single();
+    expect(stillThere?.role).toBe("owner");
+  });
+
+  it("blocks the last owner from demoting themselves to admin", async () => {
+    const { orgId, ownerClient, ownerId } = await createOrgWithOwner();
+
+    const { error } = await ownerClient
+      .from("memberships")
+      .update({ role: "admin" })
+      .eq("organization_id", orgId)
+      .eq("user_id", ownerId);
+    expect(error).not.toBeNull();
+
+    const { data: stillThere } = await ownerClient
+      .from("memberships")
+      .select("role")
+      .eq("organization_id", orgId)
+      .eq("user_id", ownerId)
+      .single();
+    expect(stillThere?.role).toBe("owner");
+  });
+
+  it("allows removing an owner once a second owner exists", async () => {
+    const { orgId, ownerClient, ownerId } = await createOrgWithOwner();
+    const coOwnerEmail = `co-owner-lockout-${randomUUID()}@example.com`;
+    const { id: coOwnerId } = await createTestUser(admin, coOwnerEmail, PASSWORD);
+    await ownerClient
+      .from("memberships")
+      .insert({ user_id: coOwnerId, organization_id: orgId, role: "owner" });
+
+    const { error } = await ownerClient
+      .from("memberships")
+      .delete()
+      .eq("organization_id", orgId)
+      .eq("user_id", ownerId);
+    expect(error).toBeNull();
+
+    const { data: remaining } = await ownerClient
+      .from("memberships")
+      .select("user_id, role")
+      .eq("organization_id", orgId);
+    expect(remaining).toEqual([{ user_id: coOwnerId, role: "owner" }]);
+  });
+});
 ```
 
 - [ ] **Step 2: Run the tests to verify they fail**
@@ -670,6 +735,47 @@ USING (
   public.is_org_admin(auth.uid(), organization_id)
   AND (role <> 'owner' OR public.is_org_owner(auth.uid(), organization_id))
 );
+
+-- Owner-lockout prevention: the RLS policies above only stop a NON-owner from touching an
+-- owner's membership. Nothing stops an owner from demoting or deleting THEMSELVES — and once
+-- an organization has zero owner memberships, no one can ever create a new one again (the
+-- INSERT/UPDATE policies both require an *existing* owner to set role = 'owner'), permanently
+-- orphaning the org. This trigger blocks any UPDATE or DELETE that would remove the last
+-- owner, regardless of who performs it (including a direct admin-client/service-role call).
+CREATE OR REPLACE FUNCTION public.prevent_owner_lockout()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  _remaining_owners INTEGER;
+BEGIN
+  IF OLD.role <> 'owner' THEN
+    RETURN COALESCE(NEW, OLD);
+  END IF;
+  IF TG_OP = 'UPDATE' AND NEW.role = 'owner' THEN
+    RETURN NEW;
+  END IF;
+
+  SELECT COUNT(*) INTO _remaining_owners
+  FROM public.memberships
+  WHERE organization_id = OLD.organization_id
+    AND role = 'owner'
+    AND id <> OLD.id;
+
+  IF _remaining_owners = 0 THEN
+    RAISE EXCEPTION 'cannot remove or demote the last owner of an organization';
+  END IF;
+
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+
+CREATE TRIGGER prevent_owner_lockout
+BEFORE UPDATE OR DELETE ON public.memberships
+FOR EACH ROW
+EXECUTE FUNCTION public.prevent_owner_lockout();
 ```
 
 - [ ] **Step 4: Apply the migration**
@@ -681,9 +787,9 @@ Watch for errors — a syntax error or ordering problem in the new migration wil
 - [ ] **Step 5: Run the tests to verify they pass**
 
 Run: `npm run test:supabase`
-Expected: PASS (9 tests total — the config runs every file under `supabase/tests/`, so this
-includes the existing smoke test plus 3 new in `organizations.test.ts` and 5 new in
-`memberships.test.ts`).
+Expected: PASS (12 tests total — the config runs every file under `supabase/tests/`, so this
+includes the existing smoke test plus 3 new in `organizations.test.ts` and 8 new in
+`memberships.test.ts`, the last 3 of which cover owner-lockout prevention).
 
 - [ ] **Step 6: Run the full existing test suites to confirm nothing else broke**
 
@@ -812,8 +918,7 @@ Expected: reapplies all migrations from scratch, including this backfill, agains
 - [ ] **Step 5: Run the test to verify it passes**
 
 Run: `npm run test:supabase`
-Expected: PASS (11 tests total — 2 new in `tenantOneBackfill.test.ts`, plus the 9 from Task 2
-and the smoke test).
+Expected: PASS (14 tests total — 2 new in `tenantOneBackfill.test.ts`, plus the 12 from Task 2).
 
 - [ ] **Step 6: Commit**
 
@@ -836,7 +941,7 @@ npx supabase db reset
 npm run test:supabase
 npm test
 ```
-Expected: `test:supabase` PASSES (11 tests across 4 files); `npm test` (frontend/domain suite)
+Expected: `test:supabase` PASSES (14 tests across 4 files); `npm test` (frontend/domain suite)
 PASSES, unaffected.
 
 - [ ] **Step 2: Manually verify RLS blocks cross-org access via the Studio (spot check)**
@@ -887,8 +992,9 @@ git commit -m "docs: document the Supabase RLS test harness"
 - [ ] **Step 5: Report status**
 
 Confirm to the user: Subsystem 1 (Organizations, Memberships, Roles) is complete — schema,
-role helper functions, `create_organization()` bootstrap, full RLS (including owner-lockout
-prevention), Tenant #1 backfill, and a 10-test RLS integration suite, all passing against a
-real local Supabase stack. Per the user's explicit requirement, this subsystem should be
-reviewed now, before Subsystem 2 (tenant isolation on the 17 B2B Growth Engine tables) is even
-planned.
+role helper functions, `create_organization()` bootstrap, full RLS including an enforced
+owner-lockout-prevention trigger (not just admin/owner role gating — the last owner of an
+org cannot demote or remove themselves, and no path exists to orphan an org's ownership tier),
+Tenant #1 backfill, and a 14-test RLS integration suite, all passing against a real local
+Supabase stack. Per the user's explicit requirement, this subsystem should be reviewed now,
+before Subsystem 2 (tenant isolation on the 17 B2B Growth Engine tables) is even planned.
