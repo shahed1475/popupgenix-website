@@ -20,7 +20,7 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const ADMIN_EMAIL = "shahedalfahad19@gmail.com";
+const ADMIN_EMAIL = "owner@popupgenix.com";
 
 export default function AdminPanel() {
   const { toast } = useToast();
@@ -36,6 +36,8 @@ export default function AdminPanel() {
       if (currentUser?.email === ADMIN_EMAIL) {
         setUser(currentUser);
         setIsAdmin(true);
+      } else if (currentUser) {
+        logout();
       }
       setLoading(false);
     });

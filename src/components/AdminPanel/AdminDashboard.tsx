@@ -57,7 +57,7 @@ export default function AdminDashboard() {
       setStats({
         totalClients: clients.length,
         activeProjects: projects.length,
-        pendingTestimonials: testimonials.filter((t) => t.status === 'pending').length,
+        pendingTestimonials: testimonials.filter((t) => t.deleted_at === null && t.status === 'pending').length,
         totalServices: services.filter((s) => s.active).length,
         recentMessages: submissions.length,
         recentActivity,
