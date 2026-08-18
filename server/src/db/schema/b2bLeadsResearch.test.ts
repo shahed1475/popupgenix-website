@@ -63,6 +63,16 @@ describe('b2b leads, research, lead_scores', () => {
     ).rejects.toThrow();
   });
 
+  it('rejects research with a nonexistent company subject_id', async () => {
+    await insertOrgAndCompany(pool, 'org-research-d');
+    const nonexistentUuid = '00000000-0000-0000-0000-000000000000';
+    await expect(
+      pool.query(`INSERT INTO research (subject_type, subject_id, summary) VALUES ('company', $1, 'notes')`, [
+        nonexistentUuid,
+      ])
+    ).rejects.toThrow();
+  });
+
   it('auto-populates lead_scores.organization_id from the parent lead', async () => {
     const { orgId, companyId } = await insertOrgAndCompany(pool, 'org-scores-a');
     const lead = await pool.query(`INSERT INTO leads (company_id) VALUES ($1) RETURNING id`, [companyId]);
