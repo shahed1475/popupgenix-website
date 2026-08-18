@@ -19,7 +19,7 @@ export async function truncateAll(pool: Pool): Promise<void> {
   await pool.query(`
     TRUNCATE TABLE
       invoice_line_items, invoices, feedback, quote_requests, contact_submissions,
-      homepage_content, services, projects, users
+      homepage_content, services, projects, memberships, organizations, users
     RESTART IDENTITY CASCADE
   `);
   await pool.query(
