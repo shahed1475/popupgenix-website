@@ -78,4 +78,34 @@ describe('b2b core entities: lead_sources, companies, contacts', () => {
       pool.query(`INSERT INTO companies (organization_id, name, domain) VALUES ($1, 'Acme Again', 'acme.com')`, [orgA])
     ).rejects.toThrow();
   });
+
+  it('scopes contacts.email uniqueness per organization, not globally', async () => {
+    const orgA = await insertOrg(pool, 'org-g');
+    const orgB = await insertOrg(pool, 'org-h');
+    const companyA = await pool.query(
+      `INSERT INTO companies (organization_id, name) VALUES ($1, 'Company A') RETURNING id`,
+      [orgA]
+    );
+    const companyB = await pool.query(
+      `INSERT INTO companies (organization_id, name) VALUES ($1, 'Company B') RETURNING id`,
+      [orgB]
+    );
+
+    await pool.query(
+      `INSERT INTO contacts (company_id, full_name, email) VALUES ($1, 'Alice', 'alice@example.com')`,
+      [companyA.rows[0].id]
+    );
+
+    const secondOrgSameEmail = await pool.query(
+      `INSERT INTO contacts (company_id, full_name, email) VALUES ($1, 'Alice Clone', 'alice@example.com') RETURNING id`,
+      [companyB.rows[0].id]
+    );
+    expect(secondOrgSameEmail.rows[0].id).toBeDefined();
+
+    await expect(
+      pool.query(`INSERT INTO contacts (company_id, full_name, email) VALUES ($1, 'Alice Again', 'alice@example.com')`, [
+        companyA.rows[0].id,
+      ])
+    ).rejects.toThrow();
+  });
 });

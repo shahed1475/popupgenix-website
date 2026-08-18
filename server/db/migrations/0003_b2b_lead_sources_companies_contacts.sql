@@ -53,7 +53,8 @@ CREATE TABLE contacts (
 );
 CREATE INDEX contacts_company_id_idx ON contacts(company_id);
 CREATE INDEX contacts_organization_id_idx ON contacts(organization_id);
-CREATE UNIQUE INDEX contacts_email_unique ON contacts(email) WHERE email IS NOT NULL;
+DROP INDEX IF EXISTS contacts_email_unique;
+CREATE UNIQUE INDEX contacts_org_email_unique ON contacts(organization_id, email) WHERE email IS NOT NULL;
 CREATE TRIGGER contacts_set_updated_at BEFORE UPDATE ON contacts
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
