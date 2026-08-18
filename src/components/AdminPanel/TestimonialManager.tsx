@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { deleteFeedback, listAdminFeedback, updateFeedback } from "@/lib/api/feedback";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,24 +29,20 @@ export default function TestimonialManager() {
 
   const loadTestimonials = async () => {
     try {
-      const { data, error } = await supabase
-        .from('feedback')
-        .select('id, testimonial, rating, status, created_at, client_name, client_company, project_id')
-        .is('deleted_at', null)
-        .order('created_at', { ascending: false });
+      const data = await listAdminFeedback();
 
-      if (error) throw error;
-
-      const formattedData: Testimonial[] = (data || []).map((item: any) => ({
-        id: item.id,
-        content: item.testimonial,
-        rating: item.rating,
-        status: item.status,
-        created_at: item.created_at,
-        project_id: item.project_id || '',
-        client_name: item.client_name || item.client_company || 'Anonymous',
-        project_name: item.project_id ? 'Linked Project' : 'N/A',
-      }));
+      const formattedData: Testimonial[] = data
+        .filter((item) => item.deleted_at === null)
+        .map((item) => ({
+          id: item.id,
+          content: item.testimonial,
+          rating: item.rating,
+          status: item.status as Testimonial['status'],
+          created_at: item.created_at,
+          project_id: item.project_id || '',
+          client_name: item.client_name || item.client_company || 'Anonymous',
+          project_name: item.project_id ? 'Linked Project' : 'N/A',
+        }));
 
       setTestimonials(formattedData);
     } catch (error) {
@@ -63,13 +59,7 @@ export default function TestimonialManager() {
 
   const updateTestimonialStatus = async (id: string, status: 'approved' | 'rejected') => {
     try {
-      const { error } = await supabase
-        .from('feedback')
-        .update({ status })
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await updateFeedback(id, { status });
       await loadTestimonials();
       toast({
         title: "Success",
@@ -87,13 +77,7 @@ export default function TestimonialManager() {
 
   const deleteTestimonial = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('feedback')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id);
-
-      if (error) throw error;
-
+      await deleteFeedback(id);
       await loadTestimonials();
       toast({
         title: "Success",

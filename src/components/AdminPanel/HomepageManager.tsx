@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getHomepageContent, saveHomepageContent } from "@/lib/api/homepageContent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,33 +47,17 @@ export default function HomepageManager() {
   const loadHomepageContent = async () => {
     setLoading(true);
     try {
-      console.log('Loading homepage content...');
-      const { data, error } = await supabase
-        .from('homepage_content')
-        .select('*')
-        .limit(1)
-        .maybeSingle();
-
-      console.log('Loaded data:', data);
-      console.log('Load error:', error);
-
-      if (error) {
-        console.error('Error loading homepage content:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load homepage content.",
-          variant: "destructive"
-        });
-      }
-
+      const data = await getHomepageContent();
       if (data) {
-        console.log('Setting content with loaded data');
         setContent(data);
-      } else {
-        console.log('No data found, keeping default values');
       }
     } catch (error) {
       console.error('Error loading homepage content:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load homepage content.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -82,65 +66,14 @@ export default function HomepageManager() {
   const saveContent = async () => {
     setSaving(true);
     try {
-      console.log('Saving content:', content);
-      
-      if (content.id) {
-        // Update existing record
-        const { data, error } = await supabase
-          .from('homepage_content')
-          .update({
-            hero_title: content.hero_title,
-            hero_subtitle: content.hero_subtitle,
-            hero_cta_primary: content.hero_cta_primary,
-            hero_cta_secondary: content.hero_cta_secondary,
-            clients_count: content.clients_count,
-            projects_count: content.projects_count,
-            satisfaction_rate: content.satisfaction_rate,
-            team_size: content.team_size,
-            about_title: content.about_title,
-            about_description: content.about_description,
-          })
-          .eq('id', content.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        console.log('Updated successfully:', data);
-      } else {
-        // Insert new record
-        const { data, error } = await supabase
-          .from('homepage_content')
-          .insert([{
-            hero_title: content.hero_title,
-            hero_subtitle: content.hero_subtitle,
-            hero_cta_primary: content.hero_cta_primary,
-            hero_cta_secondary: content.hero_cta_secondary,
-            clients_count: content.clients_count,
-            projects_count: content.projects_count,
-            satisfaction_rate: content.satisfaction_rate,
-            team_size: content.team_size,
-            about_title: content.about_title,
-            about_description: content.about_description,
-          }])
-          .select()
-          .single();
-
-        if (error) throw error;
-        console.log('Inserted successfully:', data);
-        
-        // Update state with the new ID
-        if (data) {
-          setContent(data);
-        }
-      }
+      const { id, ...input } = content;
+      const saved = await saveHomepageContent(input);
+      setContent(saved);
 
       toast({
         title: "Success",
         description: "Homepage content updated successfully!",
       });
-      
-      // Reload content to ensure we have the latest data
-      await loadHomepageContent();
     } catch (error) {
       console.error('Error saving content:', error);
       toast({

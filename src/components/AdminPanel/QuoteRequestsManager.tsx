@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { deleteQuoteRequest, listQuoteRequests } from "@/lib/api/quoteRequests";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -32,13 +32,8 @@ export default function QuoteRequestsManager() {
 
   const loadQuotes = async () => {
     try {
-      const { data, error } = await supabase
-        .from("quote_requests")
-        .select("id, created_at, name, email, phone, company, project_type, budget_range, status, project_description")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setQuotes(data || []);
+      const data = await listQuoteRequests();
+      setQuotes(data);
     } catch (err) {
       console.error("Error loading quotes:", err);
       toast({ title: "Failed to load quotes", description: "Please try again.", variant: "destructive" });
@@ -59,8 +54,7 @@ export default function QuoteRequestsManager() {
   const deleteSelected = async () => {
     if (!selected.length) return;
     try {
-      const { error } = await supabase.from("quote_requests").delete().in("id", selected);
-      if (error) throw error;
+      await Promise.all(selected.map((id) => deleteQuoteRequest(id)));
       toast({ title: "Deleted", description: "Selected quote requests were deleted." });
       setSelected([]);
       await loadQuotes();

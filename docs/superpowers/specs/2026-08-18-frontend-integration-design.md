@@ -48,20 +48,36 @@ end.
   `MessagesManager.tsx`, `QuoteRequestsManager.tsx`, `InvoiceManager.tsx` +
   `InvoiceForm.tsx`
 
-**Explicitly out of scope, left on Supabase unchanged:**
+**Explicitly out of scope, left on Supabase, code unchanged:**
 - `WorkUpdatesManager.tsx`, `ClientMessagesManager.tsx`,
-  `ClientManager.tsx` — still work exactly as today, against Supabase.
-  Revisited once a Client Portal backend (storage + messaging) exists.
+  `ClientManager.tsx` — their source code is untouched, but they are
+  **not expected to keep working as-is**. Correction found by the final
+  whole-branch review (post-implementation): the pre-migration admin
+  login established a real Supabase session via
+  `supabase.auth.signInWithPassword`, which these three pages' Postgres
+  RLS policies key on (`USING (public.is_admin(auth.uid()))`). Task 8
+  replaced that login with the new backend's API-only auth and does not
+  establish a Supabase session, so `auth.uid()` is now `NULL` for these
+  pages — they will most likely render empty/permission-denied for any
+  admin without a still-live, separately-cached Supabase session. A clean
+  fix isn't possible within this phase's scope: the Supabase account and
+  the new backend's admin account are independent credential stores with
+  different, unrelated passwords, so there's no single login form that can
+  authenticate both. These three pages need to be migrated to the new
+  backend (or the RLS policy needs a different auth story) in the same
+  future phase that builds Client Portal backend support — until then,
+  treat them as broken, not merely "on the old backend."
 - The entire Client Portal (`ClientPortal.tsx`, `Portal.tsx`, and their
-  child components) — untouched.
+  child components) — untouched, same caveat as above applies.
 - Public marketing pages — untouched (nothing to migrate; they're static).
 - `AdminSignup.tsx` — already dead code (no route, no links anywhere in
   `App.tsx` or elsewhere). Left as-is; not worth deleting as part of this
   phase.
 
-This means after this phase, the Admin Panel will run on **two backends
-simultaneously** (new API for the 7 ready pages, Supabase for the 3
-deferred pages) until a future phase builds Client Portal backend support.
+This means after this phase, the Admin Panel's 7 migrated pages run
+fully on the new API, while the 3 deferred pages are **not currently
+functional** (see correction above) until a future phase migrates them
+too.
 
 ## Architecture
 

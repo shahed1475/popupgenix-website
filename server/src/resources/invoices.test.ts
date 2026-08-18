@@ -115,4 +115,23 @@ describe('invoices resource', () => {
       .set('Authorization', `Bearer ${userToken}`);
     expect(list.status).toBe(403);
   });
+
+  it('stores a custom issue_date when provided on creation', async () => {
+    const app = buildApp();
+
+    const created = await request(app)
+      .post('/api/invoices')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({
+        invoice_number: 'INV-BACKDATED-1',
+        client_name: 'Jane',
+        client_email: 'jane@example.com',
+        due_date: '2026-09-01',
+        issue_date: '2026-01-15',
+        line_items: [],
+      });
+
+    expect(created.status).toBe(201);
+    expect(new Date(created.body.issue_date).toISOString().slice(0, 10)).toBe('2026-01-15');
+  });
 });

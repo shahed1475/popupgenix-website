@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { deleteInvoice, listInvoices } from "@/lib/api/invoices";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,26 +45,12 @@ export default function InvoiceManager() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadInvoices();
-  }, []);
-
   const loadInvoices = async () => {
     setLoading(true);
     try {
-      let query = supabase
-        .from("invoices")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      setInvoices(data || []);
+      const data = await listInvoices();
+      const filtered = statusFilter === "all" ? data : data.filter((inv) => inv.status === statusFilter);
+      setInvoices(filtered);
     } catch (error) {
       console.error("Error loading invoices:", error);
       toast({
@@ -109,10 +95,7 @@ export default function InvoiceManager() {
     if (!confirm("Are you sure you want to delete this invoice?")) return;
 
     try {
-      const { error } = await supabase.from("invoices").delete().eq("id", id);
-
-      if (error) throw error;
-
+      await deleteInvoice(id);
       toast({
         title: "Success",
         description: "Invoice deleted successfully.",

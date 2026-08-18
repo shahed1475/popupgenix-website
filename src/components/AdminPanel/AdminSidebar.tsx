@@ -25,6 +25,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { logout } from "@/lib/api/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,20 +63,17 @@ export function AdminSidebar() {
       : "text-gray-300 hover:bg-white/10 hover:text-white";
 
   const handleSignOut = async () => {
+    logout();
     try {
       await supabase.auth.signOut();
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out of the admin panel.",
-      });
-    } catch (error) {
-      console.error('Error signing out:', error);
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive"
-      });
+    } catch {
+      // best-effort cleanup of any lingering Supabase session; the new API logout above is authoritative
     }
+    toast({
+      title: "Signed out successfully",
+      description: "You have been logged out of the admin panel.",
+    });
+    window.location.href = "/admin";
   };
 
   return (
