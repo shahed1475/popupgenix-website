@@ -1,6 +1,6 @@
 # PostgreSQL-First Architecture: Supabase Removal — Audit & Migration Design
 
-**Status:** Audit complete. No implementation has started. This document is the source of truth for the Supabase → self-hosted-Postgres migration; per-subsystem implementation plans will be written separately, one at a time.
+**Status:** Audit complete. **Phase 1 (Schema Consolidation) is complete** — see the Phase 1 entry in §9 below for what was actually built. The live-data migration (Supabase → self-hosted Postgres) and the `profiles`/`auth.users` identity reconciliation described in §4 item 5 are separate, **not yet started** work — Phase 1 only ported schema (empty tables), it did not move or reconcile any production data. This document is the source of truth for the Supabase → self-hosted-Postgres migration; per-subsystem implementation plans will be written separately, one at a time.
 
 This document supersedes `docs/superpowers/specs/2026-08-18-postgres-first-saas-migration-audit.md` (an earlier, overlapping audit produced in parallel) — that file's ground-truth findings agreed with this one; its unique migration-plan specifics (StorageProvider interface, `outbox_events` schema, RBAC permission-map file path) have been folded in below.
 
@@ -197,6 +197,16 @@ Plan:
 | **Existing JWT logout is a no-op** | Pre-existing gap, not caused by Supabase removal, but the spec's "invalidatable sessions" requirement means it must be fixed as part of the auth work regardless. |
 | **Hardcoded Supabase URL/anon key** in the generated `client.ts` | Not a security issue on its own (anon key is public by design) but means nothing today reads Supabase config from env — full removal is a clean deletion, not an env-var cleanup. |
 
+### 8.1 Findings from Phase 1's final review — required inputs for Phase 3 (RBAC + tenant isolation)
+
+Three items surfaced during Phase 1's whole-branch final review that Phase 3 must plan for, not discover late:
+
+- **Secondary FKs are not org-validated.** The `organization_id` propagation triggers added in `server/db/migrations/0003`-`0008` only validate each table's *primary* parent FK (the one the trigger derives `organization_id` from). Several optional *secondary* FKs are currently unvalidated and can legally point into a different organization with no rejection: `leads.contact_id`, `leads.source_id`, `leads.current_strategy_version_id`, `contacts.source_id`, `strategies.current_version_id`, `campaigns.strategy_version_id`, `lead_scores.strategy_version_id`, `replies.contact_id`, `replies.in_reply_to_message_id`, `meetings.contact_id`, `analytics_events.strategy_version_id`. Phase 3's mandatory cross-tenant test suite (§6) must cover these paths explicitly. The eventual fix is likely composite `(organization_id, id)` unique keys on the referenced tables plus composite FKs on these columns — that is itself a schema migration, so it should be scoped as part of Phase 3 planning rather than discovered mid-implementation.
+- **Org-mismatch trigger behavior is undertested.** Of the 11 `organization_id` propagation triggers, only the `contacts` table's trigger has a test proving the "caller-supplied `organization_id` mismatches the resolved parent org" rejection branch. All 11 were verified structurally identical by code inspection during the final review (same `IF NEW.organization_id IS NOT NULL AND NEW.organization_id <> parent_org_id THEN RAISE EXCEPTION` shape), but Phase 3 should add one table-driven test covering all 11 rather than continuing to rely on inspection alone.
+- **`worker/src/test/schema.sql`** is a divergent, `organization_id`-free copy of `companies`/`leads`/`research`/`agent_tasks`/`agent_runs` (uppercase types, `IF NOT EXISTS`, no triggers) — it no longer matches the production schema built in Phase 1 and would not catch a propagation-trigger regression. Flagged here for the Phase 8 (worker generalization) plan to reconcile against `server/db/migrations`.
+
+Separately (Fix 3 of the final-review pass, already applied on this branch): the 11 propagation triggers above were originally `BEFORE INSERT` only, so `UPDATE`ing a derived row's parent FK left `organization_id` unguarded. `server/db/migrations/0012_organization_id_triggers_guard_updates.sql` extends each trigger's definition (function bodies unchanged) to also fire `BEFORE UPDATE OF <parent-fk-column(s)>`, closing that gap for the *primary* FK on each table — the secondary-FK gap above is still open and is Phase 3's to close.
+
 ---
 
 ## 9. Implementation Phases
@@ -204,7 +214,7 @@ Plan:
 Work one subsystem at a time, per the user's process (tests + code review + security review + migration test + tenant-isolation test + docs update + remaining-risk report after each):
 
 0. **Reconcile worktrees** — prune the two stale merged worktrees; decide whether to keep or discard the `multi-tenancy-outreach` test-harness scaffold commit.
-1. **Schema consolidation** — port B2B + client-portal tables into `server/db/migrations`; add `organizations`/`memberships` (reusing the existing design doc); data migration + verification loop (empty-DB and existing-DB test paths).
+1. **Schema consolidation — COMPLETE.** Ported the B2B + client-portal tables into `server/db/migrations` (`0002`-`0011`) and added `organizations`/`memberships`, for 34 tables total across the schema, schema-only (no RLS, no data migration — existing Supabase production data has not yet been moved; that remains the separate, not-yet-started work described in §4 item 5). Both verification-loop paths from item 7 above are covered by automated tests: empty-DB → run migrations → full schema (`server/src/db/schema/fullSchema.test.ts`), and existing-DB → run migrations → data preserved (`server/src/db/schema/existingDataPreserved.test.ts`).
 2. **Auth hardening** — session invalidation, email verification, password reset; migrate client portal off `@supabase/auth-ui-react`.
 3. **RBAC + tenant isolation** — permission-as-data model, `organization_id` enforcement on B2B tables, cross-tenant-access automated tests.
 4. **Storage abstraction** — LocalStorage/S3-compatible provider, migrate both buckets' call sites and data.

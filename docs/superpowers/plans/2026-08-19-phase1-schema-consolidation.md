@@ -321,7 +321,7 @@ CREATE TABLE contacts (
 );
 CREATE INDEX contacts_company_id_idx ON contacts(company_id);
 CREATE INDEX contacts_organization_id_idx ON contacts(organization_id);
-CREATE UNIQUE INDEX contacts_email_unique ON contacts(email) WHERE email IS NOT NULL;
+CREATE UNIQUE INDEX contacts_org_email_unique ON contacts(organization_id, email) WHERE email IS NOT NULL;
 CREATE TRIGGER contacts_set_updated_at BEFORE UPDATE ON contacts
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
@@ -349,7 +349,7 @@ CREATE TRIGGER contacts_set_organization_id_trigger
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `npm test -- b2bCoreEntities`
-Expected: PASS (4 tests).
+Expected: PASS (5 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -1697,7 +1697,7 @@ git commit -m "feat: add outbox_events table"
 
 **Interfaces:**
 - Consumes: every table created in Tasks 1-10.
-- Produces: an updated `truncateAll(pool)` that clears all 33 tables (the original 10 plus 23 new ones) between tests, and a test proving the complete schema — the user's Definition of Done item "a fresh developer can run migrations against an empty database and get a functional database" — actually holds.
+- Produces: an updated `truncateAll(pool)` that clears 33 of the schema's 34 tables (the original 10 minus `admin_settings`, which is reset via `UPDATE` instead of truncation, plus 24 new ones) between tests, and a test proving the complete schema — the user's Definition of Done item "a fresh developer can run migrations against an empty database and get a functional database" — actually holds.
 
 - [ ] **Step 1: Write the failing test**
 

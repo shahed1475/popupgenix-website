@@ -15,6 +15,25 @@ if (!connectionString) {
   throw new Error('TEST_DATABASE_URL must be set to run this test — see Global Constraints in the plan.');
 }
 
+// Kept in sync with the `expectedTables` array in `server/src/db/schema/fullSchema.test.ts` —
+// this test proves the same "complete schema" claim, but for an existing database being
+// upgraded rather than an empty one, so it duplicates rather than imports (the two tests are
+// deliberately independent proofs of the same Definition-of-Done property).
+const expectedTables = [
+  'users', 'projects', 'services', 'contact_submissions', 'quote_requests',
+  'invoices', 'invoice_line_items', 'homepage_content', 'feedback', 'admin_settings',
+  'organizations', 'memberships',
+  'lead_sources', 'companies', 'contacts',
+  'strategies', 'strategy_versions',
+  'leads', 'research', 'lead_scores',
+  'campaigns', 'campaign_leads', 'outreach_messages', 'outreach_message_events',
+  'replies', 'meetings',
+  'agent_tasks', 'agent_runs',
+  'analytics_events',
+  'clients', 'client_updates', 'messages', 'newsletter_subscriptions',
+  'outbox_events',
+];
+
 describe('existing database upgrade preserves data', () => {
   it('keeps pre-existing rows from the original schema intact after all Phase 1 migrations run on top', async () => {
     const setupPool = new Pool({ connectionString });
@@ -27,9 +46,10 @@ describe('existing database upgrade preserves data', () => {
       options: '-c search_path=phase1_upgrade_test,public',
     });
 
+    let onlyFirstDir: string | undefined;
     try {
       const files = (await fs.readdir(migrationsDir)).filter((f) => f.endsWith('.sql')).sort();
-      const onlyFirstDir = await fs.mkdtemp(path.join(os.tmpdir(), 'drickly-phase1-only-first-'));
+      onlyFirstDir = await fs.mkdtemp(path.join(os.tmpdir(), 'drickly-phase1-only-first-'));
       await fs.copyFile(path.join(migrationsDir, files[0]), path.join(onlyFirstDir, files[0]));
 
       // Simulate "existing database": apply only the original 0001 schema first.
@@ -42,7 +62,9 @@ describe('existing database upgrade preserves data', () => {
       // Now apply the full, real migrations directory (0001 through the latest Phase 1 file) on top.
       const applied = await runMigrations(scopedPool, migrationsDir);
       expect(applied).not.toContain(files[0]); // already applied, correctly skipped
-      expect(applied.length).toBeGreaterThan(0); // the new Phase 1 files were applied
+      // Exact equality (not just "some files ran") catches a migration being silently skipped
+      // or misordered, which a loose length-only assertion would miss.
+      expect(applied).toEqual(files.slice(1));
 
       const stillThere = await scopedPool.query('SELECT id FROM users WHERE email = $1', [
         'preexisting@drickly.test',
@@ -50,12 +72,18 @@ describe('existing database upgrade preserves data', () => {
       expect(stillThere.rows).toHaveLength(1);
       expect(stillThere.rows[0].id).toBe(preExisting.rows[0].id);
 
-      const orgTableExists = await scopedPool.query<{ table_name: string }>(
-        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'phase1_upgrade_test' AND table_name = 'organizations'`
+      const { rows } = await scopedPool.query<{ table_name: string }>(
+        `SELECT table_name FROM information_schema.tables WHERE table_schema = 'phase1_upgrade_test' AND table_type = 'BASE TABLE'`
       );
-      expect(orgTableExists.rows).toHaveLength(1);
+      const actual = new Set(rows.map((r) => r.table_name));
+      for (const table of expectedTables) {
+        expect(actual.has(table), `expected table "${table}" to exist after upgrade`).toBe(true);
+      }
     } finally {
       await scopedPool.end();
+      if (onlyFirstDir) {
+        await fs.rm(onlyFirstDir, { recursive: true, force: true });
+      }
     }
   });
 
