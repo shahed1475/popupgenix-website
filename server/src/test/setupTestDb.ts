@@ -12,15 +12,6 @@ export async function createTestPool(): Promise<Pool> {
   }
   const pool = new Pool({ connectionString });
   await runMigrations(pool, path.resolve(__dirname, '../../db/migrations'));
-  // Fix the contacts email index to be scoped per organization
-  try {
-    await pool.query('DROP INDEX IF EXISTS contacts_email_unique');
-    await pool.query(
-      'DROP INDEX IF EXISTS contacts_org_email_unique; CREATE UNIQUE INDEX contacts_org_email_unique ON contacts(organization_id, email) WHERE email IS NOT NULL'
-    );
-  } catch {
-    // Silently ignore errors if contacts table doesn't exist yet
-  }
   return pool;
 }
 
