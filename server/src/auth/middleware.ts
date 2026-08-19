@@ -1,4 +1,5 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
+import type { Pool } from 'pg';
 import { HttpError } from '../lib/httpError.js';
 import { verifyAuthToken, type AuthTokenPayload } from './tokens.js';
 
@@ -24,34 +25,60 @@ function extractToken(req: Request): string | undefined {
 }
 
 function toAuthTokenPayload(payload: AuthTokenPayload): AuthTokenPayload {
-  return { sub: payload.sub, email: payload.email, isAdmin: payload.isAdmin };
+  return { sub: payload.sub, email: payload.email, isAdmin: payload.isAdmin, sid: payload.sid };
 }
 
-export function createAuthMiddleware(secret: string): AuthMiddleware {
-  function optionalAuth(req: Request, _res: Response, next: NextFunction): void {
+async function loadActiveSession(pool: Pool, sid: string): Promise<boolean> {
+  const result = await pool.query<{ revoked_at: string | null; expires_at: string }>(
+    'SELECT revoked_at, expires_at FROM sessions WHERE id = $1',
+    [sid]
+  );
+  const session = result.rows[0];
+  if (!session) return false;
+  if (session.revoked_at) return false;
+  if (new Date(session.expires_at) < new Date()) return false;
+  return true;
+}
+
+export function createAuthMiddleware(secret: string, pool: Pool): AuthMiddleware {
+  async function optionalAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
     const token = extractToken(req);
     if (token) {
       try {
-        req.user = toAuthTokenPayload(verifyAuthToken(token, secret));
+        const payload = verifyAuthToken(token, secret);
+        if (await loadActiveSession(pool, payload.sid)) {
+          req.user = toAuthTokenPayload(payload);
+        }
       } catch {
-        // invalid token on an optional route just means "not authenticated"
+        // invalid token or DB error on an optional route just means "not authenticated"
       }
     }
     next();
   }
 
-  function requireAuth(req: Request, _res: Response, next: NextFunction): void {
+  async function requireAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
     const token = extractToken(req);
     if (!token) {
       next(new HttpError(401, 'Authentication required'));
       return;
     }
+    let payload: AuthTokenPayload;
     try {
-      req.user = toAuthTokenPayload(verifyAuthToken(token, secret));
+      payload = verifyAuthToken(token, secret);
     } catch {
       next(new HttpError(401, 'Invalid or expired token'));
       return;
     }
+    try {
+      if (!(await loadActiveSession(pool, payload.sid))) {
+        next(new HttpError(401, 'Session has been revoked or expired'));
+        return;
+      }
+    } catch (err) {
+      next(err);
+      return;
+    }
+    req.user = toAuthTokenPayload(payload);
     next();
   }
 

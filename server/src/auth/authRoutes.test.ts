@@ -13,7 +13,7 @@ let pool: Pool;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/auth', createAuthRoutes(pool, createAuthMiddleware(SECRET), SECRET, '1h'));
+  app.use('/api/auth', createAuthRoutes(pool, createAuthMiddleware(SECRET, pool), SECRET, '1h'));
   app.use(errorHandler);
   return app;
 }
@@ -42,8 +42,9 @@ describe('POST /api/auth/signup', () => {
     const app = buildApp();
     const first = await request(app).post('/api/auth/signup').send({ email: 'a@b.com', password: 'longenough1' });
     expect(first.status).toBe(201);
-    expect(first.body.is_admin).toBe(false);
-    expect(first.body.password_hash).toBeUndefined();
+    expect(typeof first.body.token).toBe('string');
+    expect(first.body.user.is_admin).toBe(false);
+    expect(first.body.user.password_hash).toBeUndefined();
 
     const dup = await request(app).post('/api/auth/signup').send({ email: 'a@b.com', password: 'longenough1' });
     expect(dup.status).toBe(409);
@@ -81,14 +82,23 @@ describe('admin user management', () => {
       [passwordHash]
     );
 
+    const adminSession = await pool.query(
+      `INSERT INTO sessions (user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id`,
+      [admin.rows[0].id]
+    );
+    const clientSession = await pool.query(
+      `INSERT INTO sessions (user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id`,
+      [client.rows[0].id]
+    );
+
     const { signAuthToken } = await import('./tokens.js');
     const adminToken = signAuthToken(
-      { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true },
+      { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true, sid: adminSession.rows[0].id },
       SECRET,
       '1h'
     );
     const clientToken = signAuthToken(
-      { sub: client.rows[0].id, email: 'client@drickly.test', isAdmin: false },
+      { sub: client.rows[0].id, email: 'client@drickly.test', isAdmin: false, sid: clientSession.rows[0].id },
       SECRET,
       '1h'
     );

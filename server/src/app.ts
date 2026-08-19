@@ -12,7 +12,7 @@ import { createFeedbackRouter } from './resources/feedback.js';
 import { errorHandler } from './lib/httpError.js';
 
 export function createApp(pool: Pool, jwtSecret: string, jwtExpiresIn: string): Express {
-  const auth = createAuthMiddleware(jwtSecret);
+  const auth = createAuthMiddleware(jwtSecret, pool);
   const app = express();
   app.use(express.json());
 

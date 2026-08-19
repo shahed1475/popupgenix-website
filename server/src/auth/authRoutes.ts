@@ -66,6 +66,14 @@ async function createUser(
   return result.rows[0];
 }
 
+async function createSession(pool: Pool, userId: string): Promise<string> {
+  const result = await pool.query<{ id: string }>(
+    `INSERT INTO sessions (user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id`,
+    [userId]
+  );
+  return result.rows[0].id;
+}
+
 export function createAuthRoutes(
   pool: Pool,
   auth: AuthMiddleware,
@@ -99,7 +107,9 @@ export function createAuthRoutes(
       }
       const body = signupSchema.parse(req.body);
       const user = await createUser(pool, body.email, body.password, body.full_name, false);
-      res.status(201).json(toPublicUser(user));
+      const sid = await createSession(pool, user.id);
+      const token = signAuthToken({ sub: user.id, email: user.email, isAdmin: user.is_admin, sid }, jwtSecret, jwtExpiresIn);
+      res.status(201).json({ token, user: toPublicUser(user) });
     })
   );
 
@@ -117,8 +127,9 @@ export function createAuthRoutes(
       if (!user || !passwordValid) {
         throw new HttpError(401, 'Invalid email or password');
       }
+      const sid = await createSession(pool, user.id);
       const token = signAuthToken(
-        { sub: user.id, email: user.email, isAdmin: user.is_admin },
+        { sub: user.id, email: user.email, isAdmin: user.is_admin, sid },
         jwtSecret,
         jwtExpiresIn
       );
