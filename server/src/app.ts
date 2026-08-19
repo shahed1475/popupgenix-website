@@ -10,6 +10,7 @@ import { createQuoteRequestsRouter } from './resources/quoteRequests.js';
 import { createInvoicesRouter } from './resources/invoices.js';
 import { createFeedbackRouter } from './resources/feedback.js';
 import { errorHandler } from './lib/httpError.js';
+import { ConsoleEmailSender } from './email/ConsoleEmailSender.js';
 
 export function createApp(pool: Pool, jwtSecret: string, jwtExpiresIn: string): Express {
   const auth = createAuthMiddleware(jwtSecret, pool);
@@ -24,7 +25,7 @@ export function createApp(pool: Pool, jwtSecret: string, jwtExpiresIn: string): 
     res.json({ status: 'ok' });
   });
 
-  app.use('/api/auth', createAuthRoutes(pool, auth, jwtSecret, jwtExpiresIn));
+  app.use('/api/auth', createAuthRoutes(pool, auth, jwtSecret, jwtExpiresIn, new ConsoleEmailSender()));
   app.use('/api/projects', createProjectsRouter(pool, auth));
   app.use('/api/services', createServicesRouter(pool, auth));
   app.use('/api/homepage-content', createHomepageContentRouter(pool, auth));

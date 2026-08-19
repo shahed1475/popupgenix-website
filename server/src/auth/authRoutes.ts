@@ -8,6 +8,8 @@ import { createRateLimiter } from '../lib/rateLimit.js';
 import { hashPassword, verifyPassword } from './password.js';
 import { signAuthToken } from './tokens.js';
 import type { AuthMiddleware } from './middleware.js';
+import { generateSecureToken, hashToken } from './secureToken.js';
+import type { EmailSender } from '../email/EmailSender.js';
 
 // Precomputed once so a "no such user" login attempt still pays the bcrypt.compare cost —
 // otherwise the early-return-on-missing-user path responds measurably faster than a wrong
@@ -31,6 +33,7 @@ interface UserRow {
   password_hash: string;
   full_name: string | null;
   is_admin: boolean;
+  email_verified_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +44,7 @@ function toPublicUser(row: UserRow) {
     email: row.email,
     full_name: row.full_name,
     is_admin: row.is_admin,
+    email_verified_at: row.email_verified_at,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
@@ -78,7 +82,8 @@ export function createAuthRoutes(
   pool: Pool,
   auth: AuthMiddleware,
   jwtSecret: string,
-  jwtExpiresIn: string
+  jwtExpiresIn: string,
+  emailSender: EmailSender
 ): Router {
   const router = Router();
   // 10 requests/IP/minute is generous for legitimate use but bounds credential-stuffing and
@@ -143,6 +148,50 @@ export function createAuthRoutes(
     asyncHandler(async (req, res) => {
       await pool.query('UPDATE sessions SET revoked_at = now() WHERE id = $1', [req.user!.sid]);
       res.status(204).send();
+    })
+  );
+
+  router.post(
+    '/verify-email/request',
+    auth.requireAuth,
+    asyncHandler(async (req, res) => {
+      const userResult = await pool.query<UserRow>('SELECT * FROM users WHERE id = $1', [req.user!.sub]);
+      const user = userResult.rows[0];
+      if (!user) throw new HttpError(404, 'User not found');
+      if (user.email_verified_at) {
+        res.status(200).json({ alreadyVerified: true });
+        return;
+      }
+      const rawToken = generateSecureToken();
+      await pool.query(
+        `INSERT INTO email_verification_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, now() + interval '1 day')`,
+        [user.id, hashToken(rawToken)]
+      );
+      await emailSender.send({
+        to: user.email,
+        subject: 'Verify your email',
+        text: `Confirm your email by visiting: /verify-email?token=${rawToken}`,
+      });
+      res.status(202).json({ sent: true });
+    })
+  );
+
+  router.post(
+    '/verify-email/confirm',
+    asyncHandler(async (req, res) => {
+      const body = z.object({ token: z.string().min(1) }).parse(req.body);
+      const tokenHash = hashToken(body.token);
+      const result = await pool.query<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
+        'SELECT id, user_id, expires_at, used_at FROM email_verification_tokens WHERE token_hash = $1',
+        [tokenHash]
+      );
+      const record = result.rows[0];
+      if (!record || record.used_at || new Date(record.expires_at) < new Date()) {
+        throw new HttpError(400, 'Invalid or expired verification token');
+      }
+      await pool.query('UPDATE email_verification_tokens SET used_at = now() WHERE id = $1', [record.id]);
+      await pool.query('UPDATE users SET email_verified_at = now() WHERE id = $1', [record.user_id]);
+      res.status(200).json({ verified: true });
     })
   );
 

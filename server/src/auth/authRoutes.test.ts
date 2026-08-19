@@ -6,14 +6,15 @@ import { createAuthMiddleware } from './middleware.js';
 import { createAuthRoutes } from './authRoutes.js';
 import { errorHandler } from '../lib/httpError.js';
 import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
+import type { EmailSender, EmailMessage } from '../email/EmailSender.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
 let pool: Pool;
 
-function buildApp() {
+function buildApp(sender: EmailSender = { send: async () => {} }) {
   const app = express();
   app.use(express.json());
-  app.use('/api/auth', createAuthRoutes(pool, createAuthMiddleware(SECRET, pool), SECRET, '1h'));
+  app.use('/api/auth', createAuthRoutes(pool, createAuthMiddleware(SECRET, pool), SECRET, '1h', sender));
   app.use(errorHandler);
   return app;
 }
@@ -136,5 +137,39 @@ describe('logout revokes the session', () => {
     const app = buildApp();
     const res = await request(app).post('/api/auth/logout');
     expect(res.status).toBe(401);
+  });
+});
+
+describe('email verification', () => {
+  it('sends a verification email, then confirms it and marks the user verified', async () => {
+    await pool.query(`UPDATE admin_settings SET setting_value = 'true' WHERE setting_key = 'admin_signup_enabled'`);
+    const sentMessages: EmailMessage[] = [];
+    const app = buildApp({ send: async (message) => { sentMessages.push(message); } });
+    await request(app).post('/api/auth/signup').send({ email: 'verify@drickly.test', password: 'longenough1' });
+    const login = await request(app).post('/api/auth/login').send({ email: 'verify@drickly.test', password: 'longenough1' });
+    const token = login.body.token as string;
+
+    const requestRes = await request(app).post('/api/auth/verify-email/request').set('Authorization', `Bearer ${token}`);
+    expect(requestRes.status).toBe(202);
+    expect(sentMessages).toHaveLength(1);
+    expect(sentMessages[0].to).toBe('verify@drickly.test');
+
+    const rawToken = sentMessages[0].text.match(/token=([0-9a-f]{64})/)?.[1];
+    expect(rawToken).toBeDefined();
+
+    const confirmRes = await request(app).post('/api/auth/verify-email/confirm').send({ token: rawToken });
+    expect(confirmRes.status).toBe(200);
+
+    const me = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${token}`);
+    expect(me.body.email_verified_at).not.toBeNull();
+
+    const reuse = await request(app).post('/api/auth/verify-email/confirm').send({ token: rawToken });
+    expect(reuse.status).toBe(400);
+  });
+
+  it('rejects confirm with an invalid token', async () => {
+    const app = buildApp();
+    const res = await request(app).post('/api/auth/verify-email/confirm').send({ token: 'not-a-real-token' });
+    expect(res.status).toBe(400);
   });
 });
