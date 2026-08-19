@@ -1,10 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { 
-  LayoutDashboard, 
-  FolderOpen, 
-  MessageSquare, 
+import { apiClient } from "@/lib/api/client";
+import { logout } from "@/lib/api/auth";
+import {
+  LayoutDashboard,
+  FolderOpen,
+  MessageSquare,
   LogOut,
   Home,
   Bell
@@ -13,23 +14,24 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function PortalNavigation() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out of your account.",
-      });
+      await apiClient.post('/auth/logout');
     } catch (error) {
-      console.error('Error signing out:', error);
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive"
-      });
+      console.error('Error revoking session on the server:', error);
+      // Fall through: clearing the local token below still logs the user out of this browser
+      // even if the server call failed (e.g. network issue), matching the AdminSidebar precedent
+      // of best-effort server cleanup with authoritative local cleanup.
     }
+    logout();
+    toast({
+      title: "Signed out successfully",
+      description: "You have been logged out of your account.",
+    });
+    navigate('/portal');
   };
 
   const navItems = [
