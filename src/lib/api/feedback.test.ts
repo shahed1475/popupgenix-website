@@ -1,30 +1,52 @@
 ﻿import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { listMyFeedback, submitFeedback } from './feedback';
-
-function stubStorage() {
-  const store: Record<string, string> = {};
-  vi.stubGlobal('localStorage', {
-    getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-  });
-}
+import { deleteFeedback, listAdminFeedback, updateFeedback, listMyFeedback, submitFeedback } from './feedback';
 
 beforeEach(() => {
-  stubStorage();
-  vi.stubGlobal('window', { location: { href: '' } });
+  vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {}, removeItem: () => {} });
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('listMyFeedback', () => {
-  it('calls GET /testimonials/mine', async () => {
+describe('feedback API module', () => {
+  it('listAdminFeedback GETs /api/testimonials/admin', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => [] });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await listAdminFeedback();
+
+    const [url, init] = mockFetch.mock.calls[0];
+    expect(url).toBe('/api/testimonials/admin');
+    expect(init.method).toBe('GET');
+  });
+
+  it('updateFeedback PATCHes /api/testimonials/:id', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => ({ id: '1' }) });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await updateFeedback('1', { status: 'approved' });
+
+    const [url, init] = mockFetch.mock.calls[0];
+    expect(url).toBe('/api/testimonials/1');
+    expect(init.method).toBe('PATCH');
+    expect(init.body).toBe(JSON.stringify({ status: 'approved' }));
+  });
+
+  it('deleteFeedback DELETEs /api/testimonials/:id', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 204, json: async () => { throw new Error('no body'); } });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await deleteFeedback('1');
+
+    const [url, init] = mockFetch.mock.calls[0];
+    expect(url).toBe('/api/testimonials/1');
+    expect(init.method).toBe('DELETE');
+  });
+});
+
+describe('client-facing feedback', () => {
+  it('listMyFeedback calls GET /testimonials/mine', async () => {
     const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => [] });
     vi.stubGlobal('fetch', mockFetch);
 
@@ -34,10 +56,8 @@ describe('listMyFeedback', () => {
     expect(url).toBe('/api/testimonials/mine');
     expect(init.method).toBe('GET');
   });
-});
 
-describe('submitFeedback', () => {
-  it('calls POST /testimonials with the given input', async () => {
+  it('submitFeedback calls POST /testimonials with the given input', async () => {
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 201,
