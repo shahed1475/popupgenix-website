@@ -89,6 +89,7 @@ export function createAuthRoutes(
   // 10 requests/IP/minute is generous for legitimate use but bounds credential-stuffing and
   // signup-spam bursts against these two endpoints.
   const authRateLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
+  const resetRateLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
   router.get(
     '/signup-enabled',
@@ -192,6 +193,60 @@ export function createAuthRoutes(
       await pool.query('UPDATE email_verification_tokens SET used_at = now() WHERE id = $1', [record.id]);
       await pool.query('UPDATE users SET email_verified_at = now() WHERE id = $1', [record.user_id]);
       res.status(200).json({ verified: true });
+    })
+  );
+
+  router.post(
+    '/password-reset/request',
+    resetRateLimiter,
+    asyncHandler(async (req, res) => {
+      const body = z.object({ email: z.string().email() }).parse(req.body);
+      const userResult = await pool.query<UserRow>('SELECT * FROM users WHERE email = $1', [body.email]);
+      const user = userResult.rows[0];
+      if (user) {
+        const rawToken = generateSecureToken();
+        await pool.query(
+          `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, now() + interval '1 hour')`,
+          [user.id, hashToken(rawToken)]
+        );
+        await emailSender.send({
+          to: user.email,
+          subject: 'Reset your password',
+          text: `Reset your password by visiting: /reset-password?token=${rawToken}`,
+        });
+      }
+      // Always 202, whether or not the email exists — a differing response would let an attacker
+      // enumerate registered accounts.
+      res.status(202).json({ sent: true });
+    })
+  );
+
+  router.post(
+    '/password-reset/confirm',
+    resetRateLimiter,
+    asyncHandler(async (req, res) => {
+      const body = z.object({ token: z.string().min(1), password: z.string().min(8) }).parse(req.body);
+      const tokenHash = hashToken(body.token);
+      const result = await pool.query<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
+        'SELECT id, user_id, expires_at, used_at FROM password_reset_tokens WHERE token_hash = $1',
+        [tokenHash]
+      );
+      const record = result.rows[0];
+      if (!record || record.used_at || new Date(record.expires_at) < new Date()) {
+        throw new HttpError(400, 'Invalid or expired reset token');
+      }
+      const newPasswordHash = await hashPassword(body.password);
+      await pool.query('BEGIN');
+      try {
+        await pool.query('UPDATE password_reset_tokens SET used_at = now() WHERE id = $1', [record.id]);
+        await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newPasswordHash, record.user_id]);
+        await pool.query('UPDATE sessions SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL', [record.user_id]);
+        await pool.query('COMMIT');
+      } catch (err) {
+        await pool.query('ROLLBACK');
+        throw err;
+      }
+      res.status(200).json({ reset: true });
     })
   );
 

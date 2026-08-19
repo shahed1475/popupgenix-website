@@ -173,3 +173,51 @@ describe('email verification', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('password reset', () => {
+  it('returns 202 for both an existing and a nonexistent email, without leaking which', async () => {
+    await pool.query(`UPDATE admin_settings SET setting_value = 'true' WHERE setting_key = 'admin_signup_enabled'`);
+    const app = buildApp();
+    await request(app).post('/api/auth/signup').send({ email: 'reset@drickly.test', password: 'longenough1' });
+
+    const existing = await request(app).post('/api/auth/password-reset/request').send({ email: 'reset@drickly.test' });
+    expect(existing.status).toBe(202);
+
+    const nonexistent = await request(app).post('/api/auth/password-reset/request').send({ email: 'nobody@drickly.test' });
+    expect(nonexistent.status).toBe(202);
+  });
+
+  it('confirms a reset, allows login with the new password, and revokes the old session', async () => {
+    await pool.query(`UPDATE admin_settings SET setting_value = 'true' WHERE setting_key = 'admin_signup_enabled'`);
+    const sentMessages: { to: string; subject: string; text: string }[] = [];
+    const app = buildApp({ send: async (message) => { sentMessages.push(message); } });
+    await request(app).post('/api/auth/signup').send({ email: 'reset2@drickly.test', password: 'oldpassword1' });
+    const login = await request(app).post('/api/auth/login').send({ email: 'reset2@drickly.test', password: 'oldpassword1' });
+    const oldToken = login.body.token as string;
+
+    await request(app).post('/api/auth/password-reset/request').send({ email: 'reset2@drickly.test' });
+    expect(sentMessages).toHaveLength(1);
+    const rawToken = sentMessages[0].text.match(/token=([0-9a-f]{64})/)?.[1];
+    expect(rawToken).toBeDefined();
+
+    const confirm = await request(app)
+      .post('/api/auth/password-reset/confirm')
+      .send({ token: rawToken, password: 'newpassword1' });
+    expect(confirm.status).toBe(200);
+
+    const oldTokenNowRejected = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${oldToken}`);
+    expect(oldTokenNowRejected.status).toBe(401);
+
+    const loginOldPassword = await request(app).post('/api/auth/login').send({ email: 'reset2@drickly.test', password: 'oldpassword1' });
+    expect(loginOldPassword.status).toBe(401);
+
+    const loginNewPassword = await request(app).post('/api/auth/login').send({ email: 'reset2@drickly.test', password: 'newpassword1' });
+    expect(loginNewPassword.status).toBe(200);
+  });
+
+  it('rejects confirm with an invalid token', async () => {
+    const app = buildApp();
+    const res = await request(app).post('/api/auth/password-reset/confirm').send({ token: 'not-a-real-token', password: 'newpassword1' });
+    expect(res.status).toBe(400);
+  });
+});
