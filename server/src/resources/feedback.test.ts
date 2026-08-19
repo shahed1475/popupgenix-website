@@ -3,9 +3,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
-import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 import { createFeedbackRouter } from './feedback.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -14,7 +13,7 @@ let pool: Pool;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/testimonials', createFeedbackRouter(pool, createAuthMiddleware(SECRET)));
+  app.use('/api/testimonials', createFeedbackRouter(pool, createAuthMiddleware(SECRET, pool)));
   app.use(errorHandler);
   return app;
 }
@@ -42,8 +41,8 @@ describe('feedback / testimonials resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin@drickly.test', $1, true) RETURNING id`,
       [passwordHash]
     );
-    const clientToken = signAuthToken({ sub: client.rows[0].id, email: 'client@drickly.test', isAdmin: false }, SECRET, '1h');
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const clientToken = await issueTestToken(pool, { sub: client.rows[0].id, email: 'client@drickly.test', isAdmin: false }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
     const app = buildApp();
 
     const submitted = await request(app)
@@ -88,12 +87,14 @@ describe('feedback / testimonials resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('attacker@drickly.test', $1, false) RETURNING id`,
       [passwordHash]
     );
-    const victimToken = signAuthToken(
+    const victimToken = await issueTestToken(
+      pool,
       { sub: victim.rows[0].id, email: 'victim@drickly.test', isAdmin: false },
       SECRET,
       '1h'
     );
-    const attackerToken = signAuthToken(
+    const attackerToken = await issueTestToken(
+      pool,
       { sub: attacker.rows[0].id, email: 'attacker@drickly.test', isAdmin: false },
       SECRET,
       '1h'
@@ -164,7 +165,8 @@ describe('feedback / testimonials resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('user@drickly.test', $1, false) RETURNING id`,
       ['$2a$12$abcdefghijklmnopqrstuv']
     );
-    const userToken = signAuthToken(
+    const userToken = await issueTestToken(
+      pool,
       { sub: nonAdmin.rows[0].id, email: 'user@drickly.test', isAdmin: false },
       SECRET,
       '1h'

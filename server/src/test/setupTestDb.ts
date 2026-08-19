@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Pool } from 'pg';
 import { runMigrations } from '../db/migrate.js';
+import { signAuthToken, type AuthTokenPayload } from '../auth/tokens.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,4 +26,17 @@ export async function truncateAll(pool: Pool): Promise<void> {
   await pool.query(
     `UPDATE admin_settings SET setting_value = 'false' WHERE setting_key = 'admin_signup_enabled'`
   );
+}
+
+export async function issueTestToken(
+  pool: Pool,
+  payload: Omit<AuthTokenPayload, 'sid'>,
+  secret: string,
+  expiresIn: string
+): Promise<string> {
+  const session = await pool.query<{ id: string }>(
+    `INSERT INTO sessions (user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id`,
+    [payload.sub]
+  );
+  return signAuthToken({ ...payload, sid: session.rows[0].id }, secret, expiresIn);
 }

@@ -3,9 +3,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
-import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 import { createContactSubmissionsRouter } from './contactSubmissions.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -14,7 +13,7 @@ let pool: Pool;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/contact-submissions', createContactSubmissionsRouter(pool, createAuthMiddleware(SECRET)));
+  app.use('/api/contact-submissions', createContactSubmissionsRouter(pool, createAuthMiddleware(SECRET, pool)));
   app.use(errorHandler);
   return app;
 }
@@ -48,7 +47,7 @@ describe('contact submissions resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin1@drickly.test', $1, true) RETURNING id`,
       [passwordHash]
     );
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin1@drickly.test', isAdmin: true }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin1@drickly.test', isAdmin: true }, SECRET, '1h');
 
     const list = await request(app).get('/api/contact-submissions').set('Authorization', `Bearer ${adminToken}`);
     expect(list.status).toBe(200);
@@ -70,7 +69,8 @@ describe('contact submissions resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('user1@drickly.test', $1, false) RETURNING id`,
       ['$2a$12$abcdefghijklmnopqrstuv']
     );
-    const userToken = signAuthToken(
+    const userToken = await issueTestToken(
+      pool,
       { sub: nonAdmin.rows[0].id, email: 'user1@drickly.test', isAdmin: false },
       SECRET,
       '1h'
@@ -109,7 +109,7 @@ describe('contact submissions resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin2@drickly.test', $1, true) RETURNING id`,
       [passwordHash]
     );
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
 
     const deleted = await request(app)
       .delete(`/api/contact-submissions/${submitted.body.id}`)

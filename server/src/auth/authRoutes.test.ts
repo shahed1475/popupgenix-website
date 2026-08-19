@@ -5,7 +5,7 @@ import type { Pool } from 'pg';
 import { createAuthMiddleware } from './middleware.js';
 import { createAuthRoutes } from './authRoutes.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
 let pool: Pool;
@@ -82,23 +82,15 @@ describe('admin user management', () => {
       [passwordHash]
     );
 
-    const adminSession = await pool.query(
-      `INSERT INTO sessions (user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id`,
-      [admin.rows[0].id]
-    );
-    const clientSession = await pool.query(
-      `INSERT INTO sessions (user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id`,
-      [client.rows[0].id]
-    );
-
-    const { signAuthToken } = await import('./tokens.js');
-    const adminToken = signAuthToken(
-      { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true, sid: adminSession.rows[0].id },
+    const adminToken = await issueTestToken(
+      pool,
+      { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true },
       SECRET,
       '1h'
     );
-    const clientToken = signAuthToken(
-      { sub: client.rows[0].id, email: 'client@drickly.test', isAdmin: false, sid: clientSession.rows[0].id },
+    const clientToken = await issueTestToken(
+      pool,
+      { sub: client.rows[0].id, email: 'client@drickly.test', isAdmin: false },
       SECRET,
       '1h'
     );

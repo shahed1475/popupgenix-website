@@ -3,9 +3,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
-import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 import { createInvoicesRouter } from './invoices.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -15,7 +14,7 @@ let adminToken: string;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/invoices', createInvoicesRouter(pool, createAuthMiddleware(SECRET)));
+  app.use('/api/invoices', createInvoicesRouter(pool, createAuthMiddleware(SECRET, pool)));
   app.use(errorHandler);
   return app;
 }
@@ -31,7 +30,7 @@ beforeEach(async () => {
     `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin@drickly.test', $1, true) RETURNING id`,
     [passwordHash]
   );
-  adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+  adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
 });
 
 afterAll(async () => {
@@ -103,7 +102,8 @@ describe('invoices resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('user@drickly.test', $1, false) RETURNING id`,
       ['$2a$12$abcdefghijklmnopqrstuv']
     );
-    const userToken = signAuthToken(
+    const userToken = await issueTestToken(
+      pool,
       { sub: nonAdmin.rows[0].id, email: 'user@drickly.test', isAdmin: false },
       SECRET,
       '1h'

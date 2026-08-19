@@ -3,9 +3,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
-import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 import { createHomepageContentRouter } from './homepageContent.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -14,7 +13,7 @@ let pool: Pool;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/homepage-content', createHomepageContentRouter(pool, createAuthMiddleware(SECRET)));
+  app.use('/api/homepage-content', createHomepageContentRouter(pool, createAuthMiddleware(SECRET, pool)));
   app.use(errorHandler);
   return app;
 }
@@ -38,7 +37,7 @@ describe('homepage content resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin@drickly.test', $1, true) RETURNING id`,
       [passwordHash]
     );
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
     const app = buildApp();
 
     const before = await request(app).get('/api/homepage-content');
@@ -76,8 +75,8 @@ describe('homepage content resource', () => {
       [passwordHash]
     );
 
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
-    const nonAdminToken = signAuthToken({ sub: nonAdmin.rows[0].id, email: 'user@drickly.test', isAdmin: false }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const nonAdminToken = await issueTestToken(pool, { sub: nonAdmin.rows[0].id, email: 'user@drickly.test', isAdmin: false }, SECRET, '1h');
     const app = buildApp();
 
     // Admin creates content for testing
