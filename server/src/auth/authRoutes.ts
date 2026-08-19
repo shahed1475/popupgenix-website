@@ -137,9 +137,14 @@ export function createAuthRoutes(
     })
   );
 
-  router.post('/logout', (_req, res) => {
-    res.status(204).send();
-  });
+  router.post(
+    '/logout',
+    auth.requireAuth,
+    asyncHandler(async (req, res) => {
+      await pool.query('UPDATE sessions SET revoked_at = now() WHERE id = $1', [req.user!.sid]);
+      res.status(204).send();
+    })
+  );
 
   router.get(
     '/me',

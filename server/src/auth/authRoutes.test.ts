@@ -111,3 +111,30 @@ describe('admin user management', () => {
     expect(created.body.is_admin).toBe(false);
   });
 });
+
+describe('logout revokes the session', () => {
+  it('rejects the token on any request after logout', async () => {
+    await pool.query(`UPDATE admin_settings SET setting_value = 'true' WHERE setting_key = 'admin_signup_enabled'`);
+    const app = buildApp();
+    await request(app).post('/api/auth/signup').send({ email: 'logout@drickly.test', password: 'longenough1' });
+    const login = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'logout@drickly.test', password: 'longenough1' });
+    const token = login.body.token as string;
+
+    const meBeforeLogout = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${token}`);
+    expect(meBeforeLogout.status).toBe(200);
+
+    const logout = await request(app).post('/api/auth/logout').set('Authorization', `Bearer ${token}`);
+    expect(logout.status).toBe(204);
+
+    const meAfterLogout = await request(app).get('/api/auth/me').set('Authorization', `Bearer ${token}`);
+    expect(meAfterLogout.status).toBe(401);
+  });
+
+  it('rejects logout without a token', async () => {
+    const app = buildApp();
+    const res = await request(app).post('/api/auth/logout');
+    expect(res.status).toBe(401);
+  });
+});
