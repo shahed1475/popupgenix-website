@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import type { Pool } from 'pg';
+import type { Pool, PoolClient } from 'pg';
 import { z } from 'zod';
 import { asyncHandler } from '../lib/asyncHandler.js';
 import { HttpError } from '../lib/httpError.js';
@@ -236,15 +236,18 @@ export function createAuthRoutes(
         throw new HttpError(400, 'Invalid or expired reset token');
       }
       const newPasswordHash = await hashPassword(body.password);
-      await pool.query('BEGIN');
+      const client: PoolClient = await pool.connect();
       try {
-        await pool.query('UPDATE password_reset_tokens SET used_at = now() WHERE id = $1', [record.id]);
-        await pool.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newPasswordHash, record.user_id]);
-        await pool.query('UPDATE sessions SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL', [record.user_id]);
-        await pool.query('COMMIT');
+        await client.query('BEGIN');
+        await client.query('UPDATE password_reset_tokens SET used_at = now() WHERE id = $1', [record.id]);
+        await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newPasswordHash, record.user_id]);
+        await client.query('UPDATE sessions SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL', [record.user_id]);
+        await client.query('COMMIT');
       } catch (err) {
-        await pool.query('ROLLBACK');
+        await client.query('ROLLBACK');
         throw err;
+      } finally {
+        client.release();
       }
       res.status(200).json({ reset: true });
     })
