@@ -11,10 +11,13 @@ import type { EmailSender, EmailMessage } from '../email/EmailSender.js';
 const SECRET = 'test-secret-value-that-is-long-enough';
 let pool: Pool;
 
-function buildApp(sender: EmailSender = { send: async () => {} }) {
+// Tests default to 'development' so the email-verification / password-reset routes exercised
+// below stay wired up (matching the pre-Fix-3 behavior). The "route gating" test at the bottom
+// explicitly overrides this to prove those routes are NOT registered outside development.
+function buildApp(sender: EmailSender = { send: async () => {} }, nodeEnv: string = 'development') {
   const app = express();
   app.use(express.json());
-  app.use('/api/auth', createAuthRoutes(pool, createAuthMiddleware(SECRET, pool), SECRET, '1h', sender));
+  app.use('/api/auth', createAuthRoutes(pool, createAuthMiddleware(SECRET, pool), SECRET, '1h', sender, nodeEnv));
   app.use(errorHandler);
   return app;
 }
@@ -219,5 +222,25 @@ describe('password reset', () => {
     const app = buildApp();
     const res = await request(app).post('/api/auth/password-reset/confirm').send({ token: 'not-a-real-token', password: 'newpassword1' });
     expect(res.status).toBe(400);
+  });
+});
+
+describe('email verification / password reset route gating', () => {
+  it('does not register verify-email or password-reset routes outside development', async () => {
+    const app = buildApp(undefined, 'production');
+
+    const verifyRequest = await request(app).post('/api/auth/verify-email/request');
+    expect(verifyRequest.status).toBe(404);
+
+    const verifyConfirm = await request(app).post('/api/auth/verify-email/confirm').send({ token: 'anything' });
+    expect(verifyConfirm.status).toBe(404);
+
+    const resetRequest = await request(app).post('/api/auth/password-reset/request').send({ email: 'a@b.com' });
+    expect(resetRequest.status).toBe(404);
+
+    const resetConfirm = await request(app)
+      .post('/api/auth/password-reset/confirm')
+      .send({ token: 'anything', password: 'newpassword1' });
+    expect(resetConfirm.status).toBe(404);
   });
 });

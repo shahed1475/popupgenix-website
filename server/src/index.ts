@@ -11,7 +11,7 @@ async function main(): Promise<void> {
   const env = loadEnv();
   const pool = createPool(env.DATABASE_URL);
   await runMigrations(pool, path.resolve(__dirname, '../db/migrations'));
-  const app = createApp(pool, env.JWT_SECRET, env.JWT_EXPIRES_IN);
+  const app = createApp(pool, env.JWT_SECRET, env.JWT_EXPIRES_IN, env.NODE_ENV);
   app.listen(env.PORT, () => {
     console.log(`Drickly API listening on port ${env.PORT}`);
   });

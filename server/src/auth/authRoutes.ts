@@ -83,7 +83,12 @@ export function createAuthRoutes(
   auth: AuthMiddleware,
   jwtSecret: string,
   jwtExpiresIn: string,
-  emailSender: EmailSender
+  emailSender: EmailSender,
+  // Email verification and password reset currently go through ConsoleEmailSender, which logs
+  // the raw token to stdout. Until a real email provider replaces it, these routes are wired up
+  // only in development so no token-bearing "email" is ever logged on a deployed server. Defaults
+  // to 'production' (routes disabled) so any caller that forgets to pass this fails closed.
+  nodeEnv: string = 'production'
 ): Router {
   const router = Router();
   // 10 requests/IP/minute is generous for legitimate use but bounds credential-stuffing and
@@ -152,106 +157,136 @@ export function createAuthRoutes(
     })
   );
 
-  router.post(
-    '/verify-email/request',
-    auth.requireAuth,
-    asyncHandler(async (req, res) => {
-      const userResult = await pool.query<UserRow>('SELECT * FROM users WHERE id = $1', [req.user!.sub]);
-      const user = userResult.rows[0];
-      if (!user) throw new HttpError(404, 'User not found');
-      if (user.email_verified_at) {
-        res.status(200).json({ alreadyVerified: true });
-        return;
-      }
-      const rawToken = generateSecureToken();
-      await pool.query(
-        `INSERT INTO email_verification_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, now() + interval '1 day')`,
-        [user.id, hashToken(rawToken)]
-      );
-      await emailSender.send({
-        to: user.email,
-        subject: 'Verify your email',
-        text: `Confirm your email by visiting: /verify-email?token=${rawToken}`,
-      });
-      res.status(202).json({ sent: true });
-    })
-  );
-
-  router.post(
-    '/verify-email/confirm',
-    asyncHandler(async (req, res) => {
-      const body = z.object({ token: z.string().min(1) }).parse(req.body);
-      const tokenHash = hashToken(body.token);
-      const result = await pool.query<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
-        'SELECT id, user_id, expires_at, used_at FROM email_verification_tokens WHERE token_hash = $1',
-        [tokenHash]
-      );
-      const record = result.rows[0];
-      if (!record || record.used_at || new Date(record.expires_at) < new Date()) {
-        throw new HttpError(400, 'Invalid or expired verification token');
-      }
-      await pool.query('UPDATE email_verification_tokens SET used_at = now() WHERE id = $1', [record.id]);
-      await pool.query('UPDATE users SET email_verified_at = now() WHERE id = $1', [record.user_id]);
-      res.status(200).json({ verified: true });
-    })
-  );
-
-  router.post(
-    '/password-reset/request',
-    resetRateLimiter,
-    asyncHandler(async (req, res) => {
-      const body = z.object({ email: z.string().email() }).parse(req.body);
-      const userResult = await pool.query<UserRow>('SELECT * FROM users WHERE email = $1', [body.email]);
-      const user = userResult.rows[0];
-      if (user) {
+  // Wire these four routes only in development. ConsoleEmailSender logs the raw verification /
+  // reset token to stdout, which is fine for local development but must never happen on a
+  // deployed server. Rather than adding a live env check inside each handler, the routes simply
+  // aren't registered outside development, so Express 404s them like any other unknown path.
+  if (nodeEnv === 'development') {
+    router.post(
+      '/verify-email/request',
+      auth.requireAuth,
+      asyncHandler(async (req, res) => {
+        const userResult = await pool.query<UserRow>('SELECT * FROM users WHERE id = $1', [req.user!.sub]);
+        const user = userResult.rows[0];
+        if (!user) throw new HttpError(404, 'User not found');
+        if (user.email_verified_at) {
+          res.status(200).json({ alreadyVerified: true });
+          return;
+        }
         const rawToken = generateSecureToken();
         await pool.query(
-          `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, now() + interval '1 hour')`,
+          `INSERT INTO email_verification_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, now() + interval '1 day')`,
           [user.id, hashToken(rawToken)]
         );
         await emailSender.send({
           to: user.email,
-          subject: 'Reset your password',
-          text: `Reset your password by visiting: /reset-password?token=${rawToken}`,
+          subject: 'Verify your email',
+          text: `Confirm your email by visiting: /verify-email?token=${rawToken}`,
         });
-      }
-      // Always 202, whether or not the email exists — a differing response would let an attacker
-      // enumerate registered accounts.
-      res.status(202).json({ sent: true });
-    })
-  );
+        res.status(202).json({ sent: true });
+      })
+    );
 
-  router.post(
-    '/password-reset/confirm',
-    resetRateLimiter,
-    asyncHandler(async (req, res) => {
-      const body = z.object({ token: z.string().min(1), password: z.string().min(8) }).parse(req.body);
-      const tokenHash = hashToken(body.token);
-      const result = await pool.query<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
-        'SELECT id, user_id, expires_at, used_at FROM password_reset_tokens WHERE token_hash = $1',
-        [tokenHash]
-      );
-      const record = result.rows[0];
-      if (!record || record.used_at || new Date(record.expires_at) < new Date()) {
-        throw new HttpError(400, 'Invalid or expired reset token');
-      }
-      const newPasswordHash = await hashPassword(body.password);
-      const client: PoolClient = await pool.connect();
-      try {
-        await client.query('BEGIN');
-        await client.query('UPDATE password_reset_tokens SET used_at = now() WHERE id = $1', [record.id]);
-        await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newPasswordHash, record.user_id]);
-        await client.query('UPDATE sessions SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL', [record.user_id]);
-        await client.query('COMMIT');
-      } catch (err) {
-        await client.query('ROLLBACK');
-        throw err;
-      } finally {
-        client.release();
-      }
-      res.status(200).json({ reset: true });
-    })
-  );
+    router.post(
+      '/verify-email/confirm',
+      asyncHandler(async (req, res) => {
+        const body = z.object({ token: z.string().min(1) }).parse(req.body);
+        const tokenHash = hashToken(body.token);
+        const result = await pool.query<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
+          'SELECT id, user_id, expires_at, used_at FROM email_verification_tokens WHERE token_hash = $1',
+          [tokenHash]
+        );
+        const record = result.rows[0];
+        if (!record || record.used_at || new Date(record.expires_at) < new Date()) {
+          throw new HttpError(400, 'Invalid or expired verification token');
+        }
+        const client: PoolClient = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          const markUsed = await client.query(
+            'UPDATE email_verification_tokens SET used_at = now() WHERE id = $1 AND used_at IS NULL',
+            [record.id]
+          );
+          if (markUsed.rowCount === 0) {
+            await client.query('ROLLBACK');
+            throw new HttpError(400, 'Invalid or expired verification token');
+          }
+          await client.query('UPDATE users SET email_verified_at = now() WHERE id = $1', [record.user_id]);
+          await client.query('COMMIT');
+        } catch (err) {
+          await client.query('ROLLBACK').catch(() => {});
+          throw err;
+        } finally {
+          client.release();
+        }
+        res.status(200).json({ verified: true });
+      })
+    );
+
+    router.post(
+      '/password-reset/request',
+      resetRateLimiter,
+      asyncHandler(async (req, res) => {
+        const body = z.object({ email: z.string().email() }).parse(req.body);
+        const userResult = await pool.query<UserRow>('SELECT * FROM users WHERE email = $1', [body.email]);
+        const user = userResult.rows[0];
+        if (user) {
+          const rawToken = generateSecureToken();
+          await pool.query(
+            `INSERT INTO password_reset_tokens (user_id, token_hash, expires_at) VALUES ($1, $2, now() + interval '1 hour')`,
+            [user.id, hashToken(rawToken)]
+          );
+          await emailSender.send({
+            to: user.email,
+            subject: 'Reset your password',
+            text: `Reset your password by visiting: /reset-password?token=${rawToken}`,
+          });
+        }
+        // Always 202, whether or not the email exists — a differing response would let an attacker
+        // enumerate registered accounts.
+        res.status(202).json({ sent: true });
+      })
+    );
+
+    router.post(
+      '/password-reset/confirm',
+      resetRateLimiter,
+      asyncHandler(async (req, res) => {
+        const body = z.object({ token: z.string().min(1), password: z.string().min(8) }).parse(req.body);
+        const tokenHash = hashToken(body.token);
+        const result = await pool.query<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
+          'SELECT id, user_id, expires_at, used_at FROM password_reset_tokens WHERE token_hash = $1',
+          [tokenHash]
+        );
+        const record = result.rows[0];
+        if (!record || record.used_at || new Date(record.expires_at) < new Date()) {
+          throw new HttpError(400, 'Invalid or expired reset token');
+        }
+        const newPasswordHash = await hashPassword(body.password);
+        const client: PoolClient = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          const markUsed = await client.query(
+            'UPDATE password_reset_tokens SET used_at = now() WHERE id = $1 AND used_at IS NULL',
+            [record.id]
+          );
+          if (markUsed.rowCount === 0) {
+            await client.query('ROLLBACK');
+            throw new HttpError(400, 'Invalid or expired reset token');
+          }
+          await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [newPasswordHash, record.user_id]);
+          await client.query('UPDATE sessions SET revoked_at = now() WHERE user_id = $1 AND revoked_at IS NULL', [record.user_id]);
+          await client.query('COMMIT');
+        } catch (err) {
+          await client.query('ROLLBACK').catch(() => {});
+          throw err;
+        } finally {
+          client.release();
+        }
+        res.status(200).json({ reset: true });
+      })
+    );
+  }
 
   router.get(
     '/me',
