@@ -39,7 +39,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   if (response.status === 401 && token) {
     clearToken();
-    window.location.href = '/admin';
+    window.location.href = window.location.pathname.startsWith('/portal') ? '/portal' : '/admin';
     throw new ApiError(401, 'Session expired');
   }
 

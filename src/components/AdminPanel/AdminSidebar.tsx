@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { logout } from "@/lib/api/auth";
+import { apiClient } from "@/lib/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 const adminItems = [
@@ -62,6 +63,13 @@ export function AdminSidebar() {
       : "text-gray-300 hover:bg-white/10 hover:text-white";
 
   const handleSignOut = async () => {
+    try {
+      await apiClient.post('/auth/logout');
+    } catch (error) {
+      console.error('Error revoking session on the server:', error);
+      // Fall through: clearing the local token below still logs the user out of this browser
+      // even if the server call failed (e.g. network issue).
+    }
     logout();
     toast({
       title: "Signed out successfully",
