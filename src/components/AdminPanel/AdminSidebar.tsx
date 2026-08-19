@@ -26,7 +26,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { logout } from "@/lib/api/auth";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const adminItems = [
@@ -64,11 +63,6 @@ export function AdminSidebar() {
 
   const handleSignOut = async () => {
     logout();
-    try {
-      await supabase.auth.signOut();
-    } catch {
-      // best-effort cleanup of any lingering Supabase session; the new API logout above is authoritative
-    }
     toast({
       title: "Signed out successfully",
       description: "You have been logged out of the admin panel.",
