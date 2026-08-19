@@ -109,7 +109,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="flex items-center gap-2 text-gray-300">
                     <Calendar className="h-4 w-4" />
-                    <span>ETA: {new Date(project.eta_date).toLocaleDateString()}</span>
+                    <span>ETA: {project.eta_date ? new Date(project.eta_date).toLocaleDateString() : 'TBD'}</span>
                   </div>
                 </div>
               </CardContent>
