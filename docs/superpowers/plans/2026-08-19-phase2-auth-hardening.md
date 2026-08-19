@@ -15,6 +15,7 @@
 - Store only a SHA-256 hash of verification/reset tokens, never the raw token, in the database — matches the existing codebase's care around secrets (bcrypt for passwords, timing-safe dummy-hash comparison in login).
 - `EmailSender` gets exactly one implementation this phase: `ConsoleEmailSender` (logs to stdout/console). Do not add a Resend/SMTP implementation — that is explicitly Phase 7 (Notifications/outbox) scope per `docs/superpowers/specs/2026-08-19-postgresql-first-architecture-design.md`.
 - React components have **no existing unit-test convention in this repo** — the root `vitest.config.ts` only includes `src/**/*.test.ts` (not `.tsx`), and none of the 7 already-migrated Admin Panel components have component tests. New logic added to `src/lib/api/*.ts` gets `.test.ts` coverage matching the existing `auth.test.ts` mock-`fetch` pattern; the React components themselves (`Portal.tsx`, `Dashboard.tsx`, etc.) are verified by `tsc`/build only, consistent with how the Admin Panel migration was done. Do not introduce `@testing-library/react`, `jsdom`, or any new frontend test tooling in this phase.
+- **Typecheck command note (corrected after Task 9's review caught this):** every "run the typecheck" step below uses `npx tsc --noEmit -p tsconfig.app.json`, NOT `tsconfig.b2b.json` — the latter's `include` is scoped to `src/b2b/domain` only and does not cover `src/pages/` or `src/components/ClientPortal/` at all, so it would silently pass regardless of errors in the code this plan actually changes. `package.json`'s `typecheck:b2b` npm script wraps the wrong config for this plan's purposes; run the `tsc` command directly against `tsconfig.app.json` instead.
 - Server-side migration files must not use `CREATE TABLE IF NOT EXISTS`, must use lowercase SQL types, and must not touch any migration file `0001` through `0012` (all pre-existing, already applied) — only new, sequentially-numbered files.
 - All new/changed server tests use the existing `TEST_DATABASE_URL` + `createTestPool()`/`truncateAll()` convention.
 - `requireAuth`/`optionalAuth` becoming session-aware (DB lookup per request) is a real, deliberate architecture change with a real ripple: `createAuthMiddleware` gains a required `pool` parameter, and every test file that fabricates a JWT via `signAuthToken(...)` directly (bypassing login) must switch to inserting a matching `sessions` row too, via a new shared test helper — otherwise those tests break the moment session validation ships. This ripple is Task 4's entire scope; do not let it bleed into other tasks.
@@ -1581,7 +1582,7 @@ Note: this task references `PortalMigrationPending` (Task 13) and the migrated `
 
 - [ ] **Step 2: Typecheck**
 
-Run (from repo root): `npx tsc --noEmit -p tsconfig.b2b.json` (or the project's standard typecheck script) — expect errors referencing `PortalMigrationPending`/updated `Dashboard`/`Feedback` until Tasks 10-13 land; re-run after Task 13 and expect it clean.
+Run (from repo root): `npx tsc --noEmit -p tsconfig.app.json` (or the project's standard typecheck script) — expect errors referencing `PortalMigrationPending`/updated `Dashboard`/`Feedback` until Tasks 10-13 land; re-run after Task 13 and expect it clean.
 
 - [ ] **Step 3: Commit**
 
@@ -1682,7 +1683,7 @@ The rest of the file (nav items, JSX) is unchanged.
 
 - [ ] **Step 2: Typecheck**
 
-Run: `npx tsc --noEmit -p tsconfig.b2b.json` — no new errors introduced by this file (see Task 9's note on when the whole group typechecks cleanly).
+Run: `npx tsc --noEmit -p tsconfig.app.json` — no new errors introduced by this file (see Task 9's note on when the whole group typechecks cleanly).
 
 - [ ] **Step 3: Commit**
 
@@ -1849,7 +1850,7 @@ The rest of the file (JSX) is unchanged except two references: `Welcome {user?.f
 
 - [ ] **Step 2: Typecheck**
 
-Run: `npx tsc --noEmit -p tsconfig.b2b.json`.
+Run: `npx tsc --noEmit -p tsconfig.app.json`.
 
 - [ ] **Step 3: Commit**
 
@@ -2084,7 +2085,7 @@ Two further changes in the JSX below (unrelated lines are unchanged):
 
 - [ ] **Step 2: Typecheck**
 
-Run: `npx tsc --noEmit -p tsconfig.b2b.json`.
+Run: `npx tsc --noEmit -p tsconfig.app.json`.
 
 - [ ] **Step 3: Commit**
 
@@ -2197,7 +2198,7 @@ to:
 
 - [ ] **Step 5: Typecheck the whole frontend**
 
-Run: `npx tsc --noEmit -p tsconfig.b2b.json` (or the repo's standard command — check `package.json`'s `typecheck:b2b` script). This is the point where Tasks 9-13's cross-references (Portal → PortalMigrationPending/Dashboard/Feedback) all resolve — expect zero errors now.
+Run: `npx tsc --noEmit -p tsconfig.app.json` (or the repo's standard command — check `package.json`'s `typecheck:b2b` script). This is the point where Tasks 9-13's cross-references (Portal → PortalMigrationPending/Dashboard/Feedback) all resolve — expect zero errors now.
 
 Also run: `npm run build` (root) to confirm the production Vite build succeeds with `ClientPortal.tsx`/`AdminSignup.tsx` removed and no dangling imports.
 
@@ -2215,7 +2216,7 @@ git commit -m "feat: add PortalMigrationPending, remove ClientPortal/AdminSignup
 
 - [ ] Full server suite passes (`npm test` in `server/`, no filter) — expect roughly 97 (Phase 1 baseline) + ~20 new tests across Tasks 1-7.
 - [ ] Root frontend suite passes (`npm test` at repo root) — the two new `src/lib/api/feedback.test.ts` tests plus all pre-existing `src/lib/api/*.test.ts` tests.
-- [ ] `npx tsc --noEmit -p tsconfig.b2b.json` and `npm run build` both succeed with zero errors.
+- [ ] `npx tsc --noEmit -p tsconfig.app.json` and `npm run build` both succeed with zero errors.
 - [ ] A logged-out JWT is rejected by `requireAuth` on the very next request (proven by `authRoutes.test.ts`'s logout test) — this is the actual "sessions must be invalidatable" requirement being met, not just a schema existing.
 - [ ] A password reset revokes every existing session for that user, not just the one used to request the reset.
 - [ ] No file under `src/` imports `@/integrations/supabase/client` from `Portal.tsx`, `PortalNavigation.tsx`, `Dashboard.tsx`, or the renamed `Feedback.tsx` (`FeedbackPage`) — `grep -rn "integrations/supabase" src/pages/Portal.tsx src/components/ClientPortal/PortalNavigation.tsx src/components/ClientPortal/Dashboard.tsx src/components/ClientPortal/Feedback.tsx` returns nothing.
