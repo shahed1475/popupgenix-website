@@ -150,6 +150,21 @@ describe('raw_leads schema', () => {
       ])
     ).rejects.toThrow();
   });
+
+  it('re-derives organization_id when source_id is updated to a source in a different organization', async () => {
+    const { sourceId: sourceInOrgI } = await insertOrgAndSource(pool, 'org-i');
+    const { orgId: orgJ, sourceId: sourceInOrgJ } = await insertOrgAndSource(pool, 'org-j');
+    const row = await pool.query(
+      `INSERT INTO raw_leads (source_id, external_id, raw_payload) VALUES ($1, 'ext-1', '{}') RETURNING id`,
+      [sourceInOrgI]
+    );
+
+    const updated = await pool.query(
+      `UPDATE raw_leads SET source_id = $1 WHERE id = $2 RETURNING organization_id`,
+      [sourceInOrgJ, row.rows[0].id]
+    );
+    expect(updated.rows[0].organization_id).toBe(orgJ);
+  });
 });
 ```
 
@@ -199,14 +214,20 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER raw_leads_set_organization_id_trigger
-  BEFORE INSERT ON raw_leads
+  BEFORE INSERT OR UPDATE OF source_id ON raw_leads
   FOR EACH ROW EXECUTE FUNCTION raw_leads_set_organization_id();
 ```
+
+(The `OR UPDATE OF source_id` clause matches `0012_organization_id_triggers_guard_updates.sql`'s
+pattern, which extended every other org-derivation trigger the same way — a `raw_leads` row's
+`source_id` should never be reassignable to a different organization's source without
+`organization_id` being recomputed and re-validated. The trigger function itself already handles
+both INSERT and UPDATE correctly; only the trigger's event list needs to list both.)
 
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `TEST_DATABASE_URL="postgresql://drickly_test:drickly_test@localhost:15432/drickly_test" npm test -- rawLeads`
-Expected: PASS (6 tests).
+Expected: PASS (7 tests).
 
 - [ ] **Step 5: Add `raw_leads` to `truncateAll()` and `fullSchema.test.ts`**
 
@@ -226,7 +247,7 @@ In `server/src/db/schema/fullSchema.test.ts`, add `'raw_leads'` to `expectedTabl
 - [ ] **Step 6: Run the full server test suite to confirm nothing broke**
 
 Run: `TEST_DATABASE_URL="postgresql://drickly_test:drickly_test@localhost:15432/drickly_test" npm test`
-Expected: PASS, all files (117 existing + 6 new = 123 tests across 34 files).
+Expected: PASS, all files (117 existing + 7 new = 124 tests across 34 files).
 
 - [ ] **Step 7: Commit**
 
@@ -329,7 +350,7 @@ CREATE UNIQUE INDEX idx_agent_tasks_idempotency_key
 - [ ] **Step 4: Run test to verify it passes, then the full suite**
 
 Run: `TEST_DATABASE_URL="postgresql://drickly_test:drickly_test@localhost:15432/drickly_test" npm test -- agentTasksIdempotency` → PASS (3 tests).
-Then: `npm test` (no filter) → PASS, all files (126 tests across 35 files).
+Then: `npm test` (no filter) → PASS, all files (127 tests across 35 files).
 
 - [ ] **Step 5: Commit**
 
