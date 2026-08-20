@@ -40,12 +40,14 @@ describe("csvAdapter", () => {
     const csvText = HEADER + "Acme Inc,acme.com,,\n";
     const first = await csvAdapter.discover({ csvText }, context()).next();
     const second = await csvAdapter.discover({ csvText }, context()).next();
+    if (first.done || second.done) throw new Error("expected a yielded RawLead, got a DiscoverResult");
     expect(first.value.externalId).toBe(second.value.externalId);
   });
 
   it("computes a different externalId when row content differs", async () => {
     const a = await csvAdapter.discover({ csvText: HEADER + "Acme Inc,acme.com,,\n" }, context()).next();
     const b = await csvAdapter.discover({ csvText: HEADER + "Beta LLC,beta.com,,\n" }, context()).next();
+    if (a.done || b.done) throw new Error("expected a yielded RawLead, got a DiscoverResult");
     expect(a.value.externalId).not.toBe(b.value.externalId);
   });
 
