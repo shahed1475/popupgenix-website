@@ -101,4 +101,19 @@ describe('raw_leads schema', () => {
       ])
     ).rejects.toThrow();
   });
+
+  it('re-derives organization_id when source_id is updated to a source in a different organization', async () => {
+    const { sourceId: sourceInOrgI } = await insertOrgAndSource(pool, 'org-i');
+    const { orgId: orgJ, sourceId: sourceInOrgJ } = await insertOrgAndSource(pool, 'org-j');
+    const row = await pool.query(
+      `INSERT INTO raw_leads (source_id, external_id, raw_payload) VALUES ($1, 'ext-1', '{}') RETURNING id`,
+      [sourceInOrgI]
+    );
+
+    const updated = await pool.query(
+      `UPDATE raw_leads SET source_id = $1 WHERE id = $2 RETURNING organization_id`,
+      [sourceInOrgJ, row.rows[0].id]
+    );
+    expect(updated.rows[0].organization_id).toBe(orgJ);
+  });
 });

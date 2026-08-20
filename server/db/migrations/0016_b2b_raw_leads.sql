@@ -26,7 +26,7 @@ BEGIN
   IF parent_org_id IS NULL THEN
     RAISE EXCEPTION 'raw_leads.source_id % does not reference an existing lead_source', NEW.source_id;
   END IF;
-  IF NEW.organization_id IS NOT NULL AND NEW.organization_id <> parent_org_id THEN
+  IF TG_OP = 'INSERT' AND NEW.organization_id IS NOT NULL AND NEW.organization_id <> parent_org_id THEN
     RAISE EXCEPTION 'raw_leads.organization_id (%) does not match parent source organization_id (%)', NEW.organization_id, parent_org_id;
   END IF;
   NEW.organization_id := parent_org_id;
@@ -34,6 +34,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS raw_leads_set_organization_id_trigger ON raw_leads;
 CREATE TRIGGER raw_leads_set_organization_id_trigger
-  BEFORE INSERT ON raw_leads
+  BEFORE INSERT OR UPDATE OF source_id ON raw_leads
   FOR EACH ROW EXECUTE FUNCTION raw_leads_set_organization_id();
