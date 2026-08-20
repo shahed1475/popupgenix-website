@@ -20,6 +20,6 @@ export async function createTestPool(): Promise<Pool> {
 
 export async function truncateAll(pool: Pool): Promise<void> {
   await pool.query(
-    "TRUNCATE TABLE agent_runs, agent_tasks, research, leads, companies RESTART IDENTITY CASCADE"
+    "TRUNCATE TABLE agent_runs, agent_tasks, raw_leads, research, contacts, leads, lead_sources, companies RESTART IDENTITY CASCADE"
   );
 }
