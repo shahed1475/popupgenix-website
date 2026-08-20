@@ -20,7 +20,7 @@ describe('full schema (Phase 1 consolidation)', () => {
       'organizations', 'memberships',
       'lead_sources', 'companies', 'contacts',
       'strategies', 'strategy_versions',
-      'leads', 'research', 'lead_scores',
+      'leads', 'research', 'lead_scores', 'raw_leads',
       'campaigns', 'campaign_leads', 'outreach_messages', 'outreach_message_events',
       'replies', 'meetings',
       'agent_tasks', 'agent_runs',
