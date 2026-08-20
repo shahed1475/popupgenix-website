@@ -3,9 +3,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
-import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 import { createQuoteRequestsRouter } from './quoteRequests.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -14,7 +13,7 @@ let pool: Pool;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/quote-requests', createQuoteRequestsRouter(pool, createAuthMiddleware(SECRET)));
+  app.use('/api/quote-requests', createQuoteRequestsRouter(pool, createAuthMiddleware(SECRET, pool)));
   app.use(errorHandler);
   return app;
 }
@@ -52,7 +51,7 @@ describe('quote requests resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin2@drickly.test', $1, true) RETURNING id`,
       [passwordHash]
     );
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
 
     const patched = await request(app)
       .patch(`/api/quote-requests/${submitted.body.id}`)
@@ -70,7 +69,8 @@ describe('quote requests resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('user2@drickly.test', $1, false) RETURNING id`,
       ['$2a$12$abcdefghijklmnopqrstuv']
     );
-    const userToken = signAuthToken(
+    const userToken = await issueTestToken(
+      pool,
       { sub: nonAdmin.rows[0].id, email: 'user2@drickly.test', isAdmin: false },
       SECRET,
       '1h'
@@ -117,7 +117,7 @@ describe('quote requests resource', () => {
       `INSERT INTO users (email, password_hash, is_admin) VALUES ('admin2@drickly.test', $1, true) RETURNING id`,
       [passwordHash]
     );
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin2@drickly.test', isAdmin: true }, SECRET, '1h');
 
     const deleted = await request(app)
       .delete(`/api/quote-requests/${submitted.body.id}`)

@@ -27,3 +27,20 @@ export function updateFeedback(id: string, input: { status?: string; featured?: 
 export function deleteFeedback(id: string): Promise<void> {
   return apiClient.delete<void>(`/testimonials/${id}`);
 }
+
+export interface SubmitFeedbackInput {
+  client_name: string;
+  client_email: string;
+  client_company?: string | null;
+  project_id?: string | null;
+  rating: number;
+  testimonial: string;
+}
+
+export function listMyFeedback(): Promise<Feedback[]> {
+  return apiClient.get<Feedback[]>('/testimonials/mine');
+}
+
+export function submitFeedback(input: SubmitFeedbackInput): Promise<Feedback> {
+  return apiClient.post<Feedback>('/testimonials', input);
+}

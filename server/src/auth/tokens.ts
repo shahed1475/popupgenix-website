@@ -4,6 +4,7 @@ export interface AuthTokenPayload {
   sub: string;
   email: string;
   isAdmin: boolean;
+  sid: string;
 }
 
 export function signAuthToken(payload: AuthTokenPayload, secret: string, expiresIn: string): string {

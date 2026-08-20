@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { deleteFeedback, listAdminFeedback, updateFeedback } from './feedback';
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { deleteFeedback, listAdminFeedback, updateFeedback, listMyFeedback, submitFeedback } from './feedback';
 
 beforeEach(() => {
   vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {}, removeItem: () => {} });
@@ -42,5 +42,35 @@ describe('feedback API module', () => {
     const [url, init] = mockFetch.mock.calls[0];
     expect(url).toBe('/api/testimonials/1');
     expect(init.method).toBe('DELETE');
+  });
+});
+
+describe('client-facing feedback', () => {
+  it('listMyFeedback calls GET /testimonials/mine', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => [] });
+    vi.stubGlobal('fetch', mockFetch);
+
+    await listMyFeedback();
+
+    const [url, init] = mockFetch.mock.calls[0];
+    expect(url).toBe('/api/testimonials/mine');
+    expect(init.method).toBe('GET');
+  });
+
+  it('submitFeedback calls POST /testimonials with the given input', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ id: 'f1', testimonial: 'Great work', rating: 5 }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    const input = { client_name: 'Jane', client_email: 'jane@drickly.test', rating: 5, testimonial: 'Great work' };
+    await submitFeedback(input);
+
+    const [url, init] = mockFetch.mock.calls[0];
+    expect(url).toBe('/api/testimonials');
+    expect(init.method).toBe('POST');
+    expect(init.body).toBe(JSON.stringify(input));
   });
 });

@@ -40,7 +40,7 @@ export function createFeedbackRouter(pool: Pool, auth: AuthMiddleware): Router {
     auth.requireAuth,
     asyncHandler(async (req, res) => {
       const result = await pool.query(
-        'SELECT * FROM feedback WHERE client_email = $1 ORDER BY created_at DESC',
+        'SELECT * FROM feedback WHERE client_email = $1 AND deleted_at IS NULL ORDER BY created_at DESC',
         [req.user!.email]
       );
       res.json(result.rows);

@@ -5,7 +5,6 @@ import { ThemeProvider } from "next-themes";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import ClientPortal from "./pages/ClientPortal";
 import Portal from "./pages/Portal";
 import AdminPanel from "./pages/AdminPanel";
 
@@ -56,7 +55,6 @@ const App = () => (
         <Route path="/services/crm-saas" element={<CRMAndSaaS />} />
         <Route path="/services/cloud-devops" element={<CloudAndDevOps />} />
         
-        <Route path="/client/*" element={<ClientPortal />} />
         <Route path="/portal/*" element={<Portal />} />
         <Route path="/admin/*" element={<AdminPanel />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

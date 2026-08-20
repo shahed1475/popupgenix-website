@@ -1,27 +1,13 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser, type AdminUser } from "@/lib/api/auth";
+import { listProjects, type Project } from "@/lib/api/projects";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Calendar, CheckCircle, Clock, User } from "lucide-react";
+import { Calendar, CheckCircle, Clock, User as UserIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface Project {
-  id: string;
-  title: string;
-  completion_percentage: number;
-  next_milestone: string;
-  eta_date: string;
-  client_user_id: string;
-}
-
-interface User {
-  id: string;
-  email: string;
-  full_name: string;
-}
-
 export default function Dashboard() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -33,20 +19,8 @@ export default function Dashboard() {
 
   const getUser = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single();
-        
-        setUser({
-          id: authUser.id,
-          email: authUser.email || '',
-          full_name: profile?.full_name || authUser.email || 'Client'
-        });
-      }
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
     } catch (error) {
       console.error('Error fetching user:', error);
       toast({
@@ -59,17 +33,9 @@ export default function Dashboard() {
 
   const getUserProject = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (authUser) {
-        const { data: projects } = await supabase
-          .from('projects')
-          .select('*')
-          .eq('client_user_id', authUser.id)
-          .limit(1);
-        
-        if (projects && projects.length > 0) {
-          setProject(projects[0]);
-        }
+      const projects = await listProjects();
+      if (projects.length > 0) {
+        setProject(projects[0]);
       }
     } catch (error) {
       console.error('Error fetching project:', error);
@@ -97,7 +63,7 @@ export default function Dashboard() {
         {/* Welcome Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-neon-purple to-neon-blue bg-clip-text text-transparent">
-            Welcome {user?.full_name} 👋
+            Welcome {user?.full_name ?? user?.email} 👋
           </h1>
           <p className="text-gray-300 text-lg">Your project dashboard and updates</p>
         </div>
@@ -143,7 +109,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="flex items-center gap-2 text-gray-300">
                     <Calendar className="h-4 w-4" />
-                    <span>ETA: {new Date(project.eta_date).toLocaleDateString()}</span>
+                    <span>ETA: {project.eta_date ? new Date(project.eta_date).toLocaleDateString() : 'TBD'}</span>
                   </div>
                 </div>
               </CardContent>
@@ -152,7 +118,7 @@ export default function Dashboard() {
         ) : (
           <Card className="bg-midnight-light/50 border-gray-700 backdrop-blur-sm">
             <CardContent className="text-center py-12">
-              <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <UserIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">No Active Project</h3>
               <p className="text-gray-300">
                 You don't have any active projects yet. Contact us to get started!

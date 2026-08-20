@@ -115,7 +115,7 @@ describe('apiClient', () => {
     }
   });
 
-  it('on a 401, clears the token and redirects to /admin', async () => {
+  it('on a 401 on an /admin path, clears the token and redirects to /admin', async () => {
     setToken('stale-token');
     const mockFetch = vi.fn().mockResolvedValue({
       ok: false,
@@ -123,13 +123,30 @@ describe('apiClient', () => {
       json: async () => ({ error: 'Invalid or expired token' }),
     });
     vi.stubGlobal('fetch', mockFetch);
-    const win = { location: { href: '' } };
+    const win = { location: { href: '', pathname: '/admin/services' } };
     vi.stubGlobal('window', win);
 
     await expect(apiClient.get('/auth/me')).rejects.toBeInstanceOf(ApiError);
 
     expect(getToken()).toBeNull();
     expect(win.location.href).toBe('/admin');
+  });
+
+  it('on a 401 on a /portal path, clears the token and redirects to /portal', async () => {
+    setToken('stale-token');
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'Invalid or expired token' }),
+    });
+    vi.stubGlobal('fetch', mockFetch);
+    const win = { location: { href: '', pathname: '/portal/files' } };
+    vi.stubGlobal('window', win);
+
+    await expect(apiClient.get('/auth/me')).rejects.toBeInstanceOf(ApiError);
+
+    expect(getToken()).toBeNull();
+    expect(win.location.href).toBe('/portal');
   });
 
   it('on a 401 with no token present (e.g. a failed login), does not redirect — throws a normal ApiError', async () => {
@@ -139,7 +156,7 @@ describe('apiClient', () => {
       json: async () => ({ error: 'Invalid email or password' }),
     });
     vi.stubGlobal('fetch', mockFetch);
-    const win = { location: { href: '' } };
+    const win = { location: { href: '', pathname: '/admin' } };
     vi.stubGlobal('window', win);
 
     await expect(apiClient.post('/auth/login', { email: 'x@example.com', password: 'wrong' })).rejects.toMatchObject(

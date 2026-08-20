@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/api/auth";
+import { listMyFeedback, submitFeedback as submitFeedbackApi, type Feedback } from "@/lib/api/feedback";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,16 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, MessageSquare, CheckCircle, Clock, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface Feedback {
-  id: string;
-  testimonial: string;
-  rating: number;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  project_id: string;
-}
-
-export default function Feedback() {
+export default function FeedbackPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [newFeedback, setNewFeedback] = useState("");
   const [rating, setRating] = useState(5);
@@ -31,25 +23,8 @@ export default function Feedback() {
   const getFeedbacks = async () => {
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        // Get user's project first
-            const { data: projects } = await supabase
-              .from('projects')
-              .select('id')
-              .eq('client_user_id', user.id);
-
-          if (projects && projects.length > 0) {
-            const { data: feedbackData } = await supabase
-              .from('feedback')
-              .select('*')
-              .eq('project_id', projects[0].id)
-              .is('deleted_at', null)
-              .order('created_at', { ascending: false });
-
-            setFeedbacks(feedbackData || []);
-          }
-      }
+      const feedbackData = await listMyFeedback();
+      setFeedbacks(feedbackData);
     } catch (error) {
       console.error('Error fetching feedback:', error);
       toast({
@@ -62,7 +37,7 @@ export default function Feedback() {
     }
   };
 
-  const submitFeedback = async () => {
+  const handleSubmitFeedback = async () => {
     if (!newFeedback.trim()) {
       toast({
         title: "Error",
@@ -74,39 +49,24 @@ export default function Feedback() {
 
     setSubmitting(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        // Get user's project
-          const { data: projects } = await supabase
-            .from('projects')
-            .select('id')
-            .eq('client_user_id', user.id);
+      const user = await getCurrentUser();
+      if (!user) throw new Error('Not authenticated');
 
-        if (projects && projects.length > 0) {
-          const { error } = await supabase
-            .from('feedback')
-            .insert({
-              testimonial: newFeedback,
-              rating: rating,
-              project_id: projects[0].id,
-              status: 'pending',
-              client_id: user.id,
-              client_name: user.email || 'Anonymous',
-              client_email: user.email || ''
-            });
+      await submitFeedbackApi({
+        client_name: user.full_name || user.email,
+        client_email: user.email,
+        rating,
+        testimonial: newFeedback,
+      });
 
-          if (error) throw error;
+      toast({
+        title: "Success",
+        description: "Your feedback has been submitted for review!",
+      });
 
-          toast({
-            title: "Success",
-            description: "Your feedback has been submitted for review!",
-          });
-
-          setNewFeedback("");
-          setRating(5);
-          getFeedbacks(); // Refresh the list
-        }
-      }
+      setNewFeedback("");
+      setRating(5);
+      getFeedbacks(); // Refresh the list
     } catch (error) {
       console.error('Error submitting feedback:', error);
       toast({
@@ -201,7 +161,7 @@ export default function Feedback() {
             </div>
 
             <Button
-              onClick={submitFeedback}
+              onClick={handleSubmitFeedback}
               disabled={submitting}
               className="w-full bg-gradient-to-r from-neon-purple to-neon-blue hover:from-neon-purple/80 hover:to-neon-blue/80"
             >

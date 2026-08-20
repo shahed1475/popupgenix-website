@@ -3,9 +3,8 @@ import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { Pool } from 'pg';
 import { createAuthMiddleware } from '../auth/middleware.js';
-import { signAuthToken } from '../auth/tokens.js';
 import { errorHandler } from '../lib/httpError.js';
-import { createTestPool, truncateAll } from '../test/setupTestDb.js';
+import { createTestPool, truncateAll, issueTestToken } from '../test/setupTestDb.js';
 import { createProjectsRouter } from './projects.js';
 
 const SECRET = 'test-secret-value-that-is-long-enough';
@@ -14,7 +13,7 @@ let pool: Pool;
 function buildApp() {
   const app = express();
   app.use(express.json());
-  app.use('/api/projects', createProjectsRouter(pool, createAuthMiddleware(SECRET)));
+  app.use('/api/projects', createProjectsRouter(pool, createAuthMiddleware(SECRET, pool)));
   app.use(errorHandler);
   return app;
 }
@@ -47,8 +46,8 @@ describe('projects resource', () => {
       [passwordHash]
     );
 
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
-    const clientAToken = signAuthToken({ sub: clientA.rows[0].id, email: 'a@drickly.test', isAdmin: false }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const clientAToken = await issueTestToken(pool, { sub: clientA.rows[0].id, email: 'a@drickly.test', isAdmin: false }, SECRET, '1h');
 
     const app = buildApp();
 
@@ -70,7 +69,7 @@ describe('projects resource', () => {
     expect(clientAList.body).toHaveLength(1);
     expect(clientAList.body[0].id).toBe(projectId);
 
-    const clientBToken = signAuthToken({ sub: clientB.rows[0].id, email: 'b@drickly.test', isAdmin: false }, SECRET, '1h');
+    const clientBToken = await issueTestToken(pool, { sub: clientB.rows[0].id, email: 'b@drickly.test', isAdmin: false }, SECRET, '1h');
     const clientBGet = await request(app).get(`/api/projects/${projectId}`).set('Authorization', `Bearer ${clientBToken}`);
     expect(clientBGet.status).toBe(404);
 
@@ -100,9 +99,9 @@ describe('projects resource', () => {
       [passwordHash]
     );
 
-    const adminToken = signAuthToken({ sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
-    const clientAToken = signAuthToken({ sub: clientA.rows[0].id, email: 'a@drickly.test', isAdmin: false }, SECRET, '1h');
-    const clientBToken = signAuthToken({ sub: clientB.rows[0].id, email: 'b@drickly.test', isAdmin: false }, SECRET, '1h');
+    const adminToken = await issueTestToken(pool, { sub: admin.rows[0].id, email: 'admin@drickly.test', isAdmin: true }, SECRET, '1h');
+    const clientAToken = await issueTestToken(pool, { sub: clientA.rows[0].id, email: 'a@drickly.test', isAdmin: false }, SECRET, '1h');
+    const clientBToken = await issueTestToken(pool, { sub: clientB.rows[0].id, email: 'b@drickly.test', isAdmin: false }, SECRET, '1h');
 
     const app = buildApp();
 
