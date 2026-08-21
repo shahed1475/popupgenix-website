@@ -34,6 +34,27 @@ services:
     networks:
       - drickly
 
+  # Not a long-running server — invoked on demand, e.g.:
+  #   docker compose run --rm drickly-worker npm run task:research
+  #   docker compose run --rm drickly-worker npm run task:lead_finder
+  #   docker compose run --rm drickly-worker npm run enqueue-csv-import -- <org-id> <source-id> <csv-path>
+  # `docker compose up`/`up -d --build` will build and briefly start it (it prints a
+  # message and exits 0) but never runs a real task on its own — no restart policy, no cron
+  # wired up here. Scheduling automation is a separate, later decision.
+  drickly-worker:
+    build: ./worker
+    container_name: drickly-worker
+    environment:
+      WORKER_DATABASE_URL: postgresql://drickly_app:${DRICKLY_DB_PASSWORD}@drickly-db:5432/drickly
+      AI_PROVIDER: ${WORKER_AI_PROVIDER:-mock}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+    depends_on:
+      drickly-db:
+        condition: service_healthy
+    networks:
+      - drickly
+
   drickly-frontend:
     build: .
     container_name: drickly-frontend
