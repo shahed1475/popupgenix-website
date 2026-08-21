@@ -9,7 +9,10 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "task:research": "node dist/tasks/runResearchTask.js",
-    "task:research:dev": "tsx src/tasks/runResearchTask.ts"
+    "task:research:dev": "tsx src/tasks/runResearchTask.ts",
+    "task:lead_finder": "node dist/tasks/runLeadFinderTask.js",
+    "task:lead_finder:dev": "tsx src/tasks/runLeadFinderTask.ts",
+    "enqueue-csv-import": "tsx scripts/enqueue-csv-import.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.116.0",

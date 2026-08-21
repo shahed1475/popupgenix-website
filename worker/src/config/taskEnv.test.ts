@@ -6,7 +6,7 @@ const DB_URL = "postgresql://user:pass@localhost:5432/b2b";
 describe("loadTaskEnv", () => {
   it("returns the database URL with a default batch size of 5", () => {
     const env = loadTaskEnv({ WORKER_DATABASE_URL: DB_URL });
-    expect(env).toEqual({ databaseUrl: DB_URL, researchBatchSize: 5 });
+    expect(env).toEqual({ databaseUrl: DB_URL, researchBatchSize: 5, leadFinderBatchSize: 100 });
   });
 
   it("throws when WORKER_DATABASE_URL is missing", () => {
@@ -28,5 +28,16 @@ describe("loadTaskEnv", () => {
     expect(() =>
       loadTaskEnv({ WORKER_DATABASE_URL: DB_URL, WORKER_RESEARCH_BATCH_SIZE: "0" })
     ).toThrow(/WORKER_RESEARCH_BATCH_SIZE/);
+  });
+
+  it("accepts a custom positive integer lead finder batch size", () => {
+    const env = loadTaskEnv({ WORKER_DATABASE_URL: DB_URL, WORKER_LEAD_FINDER_BATCH_SIZE: "250" });
+    expect(env.leadFinderBatchSize).toBe(250);
+  });
+
+  it("throws for a non-integer lead finder batch size", () => {
+    expect(() =>
+      loadTaskEnv({ WORKER_DATABASE_URL: DB_URL, WORKER_LEAD_FINDER_BATCH_SIZE: "abc" })
+    ).toThrow(/WORKER_LEAD_FINDER_BATCH_SIZE/);
   });
 });

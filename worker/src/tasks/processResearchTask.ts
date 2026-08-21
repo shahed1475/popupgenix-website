@@ -1,6 +1,7 @@
 import type { Pool } from "pg";
 import type { AIProvider } from "../ai/AIProvider.js";
 import type { ClaimedResearchTask } from "./claimResearchTasks.js";
+import { failTask } from "./failTask.js";
 
 export interface ProcessResearchTaskResult {
   taskId: string;
@@ -121,19 +122,4 @@ export async function processResearchTask(
 
     return failTask(pool, task, message);
   }
-}
-
-async function failTask(
-  pool: Pool,
-  task: ClaimedResearchTask,
-  message: string
-): Promise<ProcessResearchTaskResult> {
-  const attempts = task.attempts + 1;
-  const nextStatus = attempts < task.max_attempts ? "pending" : "failed";
-  await pool.query("UPDATE agent_tasks SET status = $1, attempts = $2 WHERE id = $3", [
-    nextStatus,
-    attempts,
-    task.id,
-  ]);
-  return { taskId: task.id, status: "failed", error: message };
 }

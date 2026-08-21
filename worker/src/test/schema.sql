@@ -1,7 +1,21 @@
+-- worker/src/test/schema.sql
+-- Hand-maintained subset of the production schema (server/db/migrations) for worker-side
+-- integration tests. Re-run on every createTestPool() call, so it drops and rebuilds every table
+-- it owns each time — this is what makes it safe to change shape between runs without requiring
+-- callers to manually reset their local test database.
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TABLE IF NOT EXISTS companies (
+DROP TABLE IF EXISTS agent_runs, agent_tasks, raw_leads, research, contacts, leads, lead_sources, companies CASCADE;
+
+-- A bare default, not a real organizations table/FK: nothing in worker/ enforces cross-org access
+-- (that's Phase 3 of the Supabase-removal roadmap, app-layer only, not this package's concern).
+-- The default keeps every pre-existing test — none of which pass organization_id — working
+-- unmodified; new tests may pass an explicit value to exercise org-scoping.
+
+CREATE TABLE companies (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
   name TEXT NOT NULL,
   domain TEXT,
   industry TEXT,
@@ -14,9 +28,42 @@ CREATE TABLE IF NOT EXISTS companies (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX idx_companies_org_domain ON companies(organization_id, domain) WHERE domain IS NOT NULL;
 
-CREATE TABLE IF NOT EXISTS leads (
+CREATE TABLE lead_sources (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
+  name TEXT NOT NULL,
+  code TEXT NOT NULL,
+  source_type TEXT,
+  config JSONB NOT NULL DEFAULT '{}'::jsonb,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE contacts (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
+  company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  full_name TEXT NOT NULL,
+  title TEXT,
+  email TEXT,
+  phone TEXT,
+  linkedin_url TEXT,
+  is_primary BOOLEAN NOT NULL DEFAULT false,
+  source_id UUID,
+  opted_out BOOLEAN NOT NULL DEFAULT false,
+  opted_out_at TIMESTAMPTZ,
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX idx_contacts_org_email ON contacts(organization_id, email) WHERE email IS NOT NULL;
+
+CREATE TABLE leads (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
   company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   contact_id UUID,
   source_id UUID,
@@ -32,8 +79,9 @@ CREATE TABLE IF NOT EXISTS leads (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS research (
+CREATE TABLE research (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
   subject_type TEXT NOT NULL CHECK (subject_type IN ('company', 'contact')),
   subject_id UUID NOT NULL,
   summary TEXT,
@@ -44,8 +92,27 @@ CREATE TABLE IF NOT EXISTS research (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS agent_tasks (
+CREATE TABLE raw_leads (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
+  source_id UUID NOT NULL REFERENCES lead_sources(id) ON DELETE CASCADE,
+  external_id TEXT NOT NULL,
+  raw_payload JSONB NOT NULL,
+  pipeline_status TEXT NOT NULL DEFAULT 'pending' CHECK (pipeline_status IN (
+    'pending','normalized','cleaned','merged','rejected','errored'
+  )),
+  rejection_reason TEXT,
+  error_message TEXT,
+  lead_id UUID REFERENCES leads(id) ON DELETE SET NULL,
+  discovered_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  processed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX idx_raw_leads_source_external ON raw_leads(source_id, external_id);
+
+CREATE TABLE agent_tasks (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
   task_type TEXT NOT NULL CHECK (task_type IN (
     'strategy','lead_finder','research','qualification','outreach',
     'reply','booking','notification','analytics'
@@ -62,12 +129,15 @@ CREATE TABLE IF NOT EXISTS agent_tasks (
   claimed_by TEXT,
   attempts INTEGER NOT NULL DEFAULT 0,
   max_attempts INTEGER NOT NULL DEFAULT 3,
+  idempotency_key TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX agent_tasks_org_idempotency_key_unique ON agent_tasks (organization_id, idempotency_key) WHERE idempotency_key IS NOT NULL;
 
-CREATE TABLE IF NOT EXISTS agent_runs (
+CREATE TABLE agent_runs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  organization_id UUID NOT NULL DEFAULT '00000000-0000-0000-0000-000000000001',
   task_id UUID NOT NULL REFERENCES agent_tasks(id) ON DELETE CASCADE,
   status TEXT NOT NULL CHECK (status IN ('running', 'succeeded', 'failed')),
   provider TEXT CHECK (provider IS NULL OR provider IN ('mock', 'claude')),
