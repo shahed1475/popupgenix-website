@@ -133,7 +133,7 @@ CREATE TABLE agent_tasks (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE UNIQUE INDEX idx_agent_tasks_idempotency_key ON agent_tasks (organization_id, idempotency_key) WHERE idempotency_key IS NOT NULL;
+CREATE UNIQUE INDEX agent_tasks_org_idempotency_key_unique ON agent_tasks (organization_id, idempotency_key) WHERE idempotency_key IS NOT NULL;
 
 CREATE TABLE agent_runs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,

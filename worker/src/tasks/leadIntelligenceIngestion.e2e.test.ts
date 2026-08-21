@@ -50,11 +50,12 @@ describe("lead intelligence ingestion — end to end", () => {
     const contacts = await pool.query("SELECT full_name, email FROM contacts WHERE organization_id = $1", [ORG_ID]);
     expect(contacts.rows).toEqual([{ full_name: "Jane Doe", email: "jane@acme.com" }]);
 
-    const leads = await pool.query("SELECT status FROM leads WHERE organization_id = $1", [ORG_ID]);
+    const leads = await pool.query("SELECT id, status FROM leads WHERE organization_id = $1", [ORG_ID]);
     expect(leads.rows).toHaveLength(2);
     expect(leads.rows.every((r) => r.status === "new")).toBe(true);
 
     const researchTasks = await pool.query("SELECT payload FROM agent_tasks WHERE task_type = 'research'");
     expect(researchTasks.rows).toHaveLength(2);
+    expect(researchTasks.rows.map((r) => r.payload.lead_id).sort()).toEqual(leads.rows.map((r) => r.id).sort());
   });
 });
