@@ -21,10 +21,10 @@ afterAll(async () => {
   await pool.end();
 });
 
-async function seedSource(sourceType: string) {
+async function seedSource(sourceType: string, config: Record<string, unknown> = {}) {
   const { rows } = await pool.query<{ id: string }>(
-    `INSERT INTO lead_sources (organization_id, name, code, source_type) VALUES ($1, 'Test Source', $2, $3) RETURNING id`,
-    [ORG_ID, `test-${sourceType}`, sourceType]
+    `INSERT INTO lead_sources (organization_id, name, code, source_type, config) VALUES ($1, 'Test Source', $2, $3, $4) RETURNING id`,
+    [ORG_ID, `test-${sourceType}`, sourceType, JSON.stringify(config)]
   );
   return rows[0].id;
 }
@@ -179,5 +179,75 @@ describe("processLeadFinderTask — continuation cursor", () => {
       [`leadfinder:${sourceId}:1`]
     );
     expect(continuations.rows).toHaveLength(1);
+  });
+});
+
+describe("processLeadFinderTask — error containment", () => {
+  it("fails the task via failTask and records a failed agent_run when discovery throws", async () => {
+    // csvAdapter throws before yielding anything when the file exceeds the source's maxRows.
+    const sourceId = await seedSource("csv", { maxRows: 1 });
+    const csvText = CSV_HEADER + "Acme Inc,acme.com,,\nBeta LLC,beta.com,,\n";
+    const task = await seedAndClaimLeadFinderTask(sourceId, { csvText });
+    const registry = createSourceRegistry([csvAdapter]);
+
+    const result = await processLeadFinderTask(pool, registry, task);
+
+    expect(result).toMatchObject({ taskId: task.id, status: "failed", discovered: 0, merged: 0, rejected: 0, errored: 0 });
+    expect(result.error).toMatch(/exceeds maxRows/);
+
+    // Not left stranded at 'in_progress' — failTask reschedules it (attempts < max_attempts).
+    const taskRow = await pool.query("SELECT status, attempts FROM agent_tasks WHERE id = $1", [task.id]);
+    expect(taskRow.rows[0].status).toBe("pending");
+    expect(taskRow.rows[0].attempts).toBe(1);
+
+    const runs = await pool.query("SELECT status, provider, error FROM agent_runs WHERE task_id = $1", [task.id]);
+    expect(runs.rows).toHaveLength(1);
+    expect(runs.rows[0].status).toBe("failed");
+    expect(runs.rows[0].provider).toBeNull();
+    expect(runs.rows[0].error).toMatch(/exceeds maxRows/);
+  });
+
+  it("marks a raw_lead 'errored' and keeps processing the batch when the merge raises a real Postgres error", async () => {
+    // A trigger RAISE is a genuine server-side error: it aborts the transaction, so without the
+    // SAVEPOINT around the merge the 'errored' bookkeeping UPDATE would itself fail with 25P02.
+    await pool.query(`
+      CREATE OR REPLACE FUNCTION test_boom_on_company_insert() RETURNS trigger AS $fn$
+      BEGIN
+        IF NEW.name = 'Boom Corp' THEN
+          RAISE EXCEPTION 'simulated database failure while inserting company';
+        END IF;
+        RETURN NEW;
+      END;
+      $fn$ LANGUAGE plpgsql;
+    `);
+    await pool.query(`
+      CREATE TRIGGER test_boom_on_company_insert BEFORE INSERT ON companies
+      FOR EACH ROW EXECUTE FUNCTION test_boom_on_company_insert();
+    `);
+
+    const sourceId = await seedSource("csv");
+    const csvText = CSV_HEADER + "Boom Corp,boom.com,,\nAcme Inc,acme.com,,\n";
+    const task = await seedAndClaimLeadFinderTask(sourceId, { csvText });
+    const registry = createSourceRegistry([csvAdapter]);
+
+    const result = await processLeadFinderTask(pool, registry, task);
+
+    expect(result).toMatchObject({ status: "succeeded", discovered: 2, merged: 1, rejected: 0, errored: 1 });
+
+    const rawLeads = await pool.query(
+      "SELECT pipeline_status, error_message, lead_id FROM raw_leads WHERE source_id = $1 ORDER BY discovered_at",
+      [sourceId]
+    );
+    expect(rawLeads.rows.map((r) => r.pipeline_status)).toEqual(["errored", "merged"]);
+    expect(rawLeads.rows[0].error_message).toMatch(/simulated database failure/);
+    expect(rawLeads.rows[0].lead_id).toBeNull();
+    expect(rawLeads.rows[1].lead_id).toBeTruthy();
+
+    // The failing record left nothing behind; the surrounding batch still committed normally.
+    const companies = await pool.query("SELECT name FROM companies WHERE organization_id = $1", [ORG_ID]);
+    expect(companies.rows).toEqual([{ name: "Acme Inc" }]);
+
+    await pool.query("DROP TRIGGER IF EXISTS test_boom_on_company_insert ON companies");
+    await pool.query("DROP FUNCTION IF EXISTS test_boom_on_company_insert()");
   });
 });
