@@ -61,7 +61,7 @@ describe("mergeLead", () => {
     expect(company.rows[0]).toEqual({ name: "Acme Inc", industry: "Fintech", country: "US" });
   });
 
-  it("finds an existing contact by organization+email", async () => {
+  it("finds an existing contact by organization+email and keeps the lead on that contact's company", async () => {
     const company = await pool.query("INSERT INTO companies (organization_id, name) VALUES ($1, 'Acme Inc') RETURNING id", [ORG_ID]);
     const existingContact = await pool.query(
       "INSERT INTO contacts (organization_id, company_id, full_name, email) VALUES ($1, $2, 'Jane Doe', 'jane@acme.com') RETURNING id",
@@ -78,6 +78,13 @@ describe("mergeLead", () => {
     );
 
     expect(result.contactId).toBe(existingContact.rows[0].id);
+    // A domain-less merge always inserts a fresh company row, but the ON CONFLICT contact match
+    // never re-points contacts.company_id — so the merge must follow the contact, not the orphan.
+    expect(result.companyId).toBe(company.rows[0].id);
+    const contact = await pool.query("SELECT company_id FROM contacts WHERE id = $1", [result.contactId]);
+    expect(contact.rows[0].company_id).toBe(result.companyId);
+    const lead = await pool.query("SELECT company_id, contact_id FROM leads WHERE id = $1", [result.leadId]);
+    expect(lead.rows[0]).toEqual({ company_id: company.rows[0].id, contact_id: existingContact.rows[0].id });
   });
 
   it("always inserts a fresh company when domain is absent (accepted duplication limitation)", async () => {
