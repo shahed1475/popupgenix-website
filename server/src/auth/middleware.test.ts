@@ -170,6 +170,55 @@ describe('requireOrgMember', () => {
     expect(next).toHaveBeenCalledWith();
     expect(req.membership).toEqual({ organizationId: org.rows[0].id, role: 'member' });
   });
+
+  it('deterministically picks the same organization when two memberships share created_at (inserted in one transaction)', async () => {
+    const orgA = await pool.query(`INSERT INTO organizations (name, slug) VALUES ('Org A', 'org-a') RETURNING id`);
+    const orgB = await pool.query(`INSERT INTO organizations (name, slug) VALUES ('Org B', 'org-b') RETURNING id`);
+    const user = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('tiebreak@b.com', 'h', false) RETURNING id`
+    );
+
+    // Insert both memberships on the same connection inside a single transaction so
+    // Postgres's now() (stable per-transaction) gives them an identical created_at,
+    // reproducing the tie that `id ASC` must break deterministically.
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query(`INSERT INTO memberships (user_id, organization_id, role) VALUES ($1, $2, 'owner')`, [
+        user.rows[0].id,
+        orgA.rows[0].id,
+      ]);
+      await client.query(`INSERT INTO memberships (user_id, organization_id, role) VALUES ($1, $2, 'member')`, [
+        user.rows[0].id,
+        orgB.rows[0].id,
+      ]);
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+
+    const createdAtRows = await pool.query(`SELECT DISTINCT created_at FROM memberships WHERE user_id = $1`, [
+      user.rows[0].id,
+    ]);
+    expect(createdAtRows.rows).toHaveLength(1); // confirms the tie was actually reproduced
+
+    const { requireOrgMember } = createAuthMiddleware(SECRET, pool);
+    const results: Array<string | undefined> = [];
+    for (let i = 0; i < 5; i++) {
+      const req = mockReq();
+      req.user = { sub: user.rows[0].id, email: 'tiebreak@b.com', isAdmin: false, sid: 'session-1' };
+      const next = vi.fn();
+      await requireOrgMember(req, mockRes(), next);
+      expect(next).toHaveBeenCalledWith();
+      results.push(req.membership?.organizationId);
+    }
+
+    expect(results).toHaveLength(5);
+    expect(new Set(results).size).toBe(1); // same org every time, regardless of which one it is
+  });
 });
 
 describe('requirePermission', () => {
