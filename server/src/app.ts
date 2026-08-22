@@ -3,6 +3,7 @@ import type { Pool } from 'pg';
 import { createAuthMiddleware } from './auth/middleware.js';
 import { createAuthRoutes } from './auth/authRoutes.js';
 import { createProjectsRouter } from './resources/projects.js';
+import { createCompaniesRouter } from './resources/companies.js';
 import { createServicesRouter } from './resources/services.js';
 import { createHomepageContentRouter } from './resources/homepageContent.js';
 import { createContactSubmissionsRouter } from './resources/contactSubmissions.js';
@@ -34,6 +35,7 @@ export function createApp(
 
   app.use('/api/auth', createAuthRoutes(pool, auth, jwtSecret, jwtExpiresIn, new ConsoleEmailSender(), nodeEnv));
   app.use('/api/projects', createProjectsRouter(pool, auth));
+  app.use('/api/companies', createCompaniesRouter(pool, auth));
   app.use('/api/services', createServicesRouter(pool, auth));
   app.use('/api/homepage-content', createHomepageContentRouter(pool, auth));
   app.use('/api/contact-submissions', createContactSubmissionsRouter(pool, auth));
