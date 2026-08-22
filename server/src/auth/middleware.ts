@@ -2,12 +2,20 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import type { Pool } from 'pg';
 import { HttpError } from '../lib/httpError.js';
 import { verifyAuthToken, type AuthTokenPayload } from './tokens.js';
+import type { Permission, Role } from './permissions.js';
+import { hasPermission } from './permissions.js';
+
+export interface Membership {
+  organizationId: string;
+  role: Role;
+}
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
       user?: AuthTokenPayload;
+      membership?: Membership;
     }
   }
 }
@@ -16,6 +24,8 @@ export interface AuthMiddleware {
   optionalAuth: RequestHandler;
   requireAuth: RequestHandler;
   requireAdmin: RequestHandler;
+  requireOrgMember: RequestHandler;
+  requirePermission: (permission: Permission) => RequestHandler;
 }
 
 function extractToken(req: Request): string | undefined {
@@ -94,5 +104,41 @@ export function createAuthMiddleware(secret: string, pool: Pool): AuthMiddleware
     next();
   }
 
-  return { optionalAuth, requireAuth, requireAdmin };
+  async function requireOrgMember(req: Request, _res: Response, next: NextFunction): Promise<void> {
+    if (!req.user) {
+      next(new HttpError(401, 'Authentication required'));
+      return;
+    }
+    try {
+      const result = await pool.query<{ organization_id: string; role: Role }>(
+        `SELECT organization_id, role FROM memberships WHERE user_id = $1 ORDER BY created_at ASC LIMIT 1`,
+        [req.user.sub]
+      );
+      const membership = result.rows[0];
+      if (!membership) {
+        next(new HttpError(403, 'Not a member of any organization'));
+        return;
+      }
+      req.membership = { organizationId: membership.organization_id, role: membership.role };
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  function requirePermission(permission: Permission): RequestHandler {
+    return (req: Request, _res: Response, next: NextFunction): void => {
+      if (!req.membership) {
+        next(new HttpError(403, 'Organization membership required'));
+        return;
+      }
+      if (!hasPermission(req.membership.role, permission)) {
+        next(new HttpError(403, 'Insufficient permissions'));
+        return;
+      }
+      next();
+    };
+  }
+
+  return { optionalAuth, requireAuth, requireAdmin, requireOrgMember, requirePermission };
 }

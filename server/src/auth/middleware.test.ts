@@ -138,3 +138,64 @@ describe('auth middleware', () => {
     expect(next).toHaveBeenCalledWith();
   });
 });
+
+describe('requireOrgMember', () => {
+  it('rejects a user with no organization membership', async () => {
+    const user = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('nomembership@b.com', 'h', false) RETURNING id`
+    );
+    const { requireOrgMember } = createAuthMiddleware(SECRET, pool);
+    const req = mockReq();
+    req.user = { sub: user.rows[0].id, email: 'nomembership@b.com', isAdmin: false, sid: 'session-1' };
+    const next = vi.fn();
+    await requireOrgMember(req, mockRes(), next);
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ status: 403 }));
+    expect(req.membership).toBeUndefined();
+  });
+
+  it('attaches the membership for a user who belongs to one organization', async () => {
+    const org = await pool.query(`INSERT INTO organizations (name, slug) VALUES ('Acme', 'acme') RETURNING id`);
+    const user = await pool.query(
+      `INSERT INTO users (email, password_hash, is_admin) VALUES ('member@acme.test', 'h', false) RETURNING id`
+    );
+    await pool.query(`INSERT INTO memberships (user_id, organization_id, role) VALUES ($1, $2, 'member')`, [
+      user.rows[0].id,
+      org.rows[0].id,
+    ]);
+    const { requireOrgMember } = createAuthMiddleware(SECRET, pool);
+    const req = mockReq();
+    req.user = { sub: user.rows[0].id, email: 'member@acme.test', isAdmin: false, sid: 'session-1' };
+    const next = vi.fn();
+    await requireOrgMember(req, mockRes(), next);
+    expect(next).toHaveBeenCalledWith();
+    expect(req.membership).toEqual({ organizationId: org.rows[0].id, role: 'member' });
+  });
+});
+
+describe('requirePermission', () => {
+  it('rejects when there is no membership on the request', () => {
+    const { requirePermission } = createAuthMiddleware(SECRET, pool);
+    const req = mockReq();
+    const next = vi.fn();
+    requirePermission('companies.read')(req, mockRes(), next);
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ status: 403 }));
+  });
+
+  it('rejects a member attempting a write permission', () => {
+    const { requirePermission } = createAuthMiddleware(SECRET, pool);
+    const req = mockReq();
+    req.membership = { organizationId: 'org-1', role: 'member' };
+    const next = vi.fn();
+    requirePermission('companies.write')(req, mockRes(), next);
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({ status: 403 }));
+  });
+
+  it('allows an owner a write permission', () => {
+    const { requirePermission } = createAuthMiddleware(SECRET, pool);
+    const req = mockReq();
+    req.membership = { organizationId: 'org-1', role: 'owner' };
+    const next = vi.fn();
+    requirePermission('companies.write')(req, mockRes(), next);
+    expect(next).toHaveBeenCalledWith();
+  });
+});
