@@ -111,7 +111,7 @@ export function createAuthMiddleware(secret: string, pool: Pool): AuthMiddleware
     }
     try {
       const result = await pool.query<{ organization_id: string; role: Role }>(
-        `SELECT organization_id, role FROM memberships WHERE user_id = $1 ORDER BY created_at ASC LIMIT 1`,
+        `SELECT organization_id, role FROM memberships WHERE user_id = $1 ORDER BY created_at ASC, id ASC LIMIT 1`,
         [req.user.sub]
       );
       const membership = result.rows[0];
