@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/popupge2/public_html/
+    - cd /home/popupge2/repositories/popupgenix-website
+    - npm install
+    - npm run build
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R dist/. $DEPLOYPATH
