@@ -1,9 +1,8 @@
 ---
 deployment:
   tasks:
+    - export PATH=/opt/alt/alt-nodejs22/root/usr/bin:$PATH
     - export DEPLOYPATH=/home/popupge2/public_html/
-    - cd /home/popupge2/repositories/popupgenix-website
-    - npm install
-    - npm run build
-    - /bin/mkdir -p $DEPLOYPATH
+    - corepack npm install
+    - corepack npm run build
     - /bin/cp -R dist/. $DEPLOYPATH
