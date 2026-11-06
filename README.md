@@ -1,65 +1,34 @@
-# Welcome to your Lovable project
+# PopupGenix Website
 
-## Project info
+The marketing website and client portal for PopupGenix, a custom software and AI automation company. Built with React, TypeScript and Supabase.
 
+## What is on the site
 
+- Service pages: web development, mobile apps, AI and ML, custom software, CRM and SaaS, cloud and DevOps
+- Pricing, contact form, blog and individual blog posts
+- A client portal and an admin panel backed by Supabase
+- Cookie, privacy, terms and refund policy pages
+- Animated landing experience with Framer Motion and a Spline 3D scene
 
-## How can I edit this code?
+## Backend
 
-There are several ways of editing your application.
+Supabase provides the database, authentication and edge functions. The functions send notifications for new messages, client replies and client updates. Schema changes live in `supabase/migrations`.
 
-**Use your preferred IDE**
+## Tech stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes.
+React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Framer Motion, React Query, React Router, Supabase, Vitest.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Run it locally
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```
+cp .env.example .env
+npm install
 npm run dev
+npm test
 ```
 
-**Edit a file directly in GitHub**
+Add your Supabase project URL and public (anon) key to `.env`. Never commit real secrets.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Deployment
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+The repo includes a Dockerfile with an nginx config for container hosting, and a `.cpanel.yml` for cPanel deployment. `SECURITY_FIX_REPORT.md` records the security review and fixes.
