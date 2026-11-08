@@ -35,6 +35,14 @@ const projects = [
     image: "/portfolio/inno.jpg",
     tags: ["AI", "Automation", "Business", "Enterprise"],
     link: "https://inno-ai-main-qk95hz.laravel.cloud/"
+  },
+  {
+    title: "AutoLead Manager",
+    category: "Lead Generation",
+    description: "All-in-one sales growth engine: lead discovery, email campaigns, pipeline and client tracking in one dashboard.",
+    image: "data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20400%20224%22%3E%3Crect%20width=%22400%22%20height=%22224%22%20fill=%22%234f46e5%22/%3E%3Ctext%20x=%22200%22%20y=%22122%22%20font-size=%2236%22%20fill=%22white%22%20text-anchor=%22middle%22%20font-family=%22sans-serif%22%3EAutoLead%3C/text%3E%3C/svg%3E",
+    tags: ["Automation", "CRM", "React", "Lead Gen"],
+    link: "https://autolead-manager.pages.dev/"
   }
 ];
 
