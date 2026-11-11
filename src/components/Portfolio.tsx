@@ -30,11 +30,11 @@ const projects = [
   },
   {
     title: "Inno AI",
-    category: "Business AI",
-    description: "Comprehensive AI suite for business automation, from customer service to process optimization.",
+    category: "Compliance Platform",
+    description: "Ingredient compliance checker for EU and US food additive rules, with substitution ideas. Runs live on Cloudflare Workers with a D1 database.",
     image: "/portfolio/inno.jpg",
-    tags: ["AI", "Automation", "Business", "Enterprise"],
-    link: "https://inno-ai-main-qk95hz.laravel.cloud/"
+    tags: ["TypeScript", "Cloudflare Workers", "D1", "SQLite"],
+    link: "https://inno-ai.shahedalfahad19.workers.dev/"
   },
   {
     title: "AutoLead Manager",
