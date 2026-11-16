@@ -34,7 +34,7 @@ const projects = [
     description: "Ingredient compliance checker for EU and US food additive rules, with substitution ideas. Runs live on Cloudflare Workers with a D1 database.",
     image: "/portfolio/inno.jpg",
     tags: ["TypeScript", "Cloudflare Workers", "D1", "SQLite"],
-    link: "https://inno-ai.shahedalfahad19.workers.dev/"
+    link: "https://inno-ai.abdullah-al-fahad.workers.dev/"
   },
   {
     title: "AutoLead Manager",
