@@ -65,13 +65,18 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     .map((m) => ({ role: m.role, content: m.content.slice(0, 1000) }));
   if (!messages.length || messages[messages.length - 1].role !== "user") return json({ error: "bad_request" }, 400);
 
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
-    body: JSON.stringify({ model: env.CHAT_MODEL || "claude-sonnet-5-5", max_tokens: 400, system: SYSTEM_PROMPT, messages }),
-  });
-  if (!res.ok) return json({ error: "upstream" }, 502);
-  const data = (await res.json()) as { content?: { type: string; text?: string }[] };
-  const reply = (data.content ?? []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+  let reply = "";
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+      body: JSON.stringify({ model: env.CHAT_MODEL || "claude-sonnet-5-5", max_tokens: 400, system: SYSTEM_PROMPT, messages }),
+    });
+    if (!res.ok) return json({ error: "upstream" }, 502);
+    const data = (await res.json()) as { content?: { type: string; text?: string }[] };
+    reply = (data.content ?? []).filter((c) => c.type === "text").map((c) => c.text).join("").trim();
+  } catch {
+    return json({ error: "upstream" }, 502);
+  }
   return json({ reply: reply || "Sorry, I could not answer that. Please use the contact form." });
 };

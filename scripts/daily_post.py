@@ -37,7 +37,16 @@ Return ONLY JSON: {{"title": str (max 70 chars), "excerpt": str (max 160 chars),
     r.raise_for_status()
     text = "".join(c.get("text", "") for c in r.json()["content"])
     m = re.search(r"\{.*\}", text, re.S)
-    return json.loads(m.group(0))
+    if not m:
+        sys.exit("Model returned no JSON; nothing was posted.")
+    try:
+        post = json.loads(m.group(0))
+    except json.JSONDecodeError as e:
+        sys.exit(f"Model returned invalid JSON ({e}); nothing was posted.")
+    missing = {"title", "excerpt", "cover_kicker", "html"} - post.keys()
+    if missing:
+        sys.exit(f"Model JSON is missing {sorted(missing)}; nothing was posted.")
+    return post
 
 def esc(s): return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
