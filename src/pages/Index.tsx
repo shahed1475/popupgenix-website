@@ -46,7 +46,7 @@ export default function Index() {
   const reduce = useReducedMotion();
   const fade = reduce ? {} : { initial: { opacity: 0, y: 18 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.5 } };
   const home = STATIC_ROUTES[0];
-  const featured = CASE_STUDIES.slice(0, 3);
+  const featured = CASE_STUDIES.filter((c) => c.status !== "In development").slice(0, 3);
 
   return (
     <Layout>

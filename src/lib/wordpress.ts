@@ -60,8 +60,11 @@ export const textOnly = (html: string) =>
 export const readingMinutes = (html: string) =>
   Math.max(1, Math.round(textOnly(html).split(/\s+/).length / 220));
 
+/** Branded cover used when a post has no featured image. */
+export const FALLBACK_COVER = "/blog-cover.png";
+
 export const featuredImage = (p: WPPost) =>
-  p._embedded?.["wp:featuredmedia"]?.[0]?.source_url ?? p.jetpack_featured_media_url ?? null;
+  p._embedded?.["wp:featuredmedia"]?.[0]?.source_url ?? p.jetpack_featured_media_url ?? FALLBACK_COVER;
 
 export const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });

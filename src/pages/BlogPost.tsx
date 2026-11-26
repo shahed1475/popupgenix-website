@@ -29,7 +29,7 @@ export default function BlogPost() {
         title={title}
         description={desc}
         path={`/blog/${post.slug}`}
-        image={img ?? undefined}
+        image={img.startsWith("/") ? `${SITE.url}${img}` : img}
         type="article"
         jsonLd={{
           "@context": "https://schema.org",
@@ -37,7 +37,7 @@ export default function BlogPost() {
           headline: title,
           datePublished: post.date,
           dateModified: post.modified,
-          image: img ?? undefined,
+          image: img.startsWith("/") ? `${SITE.url}${img}` : img,
           author: { "@type": "Organization", name: SITE.name },
           publisher: { "@type": "Organization", name: SITE.name, logo: { "@type": "ImageObject", url: `${SITE.url}/popupgenix-logo.svg` } },
           mainEntityOfPage: `${SITE.url}/blog/${post.slug}`,
@@ -52,7 +52,7 @@ export default function BlogPost() {
           <p className="mt-4 text-sm text-muted-foreground">
             <time dateTime={post.date}>{fmtDate(post.date)}</time> · {readingMinutes(post.content.rendered)} min read
           </p>
-          {img && <img src={img} alt="" width={1200} height={630} className="mt-8 w-full rounded-2xl" />}
+          {<img src={img} alt="" width={1200} height={630} className="mt-8 w-full rounded-2xl" />}
           <div className="blog-content mt-10" dangerouslySetInnerHTML={{ __html: cleanHtml(post.content.rendered) }} />
           <div className="mt-16 rounded-2xl border border-border bg-card p-8">
             <h2 className="text-xl font-semibold">Enjoyed this? Get the next one by email.</h2>

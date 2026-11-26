@@ -385,6 +385,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Data model with 38 models, installable as a web app",
     ],
     stack: ["Next.js", "TypeScript", "Prisma", "NextAuth", "Tailwind CSS"],
+    image: "/portfolio/fluxpos.png",
     metaDescription:
       "FluxPOS: a multi-tenant POS and vendor settlement platform for restaurants and food markets, built by PopupGenix.",
   },
@@ -414,23 +415,23 @@ export const CASE_STUDIES: CaseStudy[] = [
     slug: "inno-ai",
     name: "Inno AI",
     tag: "Compliance platform",
-    status: "Live",
+    status: "In development",
     summary:
-      "An ingredient compliance checker for EU and US food additive rules, with substitution ideas.",
+      "Under development: an ingredient compliance checker for EU and US food additive rules. Not yet public.",
     problem:
       "Food producers selling in both the EU and US have to check ingredients against two different additive rule sets, which is slow and easy to get wrong.",
     solution:
-      "A web tool that checks ingredients against EU and US food additive rules and suggests substitutions, running live at the edge.",
+      "A web tool that checks ingredients against EU and US food additive rules and suggests substitutions. Currently being built and tested.",
     highlights: [
       "Checks ingredients against EU and US additive rules",
       "Suggests substitution ideas when an ingredient is a problem",
       "Runs on Cloudflare Workers with a D1 database",
+      "Under development: not yet available to the public",
     ],
     stack: ["TypeScript", "Cloudflare Workers", "D1", "SQLite"],
-    image: "/portfolio/inno.jpg",
-    url: "https://inno-ai.abdullah-al-fahad.workers.dev/",
+    image: "/portfolio/inno-ai.png",
     metaDescription:
-      "Inno AI: an EU and US food additive compliance checker running on Cloudflare Workers, built by PopupGenix.",
+      "Inno AI: an EU and US food additive compliance checker, currently under development at PopupGenix.",
   },
   {
     slug: "clarify-ai",
@@ -513,6 +514,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "Currently in the architecture and foundations phase",
     ],
     stack: ["Python", "FastAPI", "PostgreSQL + pgvector", "Redis", "Docker"],
+    image: "/portfolio/ai-sales-employee.png",
     metaDescription:
       "PopupGenix AI Sales Employee: our in-development platform for configurable AI voice sales agents.",
   },
@@ -621,7 +623,7 @@ export const STATIC_ROUTES: RouteMeta[] = [
     path: "/work",
     title: "Selected Work and Case Studies",
     description:
-      "Platforms, AI products and automation systems built by PopupGenix: FluxPOS, AutoLead Manager, Inno AI and more.",
+      "Platforms, AI products and automation systems built by PopupGenix: FluxPOS, AutoLead Manager, Clarify AI and more.",
     priority: 0.9,
   },
   {
