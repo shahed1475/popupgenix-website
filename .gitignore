@@ -34,3 +34,5 @@ dev-server.err.log
 *.sw?
 
 .worktrees/
+daily-cover.png
+__pycache__/
