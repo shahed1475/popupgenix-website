@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Cookie, Shield, Settings, Info } from "lucide-react";
 import { Link } from "react-router-dom";
-import ContactSection from "@/components/ContactSection";
+import { CtaBand } from "@/components/site/ui";
 
 const CookiePolicy = () => {
   return (
@@ -207,11 +207,7 @@ const CookiePolicy = () => {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <ContactSection
-        title="Still Have Questions?"
-        subtitle="Contact us for more information about our cookie policy or data practices."
-      />
+      <CtaBand title="Still have questions?" body="Contact us for more information about our cookie policy or data practices." />
     </div>
   );
 };
