@@ -57,7 +57,7 @@ export default function Blog() {
                       )}
                       <div className="flex flex-1 flex-col p-6">
                         <time dateTime={p.date} className="text-xs text-muted-foreground">{fmtDate(p.date)}</time>
-                        <h2 className="mt-2 text-xl font-semibold leading-snug" dangerouslySetInnerHTML={{ __html: textOnly(p.title.rendered) }} />
+                        <h2 className="mt-2 text-xl font-semibold leading-snug">{textOnly(p.title.rendered)}</h2>
                         <p className="mt-3 line-clamp-3 flex-1 text-sm text-muted-foreground">{textOnly(p.excerpt.rendered)}</p>
                         <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary">Read article <ArrowRight className="h-4 w-4" aria-hidden /></span>
                       </div>

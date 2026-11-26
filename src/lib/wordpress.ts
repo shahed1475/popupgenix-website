@@ -42,8 +42,20 @@ export function cleanHtml(html: string): string {
   });
 }
 
+function decodeEntities(value: string): string {
+  if (typeof document === "undefined") return value;
+  const el = document.createElement("textarea");
+  el.innerHTML = value;
+  return el.value;
+}
+
+/** Plain text from WordPress HTML. Decodes twice because some posts are double-encoded (&amp;nbsp;). */
 export const textOnly = (html: string) =>
-  DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }).replace(/&hellip;|\[…\]|\[&hellip;\]/g, "…").trim();
+  decodeEntities(decodeEntities(DOMPurify.sanitize(html, { ALLOWED_TAGS: [] })))
+    .replace(/\u00a0/g, " ")
+    .replace(/\[…\]|\[&hellip;\]/g, "…")
+    .replace(/\s+/g, " ")
+    .trim();
 
 export const readingMinutes = (html: string) =>
   Math.max(1, Math.round(textOnly(html).split(/\s+/).length / 220));
