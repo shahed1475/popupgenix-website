@@ -80,7 +80,7 @@ const PrivacyPolicy = () => {
           <CardHeader>
             <div className="flex items-center gap-3 mb-4">
               <Shield className="w-8 h-8 text-primary" />
-              <CardTitle className="text-3xl">🔒 Privacy Policy</CardTitle>
+              <CardTitle className="text-3xl">Privacy Policy</CardTitle>
             </div>
             <CardDescription className="text-base">
               Last Updated: {new Date().toLocaleDateString()}
@@ -292,7 +292,7 @@ const PrivacyPolicy = () => {
           </p>
           <div className="mt-6 pt-6 border-t border-border/30">
             <p className="text-sm text-muted-foreground">
-              © 2025 PopupGenix.com – All Rights Reserved
+              © {new Date().getFullYear()} PopupGenix.com – All Rights Reserved
             </p>
           </div>
         </div>
