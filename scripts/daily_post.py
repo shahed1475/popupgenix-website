@@ -66,17 +66,30 @@ display:flex;flex-direction:column;justify-content:center;padding:0 130px">
 def main():
     post = draft_post(recent_titles())
     cover = ROOT / "daily-cover.png"
-    render_cover(post["title"], post["cover_kicker"], cover)
+    try:
+        render_cover(post["title"], post["cover_kicker"], cover)
+    except Exception as e:
+        sys.exit(f"Cover render failed ({e}); nothing was posted.")
     print("Drafted:", post["title"])
     if os.environ.get("DRY_RUN"):
         print(post["excerpt"]); return
     h = {"Authorization": f"Bearer {os.environ['WPCOM_TOKEN']}"}
-    with open(cover, "rb") as f:
-        m = requests.post(f"{API}/media", headers={**h, "Content-Disposition": 'attachment; filename="cover.png"', "Content-Type": "image/png"}, data=f.read(), timeout=120)
-    m.raise_for_status(); media_id = m.json()["id"]
-    p = requests.post(f"{API}/posts", headers=h, timeout=60, json={
-        "title": post["title"], "content": post["html"], "excerpt": post["excerpt"], "status": STATUS, "featured_media": media_id})
-    p.raise_for_status(); print("WordPress post:", p.json().get("link"), "status:", STATUS)
+    media_id = None
+    try:
+        with open(cover, "rb") as f:
+            m = requests.post(f"{API}/media", headers={**h, "Content-Disposition": 'attachment; filename="cover.png"', "Content-Type": "image/png"}, data=f.read(), timeout=120)
+        m.raise_for_status(); media_id = m.json()["id"]
+        p = requests.post(f"{API}/posts", headers=h, timeout=60, json={
+            "title": post["title"], "content": post["html"], "excerpt": post["excerpt"], "status": STATUS, "featured_media": media_id})
+        p.raise_for_status()
+    except (requests.RequestException, KeyError, ValueError) as e:
+        if media_id is not None:  # post failed after upload: remove the orphaned cover
+            try:
+                requests.delete(f"{API}/media/{media_id}", headers=h, params={"force": "true"}, timeout=30)
+            except requests.RequestException:
+                pass
+        sys.exit(f"WordPress upload failed ({e}); nothing was posted.")
+    print("WordPress post:", p.json().get("link"), "status:", STATUS)
 
 if __name__ == "__main__":
     sys.exit(main())
