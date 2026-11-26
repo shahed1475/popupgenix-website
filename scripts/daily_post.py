@@ -69,7 +69,10 @@ def cf_run(model, messages, max_tokens, temperature=0.4):
             last = f"{r.status_code} {r.text[:120]}"; time.sleep(5 * (attempt + 1)); continue
         if not r.ok:
             raise RuntimeError(f"{model}: HTTP {r.status_code} {r.text[:200]}")
-        res = (r.json().get("result") or {})
+        try:
+            res = (r.json().get("result") or {})
+        except ValueError:
+            last = f"non-JSON response: {r.text[:120]}"; continue
         text = res.get("response") or ((res.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
         if isinstance(text, str) and text.strip():
             return text
@@ -204,7 +207,7 @@ def background_image(title):
         r = requests.post(f"{CF}/{IMAGE_MODEL}", timeout=120, headers={"Authorization": f"Bearer {os.environ['CF_API_TOKEN']}"},
             json={"prompt": "Abstract dark blue and cyan gradient light streaks, soft glow, minimal, premium technology backdrop, "
                             "no text, no letters, no logos, no people", "steps": 4})
-        b64 = (r.json().get("result") or {}).get("image")
+        b64 = ((r.json() or {}).get("result") or {}).get("image")
         return f"data:image/jpeg;base64,{b64}" if r.ok and b64 else None
     except Exception as e:
         print(f"Background skipped ({e}).", file=sys.stderr)
