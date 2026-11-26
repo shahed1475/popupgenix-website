@@ -1,0 +1,765 @@
+{
+  "hash": "3a927e7b64b0f568",
+  "chunks": [
+    {
+      "id": "company",
+      "kind": "company",
+      "title": "About PopupGenix",
+      "keywords": [
+        "popupgenix",
+        "company",
+        "who",
+        "about",
+        "studio",
+        "founder",
+        "albuquerque",
+        "services",
+        "offer",
+        "do"
+      ],
+      "text": "PopupGenix is a founder-led software studio in Albuquerque, NM (founded 2024). It builds AI sales agents, custom software, automation, websites, mobile apps, CRM and SaaS tools, and cloud/DevOps for growing businesses worldwide."
+    },
+    {
+      "id": "pricing",
+      "kind": "pricing",
+      "title": "Pricing",
+      "keywords": [
+        "price",
+        "pricing",
+        "cost",
+        "costs",
+        "how much",
+        "rate",
+        "fee",
+        "fees",
+        "quote",
+        "budget",
+        "plan",
+        "plans",
+        "monthly",
+        "starter",
+        "enterprise",
+        "cheap",
+        "expensive",
+        "afford"
+      ],
+      "text": "Starter is $500 per month: Ongoing development and automation hours for small teams, with weekly progress updates and email support. Project work is a custom quote: A defined build such as an AI agent, portal or website. Discovery and a written scope come first, then design, build and launch, with 30-day post-launch support. The client owns the code. Enterprise is custom: Larger platforms, multi-tenant products and long-term partnerships, with a dedicated team and roadmap. No other price is published."
+    },
+    {
+      "id": "contact",
+      "kind": "contact",
+      "title": "Contact",
+      "keywords": [
+        "contact",
+        "email",
+        "phone",
+        "call",
+        "reach",
+        "talk",
+        "speak",
+        "human",
+        "person",
+        "whatsapp",
+        "book",
+        "meeting",
+        "consultation"
+      ],
+      "text": "Email hello@popupgenix.com, phone +1 479 689 1012, or the contact form at /contact. Replies come within one business day."
+    },
+    {
+      "id": "service-ai-sales-agents",
+      "kind": "service",
+      "title": "AI Sales Agents",
+      "keywords": [
+        "ai",
+        "agent",
+        "chatbot",
+        "bot",
+        "sales",
+        "lead",
+        "qualify",
+        "qualification",
+        "booking",
+        "book",
+        "voice",
+        "whatsapp",
+        "receptionist",
+        "answer",
+        "calls",
+        "crm",
+        "calendar",
+        "follow-up",
+        "followup"
+      ],
+      "text": "AI Sales Agents: AI sales agents answer every enquiry instantly on your website, WhatsApp or phone, qualify leads against your own criteria, book meetings into your calendar, and log summaries in your CRM. A human takes over for anything sensitive. Built for service businesses, agencies, clinics, real estate teams and B2B companies that lose leads to slow follow-up. A focused website chat agent can usually be live within a few weeks; voice and multi-channel agents are scoped after a discovery call."
+    },
+    {
+      "id": "service-custom-software",
+      "kind": "service",
+      "title": "Custom Software",
+      "keywords": [
+        "custom",
+        "software",
+        "platform",
+        "saas",
+        "internal",
+        "tool",
+        "dashboard",
+        "billing",
+        "ordering",
+        "spreadsheet",
+        "build",
+        "product",
+        "mvp",
+        "code",
+        "own"
+      ],
+      "text": "Custom Software: Custom web platforms, internal tools, dashboards and SaaS products designed around how the business works. Discovery and a written scope come before any build. Includes database design, API, admin dashboard, authentication and roles, automated tests and documented deployment. The client owns the source code and the infrastructure accounts. Existing codebases can be audited and extended."
+    },
+    {
+      "id": "service-ai-automation",
+      "kind": "service",
+      "title": "AI and Automation",
+      "keywords": [
+        "automation",
+        "automate",
+        "workflow",
+        "n8n",
+        "document",
+        "processing",
+        "reporting",
+        "extraction",
+        "classification",
+        "summarisation",
+        "summarization",
+        "repetitive",
+        "manual",
+        "data entry",
+        "zapier"
+      ],
+      "text": "AI and Automation: Workflow automation and practical AI features for lead handling, document processing, reporting and follow-ups. A process audit comes first. AI is only used where it measurably helps; if a plain rule or script does the job, that is used instead. Includes error handling, monitoring, evaluation on real data and a support window after go-live. Data privacy is designed in, and self-hosted models can be used where required."
+    },
+    {
+      "id": "service-web-development",
+      "kind": "service",
+      "title": "Web Development",
+      "keywords": [
+        "website",
+        "web",
+        "site",
+        "landing",
+        "seo",
+        "redesign",
+        "cms",
+        "blog",
+        "wordpress",
+        "fast",
+        "speed",
+        "accessibility",
+        "marketing",
+        "ecommerce",
+        "shop",
+        "store"
+      ],
+      "text": "Web Development: Fast, accessible, search-friendly websites and web apps. Includes a design system, responsive layouts, SEO metadata, sitemap and structured data, CMS or WordPress blog integration, analytics, and deployment. Redesigns keep what already ranks and converts. Content can be edited by the client's own team."
+    },
+    {
+      "id": "service-mobile-apps",
+      "kind": "service",
+      "title": "Mobile Apps",
+      "keywords": [
+        "mobile",
+        "app",
+        "ios",
+        "android",
+        "iphone",
+        "flutter",
+        "react native",
+        "expo",
+        "cross-platform",
+        "store",
+        "push",
+        "notification"
+      ],
+      "text": "Mobile Apps: Cross-platform iOS and Android apps from one codebase using React Native and Expo, with a secure backend, push notifications, analytics and App Store and Google Play submission support. Native is only recommended when the product genuinely needs it. Flutter and fully native Swift or Kotlin apps are not listed services."
+    },
+    {
+      "id": "service-crm-saas",
+      "kind": "service",
+      "title": "CRM and SaaS Tools",
+      "keywords": [
+        "crm",
+        "saas",
+        "portal",
+        "client portal",
+        "subscription",
+        "multi-tenant",
+        "billing",
+        "roles",
+        "analytics",
+        "lead management",
+        "integrate",
+        "integration"
+      ],
+      "text": "CRM and SaaS Tools: CRMs, client portals, lead-management systems and subscription products with multi-tenant architecture, role-based access, billing and plan management, email notifications and activity logs. Can integrate with the CRM a client already uses, or replace it."
+    },
+    {
+      "id": "service-cloud-devops",
+      "kind": "service",
+      "title": "Cloud and DevOps",
+      "keywords": [
+        "cloud",
+        "devops",
+        "ci",
+        "cd",
+        "deployment",
+        "deploy",
+        "docker",
+        "monitoring",
+        "infrastructure",
+        "aws",
+        "gcp",
+        "cloudflare",
+        "terraform",
+        "pipeline",
+        "backup",
+        "hosting"
+      ],
+      "text": "Cloud and DevOps: CI/CD pipelines, Docker and environment configuration, monitoring and alerting, backup and recovery plans, and cost-aware cloud infrastructure on Cloudflare, AWS or GCP. Existing setups can be taken over after an audit that fixes the highest-risk issues first."
+    },
+    {
+      "id": "process",
+      "kind": "process",
+      "title": "Process",
+      "keywords": [
+        "process",
+        "how",
+        "work",
+        "steps",
+        "timeline",
+        "scope",
+        "workflow",
+        "weekly",
+        "updates",
+        "start",
+        "begin",
+        "onboarding",
+        "discovery",
+        "launch",
+        "support"
+      ],
+      "text": "Five steps. Discover: a short call to understand goals and where time or leads are lost, then a written scope and a fixed or phased quote. Design: flows, data and interface mapped and signed off before building. Build: small visible increments with automated tests, code review and weekly updates. Launch: deployment, monitoring and a handover session. Support: a support window after launch and optional monthly retainers. Clients own the code."
+    },
+    {
+      "id": "case-fluxpos",
+      "kind": "case",
+      "title": "FluxPOS",
+      "keywords": [
+        "fluxpos",
+        "pos",
+        "point of sale",
+        "restaurant",
+        "food",
+        "market",
+        "vendor",
+        "settlement",
+        "inventory",
+        "orders",
+        "multi-tenant"
+      ],
+      "text": "FluxPOS is a built multi-tenant point-of-sale and operations platform for restaurants and multi-vendor food markets: orders, tables and tabs with live updates, menus with recipes linked to ingredients, inventory and waste tracking, vendor settlement with commissions and payouts, role-based access, audit log and subscription billing. Built with Next.js, TypeScript, Prisma and Tailwind CSS. Status: Built."
+    },
+    {
+      "id": "case-autolead",
+      "kind": "case",
+      "title": "AutoLead Manager",
+      "keywords": [
+        "autolead",
+        "hom",
+        "lead generation",
+        "leads",
+        "email campaigns",
+        "pipeline",
+        "outreach",
+        "prospect"
+      ],
+      "text": "AutoLead Manager (also called HOM) is a live sales growth engine: lead discovery, email campaigns, pipeline and client tracking in one dashboard. It is the foundation for the AI sales agent workflow. Status: Live. Link: https://autolead-manager.pages.dev/"
+    },
+    {
+      "id": "case-clarify",
+      "kind": "case",
+      "title": "Clarify AI",
+      "keywords": [
+        "clarify",
+        "data analysis",
+        "analytics",
+        "insights",
+        "datasets"
+      ],
+      "text": "Clarify AI is a live AI-powered data analysis platform that turns complex datasets into clear, actionable insights for decision makers. Status: Live. Link: https://www.clarify.ai/"
+    },
+    {
+      "id": "case-klevere",
+      "kind": "case",
+      "title": "Klevere AI",
+      "keywords": [
+        "klevere",
+        "business intelligence",
+        "bi",
+        "reporting",
+        "predictive"
+      ],
+      "text": "Klevere AI is a live business intelligence SaaS platform with automated reporting and predictive analytics on company data. Status: Live. Link: https://www.klevere.ai/"
+    },
+    {
+      "id": "case-blackgpt",
+      "kind": "case",
+      "title": "BlackGPT",
+      "keywords": [
+        "blackgpt",
+        "chatbot",
+        "knowledge base",
+        "nlp",
+        "conversational"
+      ],
+      "text": "BlackGPT is a live conversational AI chatbot with a specialised knowledge base and natural-language understanding for focused answers. Status: Live. Link: https://blackgpt.us/"
+    },
+    {
+      "id": "case-inno",
+      "kind": "case",
+      "title": "Inno AI",
+      "keywords": [
+        "inno",
+        "compliance",
+        "ingredient",
+        "food additive",
+        "eu",
+        "us",
+        "regulation"
+      ],
+      "text": "Inno AI is still in development and not yet public. It is an ingredient compliance checker for EU and US food additive rules. It is not a finished client project. Status: In development."
+    },
+    {
+      "id": "case-ai-sales-employee",
+      "kind": "case",
+      "title": "PopupGenix AI Sales Employee",
+      "keywords": [
+        "ai sales employee",
+        "voice agent",
+        "voice",
+        "own product",
+        "platform"
+      ],
+      "text": "The PopupGenix AI Sales Employee is PopupGenix's own multi-tenant platform where each business configures its own AI voice sales agent. It is in development (architecture and foundations phase), not yet released. Status: In development."
+    },
+    {
+      "id": "faq-ownership",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "own",
+        "ownership",
+        "code",
+        "source",
+        "license",
+        "rights",
+        "lock-in"
+      ],
+      "text": "Clients own the source code and the infrastructure accounts it runs on."
+    },
+    {
+      "id": "faq-existing-code",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "existing",
+        "codebase",
+        "takeover",
+        "take over",
+        "legacy",
+        "audit",
+        "fix",
+        "rescue",
+        "inherit"
+      ],
+      "text": "Existing codebases and setups can be audited, stabilised and extended. The audit comes first and the highest-risk issues are fixed first."
+    },
+    {
+      "id": "faq-privacy",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "privacy",
+        "data",
+        "safe",
+        "safety",
+        "security",
+        "secure",
+        "gdpr",
+        "confidential",
+        "training",
+        "trust",
+        "private"
+      ],
+      "text": "Systems are designed around the client's data policies. Only the minimum data is sent to third-party models, role-based access and audit logs are standard in custom platforms, and self-hosted models can be used where required. Specific compliance requirements are reviewed on the discovery call."
+    },
+    {
+      "id": "faq-mistakes",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "mistakes",
+        "wrong",
+        "accuracy",
+        "accurate",
+        "hallucinate",
+        "hallucination",
+        "errors",
+        "reliable",
+        "trust",
+        "human",
+        "handover",
+        "handoff"
+      ],
+      "text": "AI agents are grounded in the client's own documents, tested against real enquiries before launch, and given clear handover rules so a human takes over for sensitive or complex requests. Where a plain rule is more reliable than AI, a rule is used."
+    },
+    {
+      "id": "faq-tools",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "tools",
+        "integrations",
+        "integrate",
+        "crm",
+        "calendar",
+        "email",
+        "whatsapp",
+        "api",
+        "connect",
+        "hubspot",
+        "salesforce",
+        "zapier"
+      ],
+      "text": "Common CRMs, calendars, email and WhatsApp are standard integrations. If a tool has an API, it can usually be connected. Specific tools are confirmed on the discovery call."
+    },
+    {
+      "id": "faq-timeline",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "how long",
+        "timeline",
+        "deadline",
+        "weeks",
+        "delivery",
+        "deliver",
+        "ready",
+        "when",
+        "fast",
+        "quickly",
+        "urgent"
+      ],
+      "text": "Timelines are set in the written scope after a discovery call, because they depend on the project. A focused website chat agent can usually be live within a few weeks. The assistant cannot promise a delivery date; a human confirms timelines."
+    },
+    {
+      "id": "faq-where",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "where",
+        "location",
+        "based",
+        "office",
+        "country",
+        "timezone",
+        "remote",
+        "worldwide",
+        "albuquerque"
+      ],
+      "text": "PopupGenix is based in Albuquerque, NM, USA, and works with clients worldwide."
+    },
+    {
+      "id": "faq-team",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "team",
+        "who",
+        "founder",
+        "ceo",
+        "abdullah",
+        "people",
+        "size",
+        "staff"
+      ],
+      "text": "PopupGenix is founder-led. Abdullah Al Fahad is the founder and CEO. Work is done by a small team under his direction."
+    },
+    {
+      "id": "faq-support",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "support",
+        "maintenance",
+        "retainer",
+        "after launch",
+        "post-launch",
+        "warranty",
+        "bug",
+        "help"
+      ],
+      "text": "Project work includes 30-day post-launch support. Optional monthly retainers (such as the $500 per month Starter plan) cover ongoing improvements and maintenance."
+    },
+    {
+      "id": "faq-ai-or-not",
+      "kind": "faq",
+      "title": "FAQ",
+      "keywords": [
+        "should",
+        "need",
+        "ai",
+        "necessary",
+        "worth",
+        "right fit",
+        "automation or ai",
+        "rule"
+      ],
+      "text": "AI is not always the answer. If a simple rule or script does the job reliably, PopupGenix says so and uses that. AI is added where it measurably helps."
+    },
+    {
+      "id": "obj-data-safety",
+      "kind": "objection",
+      "title": "Guidance",
+      "keywords": [
+        "data",
+        "safe",
+        "security",
+        "private",
+        "customer data",
+        "secure"
+      ],
+      "text": "See the data and privacy answer. Offer a call to review specific requirements."
+    },
+    {
+      "id": "obj-accuracy",
+      "kind": "objection",
+      "title": "Guidance",
+      "keywords": [
+        "wrong",
+        "mistakes",
+        "accuracy",
+        "trust",
+        "hallucinate"
+      ],
+      "text": "See the mistakes answer. Agents are grounded in the client's documents and hand off to a human for anything sensitive."
+    },
+    {
+      "id": "obj-expertise",
+      "kind": "objection",
+      "title": "Guidance",
+      "keywords": [
+        "expertise",
+        "technical",
+        "setup",
+        "difficult",
+        "complicated",
+        "ourselves",
+        "non-technical"
+      ],
+      "text": "PopupGenix does the setup end to end (design, build, launch, handover), so the client's team does not need technical expertise."
+    },
+    {
+      "id": "obj-roi",
+      "kind": "objection",
+      "title": "Guidance",
+      "keywords": [
+        "roi",
+        "expensive",
+        "cost",
+        "worth",
+        "budget",
+        "cheap",
+        "cheaper",
+        "afford"
+      ],
+      "text": "Frame value as not losing leads to slow follow-up and removing manual work. State the $500 per month Starter plan and that project work is a custom quote after a short call. Do not invent savings figures."
+    }
+  ],
+  "allow": {
+    "prices": [
+      "$500"
+    ],
+    "years": [
+      "2024"
+    ],
+    "durations": [
+      "30-day",
+      "30 day",
+      "30 days",
+      "one business day",
+      "1 business day",
+      "a few weeks"
+    ],
+    "emails": [
+      "hello@popupgenix.com",
+      "popupitcompany@gmail.com"
+    ],
+    "phoneDigits": [
+      "14796891012",
+      "14796891012",
+      "4796891012"
+    ],
+    "domains": [
+      "popupgenix.com",
+      "www.popupgenix.com",
+      "autolead-manager.pages.dev",
+      "clarify.ai",
+      "www.clarify.ai",
+      "klevere.ai",
+      "www.klevere.ai",
+      "blackgpt.us",
+      "wa.me"
+    ],
+    "names": [
+      "PopupGenix",
+      "FluxPOS",
+      "AutoLead Manager",
+      "AutoLead",
+      "HOM",
+      "Clarify AI",
+      "Klevere AI",
+      "BlackGPT",
+      "Inno AI",
+      "AI Sales Employee",
+      "PopupGenix AI Sales Employee",
+      "Abdullah Al Fahad",
+      "Abdullah",
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Python",
+      "Node.js",
+      "PostgreSQL",
+      "Supabase",
+      "Cloudflare",
+      "Docker",
+      "WordPress",
+      "WhatsApp",
+      "Twilio",
+      "Stripe",
+      "Paddle",
+      "Tailwind",
+      "Prisma",
+      "GitHub",
+      "Expo",
+      "React Native",
+      "Terraform",
+      "AWS",
+      "GCP",
+      "Firebase",
+      "Astro",
+      "Calendar",
+      "CRM",
+      "LLM",
+      "AI",
+      "AI Sales Agents",
+      "Custom Software",
+      "AI and Automation",
+      "Web Development",
+      "Mobile Apps",
+      "CRM and SaaS Tools",
+      "Cloud and DevOps",
+      "Starter",
+      "Enterprise"
+    ],
+    "clientNames": [
+      "FluxPOS",
+      "AutoLead Manager",
+      "Clarify AI",
+      "Klevere AI",
+      "BlackGPT",
+      "Inno AI",
+      "PopupGenix AI Sales Employee"
+    ]
+  },
+  "templates": {
+    "price": "Our Starter plan is $500 per month: ongoing development and automation hours for small teams. Anything bigger, such as an AI agent, a portal or a custom platform, is a custom quote after a short call and a written scope. Want me to point you to the contact form so a person can scope it?",
+    "discount": "I can't offer discounts or change prices. The published price is $500 per month for Starter, and project work is a custom quote. A person on the team can talk through your budget: /contact or hello@popupgenix.com.",
+    "contact": "You can reach the team at hello@popupgenix.com or +1 479 689 1012, or use the contact form at /contact. Replies come within one business day.",
+    "booking": "The fastest way to book a call is the contact form at /contact, or email hello@popupgenix.com.",
+    "clients": "I can only speak about work PopupGenix has actually built. Live or built: FluxPOS, AutoLead Manager, Clarify AI, Klevere AI, BlackGPT. In development and not yet public: Inno AI, PopupGenix AI Sales Employee. I can't say anything about other clients or projects.",
+    "inDevelopment": "Inno AI, PopupGenix AI Sales Employee are still in development and not public yet, so I can't describe them as finished products. The projects you can see today are FluxPOS, AutoLead Manager, Clarify AI, Klevere AI, BlackGPT.",
+    "greeting": "Hi, I'm the PopupGenix assistant. Tell me what you are trying to build or fix and I'll point you in the right direction.",
+    "identity": "I'm the PopupGenix website assistant, an AI. A person on the team replies to quotes and contracts: hello@popupgenix.com.",
+    "quote": "A quote needs a person, so I can't promise a price, date or scope. Share a few details about what you need through /contact (or email hello@popupgenix.com) and the team will reply within one business day.",
+    "injection": "I can only help with questions about PopupGenix, our services and how we work, and I can't change how I operate. What are you trying to build or fix?",
+    "offtopic": "I can only help with PopupGenix, software, AI and automation questions. If you tell me what you are trying to build or fix, I'll point you in the right direction.",
+    "blocked": "I want to be sure you get accurate information on that, so please check with the team directly: /contact or hello@popupgenix.com.",
+    "unavailable": "The assistant is unavailable right now. Please use the contact form at /contact or email hello@popupgenix.com.",
+    "services": "PopupGenix builds: AI Sales Agents, Custom Software, AI and Automation, Web Development, Mobile Apps, CRM and SaaS Tools, Cloud and DevOps. Which of these is closest to what you need?"
+  },
+  "topics": [
+    "What an AI sales agent costs for a small business",
+    "Speed to lead - why the first few minutes decide who wins the customer",
+    "Is AI safe for my customer data? What to ask any vendor",
+    "AI chatbot vs AI receptionist - which one does your business need",
+    "How we built FluxPOS - lessons from a multi-vendor POS platform",
+    "Five automations every small business can run this month",
+    "Can AI make mistakes? How a good agent prevents them",
+    "A walkthrough of CRM follow-up with an AI agent",
+    "Why your website contact form is losing you leads",
+    "What small-business AI adoption looks like right now",
+    "Custom software or off-the-shelf tools - how to decide",
+    "How to write down your sales process so an AI agent can follow it",
+    "What a written project scope should contain",
+    "Handing a lead from an AI agent to a human without dropping the ball",
+    "Automating invoice and document processing without losing control",
+    "How to choose between a website chat agent and a voice agent",
+    "What to measure to know your AI agent is working",
+    "Cleaning up your CRM before you automate anything",
+    "Booking meetings automatically - what to connect first",
+    "Mobile app or web app - which one should you build first",
+    "What happens in the first week of a software project",
+    "Questions to ask before hiring a software studio",
+    "Why owning your code matters",
+    "Automating follow-up on missed calls and after-hours enquiries",
+    "Practical ways to use AI for small-business lead qualification",
+    "How to keep an AI assistant on-brand and on-topic",
+    "Cloud costs for small teams - where the money usually goes",
+    "Content operations - automating the boring half of publishing",
+    "Migrating off spreadsheets - when it is time",
+    "What a founder-led studio offers that a big agency does not"
+  ],
+  "stats": [
+    {
+      "id": "stat-oldroyd",
+      "claim": "A Lead Response Management study by Dr. James Oldroyd (MIT Sloan) with InsideSales.com found the odds of contacting a lead fall sharply as response time grows beyond the first few minutes.",
+      "source": "Lead Response Management Study (Oldroyd / InsideSales.com)",
+      "allow_numbers": []
+    },
+    {
+      "id": "stat-census-sales",
+      "claim": "In US Census Bureau research, sales and marketing is the most common business function where AI-using firms apply it.",
+      "source": "US Census Bureau, CES working paper CES-WP-26-25",
+      "allow_numbers": []
+    }
+  ],
+  "brand": {
+    "name": "PopupGenix",
+    "positioning": [
+      "PopupGenix is founder-led and builds custom, CRM-integrated systems with a human handoff.",
+      "Lead with fit and outcome (never miss a lead, faster follow-up, less manual work), not with price.",
+      "Never compare against or quote named competitors' prices."
+    ],
+    "forbidden": [
+      "Any client name that is not in allow.names (for example big-brand or invented clients).",
+      "Any price other than $500 per month for Starter.",
+      "Discounts, free trials, free audits, guarantees, refunds or money-back promises.",
+      "Specific delivery dates or fixed timelines.",
+      "Statistics, revenue figures, conversion numbers or awards about PopupGenix's own work.",
+      "That Inno AI or the AI Sales Employee are live or finished.",
+      "That the assistant can sign contracts, take payment or make binding promises."
+    ]
+  }
+}

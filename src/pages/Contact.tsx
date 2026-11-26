@@ -13,6 +13,8 @@ const field = "h-11 w-full rounded-xl border border-input bg-background px-4 tex
 export default function Contact() {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [err, setErr] = useState("");
+  // The chat assistant hands over here with the visitor's last message pre-filled.
+  const prefill = (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("message") : "")?.slice(0, 1000) ?? "";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -75,7 +77,7 @@ export default function Contact() {
                   </label>
                 </div>
                 <label className="block text-sm font-medium">How can we help?
-                  <textarea name="message" required rows={6} maxLength={5000} className="mt-2 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+                  <textarea name="message" required rows={6} maxLength={5000} defaultValue={prefill} className="mt-2 w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" />
                 </label>
                 <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
                 {state === "error" && <p role="alert" className="text-sm text-destructive">{err}</p>}

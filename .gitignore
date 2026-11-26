@@ -36,3 +36,5 @@ dev-server.err.log
 .worktrees/
 daily-cover.png
 __pycache__/
+agent/generated/core.mjs
+daily-draft.html

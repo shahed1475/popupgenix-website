@@ -40,10 +40,23 @@ Build command `npm run build`, output directory `dist`. `public/_redirects` prov
 
 ## Agents
 
-**Client chat agent** (`functions/api/chat.ts` + `src/components/site/ChatWidget.tsx`)
-A Cloudflare Pages Function answers visitors from the facts in its system prompt (services, pricing, process, contact). Add the Anthropic API key as a secret in Cloudflare Pages (Settings, Variables and Secrets) using the name the function reads (see the `Env` interface in the file). Optional `CHAT_MODEL`. Without the key the widget shows a contact-form fallback. Rate limited per IP; it never promises prices, dates or contracts.
+Both agents run on free tiers (no paid API key). One facts file drives everything: edit `knowledge/facts.yaml`, run `npm run knowledge`, commit the regenerated `agent/generated/knowledge.json`.
+
+**Client chat agent** (`functions/api/chat.ts`, `agent/core.ts`, `agent/providers.ts`, `src/components/site/ChatWidget.tsx`)
+Pipeline per message: sanitise input, then a regex router answers known questions (price, quote, booking, contact, services, clients, in-development products, off-topic, prompt injection) from templates with zero model tokens. Everything else retrieves the top facts (BM25, optional embeddings) and asks a small model (220 tokens max). A validator then blocks any reply containing a price, percentage, email, phone, URL, timeline, discount or client name that is not in the allowlist, and swaps in a safe "talk to the team" reply. If every model fails, the widget shows the contact form. Limits: 10 messages/min and 60/day per IP.
+
+Setup in Cloudflare Pages, Settings, Bindings and Variables:
+1. Workers AI binding named `AI` (required). The free plan includes 10,000 Neurons/day and fails closed rather than billing.
+2. Optional: KV binding `CHAT_KV` (rate limits that survive restarts), secret `GROQ_API_KEY` (third fallback tier), `TURNSTILE_SECRET` plus build variable `VITE_TURNSTILE_SITE_KEY` (bot check), `CHAT_MODEL_PRIMARY` / `CHAT_MODEL_FALLBACK` (override model IDs).
+3. Primary model is `@cf/google/gemma-4-26b-a4b-it`, fallback `@cf/meta/llama-3.1-8b-instruct-fp8-fast`. Free-plan access to Gemma 4 is unconfirmed; if the first call returns 403, the fallback is used automatically. Set `CHAT_MODEL_PRIMARY` to the Llama ID to skip the failed hop, or use Workers Paid ($5/month).
+4. Optional embeddings: `CF_ACCOUNT_ID=... CF_API_TOKEN=... npm run knowledge:embed`, then commit `agent/generated/embeddings.json`. Without it, retrieval is lexical only.
+
+Checks: `npm run eval` runs unit tests plus 42 eval cases offline. Offline mode uses scripted model replies, so it tests the router, retrieval, validator and fallbacks, not the real model's wording. To score a real model: `LIVE_EVAL=1 CF_ACCOUNT_ID=... CF_API_TOKEN=... npx vitest run agent/eval.test.ts`. The `Agent checks` workflow runs the offline suite and fails if the generated facts are stale.
+
+Not done: LoRA fine-tuning for tone. It is documented as an option only after the live eval shows the base model's tone is the problem (Unsloth QLoRA on a free Kaggle T4, then `npx wrangler ai finetune create`). Facts stay in retrieval, never in the weights.
 
 **Daily content agent** (`scripts/daily_post.py` + `.github/workflows/daily-content.yml`)
-Runs daily on GitHub Actions: drafts a post with Claude, renders a branded cover image, and uploads both to WordPress.com as a **draft** for review. Repo secrets are listed in the workflow file. Set the repo variable `POST_STATUS=publish` only once you trust the output. Run it manually with "Run workflow" (dry run by default).
+Runs just after 00:00 UTC on GitHub Actions using Workers AI (about 100 Neurons per post). It picks a topic from `knowledge.json` that does not match recent titles, writes an outline then a draft, runs the same validator in blog mode, optionally adds a text-free FLUX.1 schnell background (`COVER_BG=1`), renders the branded cover, and uploads both to WordPress.com as a **draft**. A post that fails validation is always a draft titled `[NEEDS REVIEW]`; if the model is unreachable nothing is posted.
+Repo secrets: `CF_ACCOUNT_ID`, `CF_API_TOKEN` (Workers AI permission), `WPCOM_TOKEN`. Optional variables: `POST_STATUS` (set `publish` only once you trust the output), `COVER_BG`. "Run workflow" defaults to a dry run and attaches the draft and cover as a downloadable artifact.
 
 **Covers and logo**: `python3 scripts/make-covers.py` regenerates portfolio and blog covers; the logo source is `brand/popupgenix/icon.svg`.
