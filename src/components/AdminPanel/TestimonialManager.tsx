@@ -196,7 +196,7 @@ export default function TestimonialManager() {
           <Button
             key={status}
             variant={filter === status ? "default" : "outline"}
-            onClick={() => setFilter(status as any)}
+            onClick={() => setFilter(status as typeof filter)}
             className={`capitalize ${
               filter === status 
                 ? 'bg-neon-purple text-white' 

@@ -33,7 +33,8 @@ export default function Portal() {
       const loggedInUser = await login(email, password);
       setUser(loggedInUser);
       toast({ title: "Success", description: "Logged in successfully" });
-    } catch (error: any) {
+    } catch (caught) {
+      const error = caught as Error;
       toast({
         title: "Login Failed",
         description: error.message || "Invalid login credentials. Please try again.",

@@ -93,7 +93,8 @@ export default function Updates() {
       if (data?.signedUrl) {
         window.open(data.signedUrl, '_blank');
       }
-    } catch (error: any) {
+    } catch (caught) {
+      const error = caught as Error;
       console.error('Error downloading file:', error);
       toast({
         title: "Error",
