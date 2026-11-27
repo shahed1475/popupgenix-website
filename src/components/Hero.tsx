@@ -12,7 +12,7 @@ const stats = [
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-12">
+    <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12">
       {/* Single restrained background blob */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div
@@ -44,7 +44,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-              className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 leading-[1.05]"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 leading-[1.05]"
             >
               <span className="text-foreground">Building Future-Ready</span>
               <br />
@@ -91,17 +91,22 @@ const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            className="relative h-[320px] sm:h-[420px] lg:h-[500px] rounded-3xl border border-border bg-card overflow-hidden dark:border-white/5 dark:bg-white/[0.02]"
+            className="relative h-[300px] sm:h-[420px] lg:h-[500px] rounded-3xl border border-border/60 bg-gradient-to-br from-primary/5 via-card to-primary/10 overflow-hidden dark:border-white/5 dark:from-primary/10 dark:via-white/[0.02] dark:to-primary/5"
           >
-            <SplineScene
-              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              className="w-full h-full"
-            />
+            {/* Soft brand glow behind the robot so it sits in the page, not on a white box */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_62%,hsl(var(--primary)/0.2),transparent_65%)]" />
+            {/* On phones the scene ignores touch so the page still scrolls; on desktop it follows the mouse */}
+            <div className="relative h-full w-full pointer-events-none lg:pointer-events-auto touch-pan-y mix-blend-multiply dark:mix-blend-normal">
+              <SplineScene
+                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                className="w-full h-full"
+              />
+            </div>
           </motion.div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-16 lg:mt-24">
+        <div className="grid grid-cols-3 gap-3 sm:gap-8 max-w-2xl mx-auto mt-12 lg:mt-24">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
