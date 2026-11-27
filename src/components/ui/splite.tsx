@@ -1,5 +1,6 @@
 import { Component, Suspense, lazy, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { BrandMark } from '@/components/BrandMark'
 
 const Spline = lazy(() => import('@splinetool/react-spline'))
 
@@ -18,7 +19,7 @@ class SceneBoundary extends Component<{ fallback: ReactNode; children: ReactNode
 
 const Poster = () => (
   <div className="w-full h-full flex items-center justify-center">
-    <img src="/popupgenix-logo.svg" alt="PopupGenix" width={120} height={126} className="opacity-80" />
+    <BrandMark className="h-28 w-28 text-primary opacity-80" />
   </div>
 )
 

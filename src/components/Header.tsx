@@ -1,3 +1,4 @@
+import { BrandMark, BrandWordmark } from "@/components/BrandMark";
 import { useEffect, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -86,19 +87,13 @@ const Header = () => {
         <nav className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3">
-              <img
-                src="/popupgenix-logo.svg"
-                alt="PopupGenix Logo"
-                className="h-9 w-auto"
-              />
-              <span className="text-lg font-black tracking-tight text-foreground">
-                PopupGenix
-              </span>
+            <Link to="/" className="flex shrink-0 items-center space-x-3 mr-6">
+              <BrandMark className="h-9 w-9 text-primary" title="PopupGenix logo" />
+              <BrandWordmark className="text-lg font-black tracking-tight" />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-9">
+            <div className="hidden md:flex items-center gap-5 lg:gap-9">
               {navigationBefore.map((item) => (
                 <NavLink key={item.name} {...item} />
               ))}

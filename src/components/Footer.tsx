@@ -1,3 +1,4 @@
+import { BrandMark, BrandWordmark } from "@/components/BrandMark";
 import { Button } from "@/components/ui/button";
 import {
   Mail,
@@ -43,11 +44,8 @@ const Footer = () => {
             {/* Company Info */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <img
-                  src="/lovable-uploads/840fc8c0-fd1f-46ff-b59e-8c30eeebac75.png"
-                  alt="PopupGenix Logo"
-                  className="h-9 w-auto"
-                />
+                <BrandMark className="h-9 w-9 text-primary" title="PopupGenix logo" />
+                <BrandWordmark className="text-lg font-black tracking-tight" />
               </div>
               <p className="text-muted-foreground mb-6 leading-relaxed">
                 PopupGenix creates cutting-edge AI and software solutions that drive business growth
