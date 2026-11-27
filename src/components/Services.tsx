@@ -1,3 +1,4 @@
+import { ShaderBackdrop } from "@/components/ShaderBackdrop";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -60,8 +61,9 @@ const services = [
 
 const Services = () => {
   return (
-    <section id="services" className="py-24 md:py-32 bg-secondary/30">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section id="services" className="relative overflow-hidden py-24 md:py-32 bg-secondary/30">
+      <ShaderBackdrop opacity={0.35} />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <m.div
           initial={{ opacity: 0, y: 20 }}

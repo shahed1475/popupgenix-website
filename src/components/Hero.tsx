@@ -3,6 +3,8 @@ import { ArrowRight, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { HeroVisual } from "@/components/HeroVisual";
+import { RobotScene } from "@/components/RobotScene";
+import { useState } from "react";
 
 const stats = [
   { number: "50+", label: "Projects Delivered" },
@@ -11,6 +13,7 @@ const stats = [
 ];
 
 const Hero = () => {
+  const [robotReady, setRobotReady] = useState(false);
   return (
     <section id="home" className="grain relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12">
       {/* Single restrained background blob */}
@@ -94,7 +97,11 @@ const Hero = () => {
             className="surface-card relative h-[300px] sm:h-[420px] lg:h-[500px] overflow-hidden rounded-3xl"
           >
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.16),transparent_68%)]" />
-            <HeroVisual className="relative h-full w-full" />
+            <HeroVisual
+              className="relative h-full w-full transition-opacity duration-1000"
+              style={{ opacity: robotReady ? 0.12 : 1 }}
+            />
+            <RobotScene className="absolute inset-0 z-10" onReady={setRobotReady} />
           </m.div>
         </div>
 

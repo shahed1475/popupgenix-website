@@ -1,3 +1,4 @@
+import { ShaderBackdrop } from "@/components/ShaderBackdrop";
 import { Mail, MessageCircle, ArrowRight } from "lucide-react";
 import { m } from "framer-motion";
 
@@ -17,13 +18,14 @@ const ContactSection = ({
   className = "",
 }: ContactSectionProps) => {
   return (
-    <section className={`py-24 md:py-32 bg-secondary/30 ${className}`}>
+    <section className={`relative overflow-hidden py-24 md:py-32 bg-secondary/30 ${className}`}>
+      <ShaderBackdrop opacity={0.4} />
       <m.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="max-w-7xl mx-auto px-6 lg:px-12 text-center"
+        className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 text-center"
       >
         <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4 text-foreground">{title}</h2>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">{subtitle}</p>

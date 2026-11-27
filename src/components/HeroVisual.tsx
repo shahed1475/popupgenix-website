@@ -17,9 +17,9 @@ const ORBIT = [
   { cx: 96, cy: 156, r: 11, delay: "-8s" },
 ];
 
-export function HeroVisual({ className }: { className?: string }) {
+export function HeroVisual({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <div className={className} aria-hidden="true">
+    <div className={className} style={style} aria-hidden="true">
       <svg
         viewBox="0 0 480 480"
         className="h-full w-full"
