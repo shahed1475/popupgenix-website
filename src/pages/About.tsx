@@ -14,7 +14,7 @@ export default function About() {
           <Eyebrow>About</Eyebrow>
           <h1 className="text-4xl font-bold tracking-tight md:text-6xl">A small studio that ships real products</h1>
           <div className="mt-8 space-y-5 text-lg leading-relaxed text-muted-foreground">
-            <p>PopupGenix was founded in {SITE.founded} by Abdullah Al Fahad, who still leads every project. We build AI sales agents, custom software and automation for growing businesses, from our base in {SITE.address.city}, {SITE.address.region}.</p>
+            <p>PopupGenix was founded in {SITE.founded} by Abdullah Al Fahad, who still leads every project. We build AI products, custom software and the automation around them for growing businesses, from our base in {SITE.address.city}, {SITE.address.region}.</p>
             <p>We are deliberately small. You talk to the person building your product, decisions are quick, and nothing gets lost in hand-offs. We also build and run our own products, which keeps our advice grounded in what actually works in production.</p>
           </div>
 

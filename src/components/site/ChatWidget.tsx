@@ -5,7 +5,7 @@ import { MessageCircle, Send, X } from "lucide-react";
 type Msg = { role: "user" | "assistant"; content: string; handoff?: boolean };
 const GREETING: Msg = {
   role: "assistant",
-  content: "Hi, I'm the PopupGenix assistant. Tell me what you are trying to build or fix and I'll point you in the right direction.",
+  content: "Hi, I'm PopupGenix's AI assistant. I can explain what we build and pass your enquiry to the founder, Abdullah. If you'd rather talk to a person, just say so.",
 };
 
 // Optional bot protection. Set VITE_TURNSTILE_SITE_KEY at build time and TURNSTILE_SECRET on the function.

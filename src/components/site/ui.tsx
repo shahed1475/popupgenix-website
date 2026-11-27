@@ -66,7 +66,7 @@ export function ButtonLink({
 }
 
 export function CtaBand({
-  title = "Ready to put an AI agent or custom software to work?",
+  title = "Have something to build with AI or custom software?",
   body = "Tell us what you are trying to fix. We reply within one business day with honest next steps, even if the answer is that you do not need us.",
 }: {
   title?: string;

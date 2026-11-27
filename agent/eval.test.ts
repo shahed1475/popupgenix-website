@@ -1,4 +1,4 @@
-// Evaluation set for the chat agent (42 cases). Scored with regex and exact matches, never
+// Evaluation set for the chat agent (48 cases). Scored with regex and exact matches, never
 // with another model. It runs in CI on every change to the facts or the agent code.
 //
 // Offline mode (default): llm-route cases use the `stub` as a scripted model reply, so the

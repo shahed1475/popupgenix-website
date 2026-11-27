@@ -4,9 +4,9 @@
 export const SITE = {
   name: "PopupGenix",
   url: "https://popupgenix.com",
-  tagline: "AI sales agents and custom software for growing businesses",
+  tagline: "AI products and custom software for growing businesses",
   description:
-    "PopupGenix builds AI sales agents, custom software and automation for growing businesses. Founder-led studio in Albuquerque, NM, working with clients worldwide.",
+    "PopupGenix is a founder-led studio in Albuquerque, NM that builds AI agents, custom software and SaaS platforms, and automates business workflows. Talk to us.",
   founded: 2024,
   email: "hello@popupgenix.com",
   emailAlt: "popupitcompany@gmail.com",
@@ -75,7 +75,7 @@ export interface Service {
   metaDescription: string;
 }
 
-export const SERVICES: Service[] = [
+const SERVICE_LIST: Service[] = [
   {
     slug: "ai-sales-agents",
     path: "/services/ai-sales-agents",
@@ -167,12 +167,12 @@ export const SERVICES: Service[] = [
     path: "/services/ai-machine-learning",
     title: "AI & Automation",
     short:
-      "Workflow automation, document processing and AI features that remove repetitive work from your team.",
+      "Workflow automation, document processing, data analysis and AI features that remove repetitive work from your team.",
     icon: "brain",
     headline: "Automate the repetitive work, keep the judgement calls",
     intro:
-      "We find the slow, repetitive parts of your operation, such as lead handling, document processing, reporting and follow-ups, and automate them with a mix of workflow tools and AI where it genuinely helps.",
-    who: "Teams buried in manual lead handling, data entry, reporting or content operations.",
+      "We find the slow, repetitive parts of your operation, such as document processing, reporting, data analysis and follow-ups, and automate them with workflow tools, language-model features and predictive reporting where AI genuinely helps.",
+    who: "Teams buried in manual data entry, document handling, reporting or content operations.",
     outcomes: [
       "Hours of weekly manual work removed",
       "Consistent processing instead of person-dependent quality",
@@ -520,13 +520,21 @@ export const CASE_STUDIES: CaseStudy[] = [
   },
 ];
 
+/** AI-first order for every page that lists services (home, services hub, sitemap). */
+const SERVICE_ORDER = ["ai-automation", "ai-sales-agents", "custom-software", "crm-saas", "web-development", "mobile-apps", "cloud-devops"];
+export const SERVICES: Service[] = SERVICE_ORDER.map((slug) => {
+  const s = SERVICE_LIST.find((x) => x.slug === slug);
+  if (!s) throw new Error(`Unknown service slug in SERVICE_ORDER: ${slug}`);
+  return s;
+});
+
 export const getCaseStudy = (slug: string) => CASE_STUDIES.find((c) => c.slug === slug);
 
 export const PROCESS = [
   {
     step: "01",
     title: "Discover",
-    body: "A short call to understand your goals, constraints and where time or leads are being lost. You get a written scope and a fixed or phased quote.",
+    body: "A short call to understand your goals, constraints and where time or money is being lost. You get a written scope and a fixed or phased quote.",
   },
   {
     step: "02",
@@ -608,22 +616,22 @@ export interface RouteMeta {
 export const STATIC_ROUTES: RouteMeta[] = [
   {
     path: "/",
-    title: "AI Sales Agents and Custom Software for Growing Businesses",
+    title: "Custom AI and Software Development Studio",
     description: SITE.description,
     priority: 1,
   },
   {
     path: "/services",
-    title: "Services: AI Agents, Custom Software, Automation",
+    title: "Services: AI, Custom Software, Automation, Web and Mobile",
     description:
-      "AI sales agents, custom software, automation, web and mobile development, CRM and cloud services from PopupGenix.",
+      "AI and automation, AI agents, custom software and SaaS, web and mobile apps, and cloud services from PopupGenix, a founder-led studio.",
     priority: 0.9,
   },
   {
     path: "/work",
     title: "Selected Work and Case Studies",
     description:
-      "Platforms, AI products and automation systems built by PopupGenix: FluxPOS, AutoLead Manager, Clarify AI and more.",
+      "Products built by PopupGenix: FluxPOS, AutoLead Manager, Clarify AI, Klevere AI and BlackGPT, plus what is still in development.",
     priority: 0.9,
   },
   {
@@ -637,7 +645,7 @@ export const STATIC_ROUTES: RouteMeta[] = [
     path: "/about",
     title: "About PopupGenix",
     description:
-      "PopupGenix is a founder-led software studio in Albuquerque, NM, building AI agents and custom software since 2024.",
+      "PopupGenix is a founder-led studio in Albuquerque, NM, building AI products and custom software since 2024.",
     priority: 0.7,
   },
   {
@@ -651,7 +659,7 @@ export const STATIC_ROUTES: RouteMeta[] = [
     path: "/blog",
     title: "Blog: AI, Automation and Software Insights",
     description:
-      "Practical articles on AI sales agents, automation and building software that supports growth.",
+      "Practical articles on AI, automation and custom software, from a founder-led studio that builds them.",
     priority: 0.7,
   },
   {

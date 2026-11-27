@@ -108,8 +108,8 @@ const templates = {
     `I can only speak about work PopupGenix has actually built. Live or built: ${list(live)}. In development and not yet public: ${list(dev)}. ` +
     `I can't say anything about other clients or projects.`,
   inDevelopment: `${list(dev)} are still in development and not public yet, so I can't describe them as finished products. The projects you can see today are ${list(live)}.`,
-  greeting: `Hi, I'm the PopupGenix assistant. Tell me what you are trying to build or fix and I'll point you in the right direction.`,
-  identity: `I'm the PopupGenix website assistant, an AI. A person on the team replies to quotes and contracts: ${f.contact.email}.`,
+  greeting: `Hi, I'm PopupGenix's AI assistant. I can explain what we build and pass your enquiry to the founder, Abdullah. If you'd rather talk to a person, just say so.`,
+  identity: `No, I'm an AI assistant, not a person. I can explain what PopupGenix builds; a person on the team replies to quotes, timelines and contracts: ${f.contact.email}.`,
   quote:
     `A quote needs a person, so I can't promise a price, date or scope. Share a few details about what you need through ${f.contact.form_path} ` +
     `(or email ${f.contact.email}) and the team will reply ${f.contact.reply_time.toLowerCase()}.`,

@@ -11,9 +11,10 @@ company:
   location: Albuquerque, NM, USA
   founder: Abdullah Al Fahad
   summary: >-
-    PopupGenix is a founder-led software studio in Albuquerque, NM (founded 2024).
-    It builds AI sales agents, custom software, automation, websites, mobile apps,
-    CRM and SaaS tools, and cloud/DevOps for growing businesses worldwide.
+    PopupGenix is a founder-led AI and software studio in Albuquerque, NM (founded 2024).
+    It builds AI agents, data and predictive-analytics products, custom software and SaaS
+    platforms, websites, mobile apps, CRM tools, workflow automation and cloud/DevOps for
+    growing businesses worldwide. It also builds and runs its own products.
 
 contact:
   email: hello@popupgenix.com
@@ -103,6 +104,16 @@ allow:
     - AI
 
 services:
+  - id: ai-automation
+    name: AI and Automation
+    keywords: [automation, automate, workflow, n8n, document, processing, reporting, extraction, classification, summarisation, summarization, repetitive, manual, data entry, zapier, machine learning, ml, predictive, prediction, forecast, analysis, analytics, llm, rag, model]
+    text: >-
+      Workflow automation and practical AI features: document processing, reporting, AI data analysis,
+      predictive reporting on business data, and language-model features that answer from the client's own
+      documents. A process audit comes first. AI is only used where it measurably helps; if a plain rule or
+      script does the job, that is used instead. Includes error handling, monitoring, evaluation on real data
+      and a support window after go-live. Data privacy is designed in, and self-hosted models can be used
+      where required.
   - id: ai-sales-agents
     name: AI Sales Agents
     keywords: [ai, agent, chatbot, bot, sales, lead, qualify, qualification, booking, book, voice, whatsapp, receptionist, answer, calls, crm, calendar, follow-up, followup]
@@ -120,15 +131,6 @@ services:
       works. Discovery and a written scope come before any build. Includes database design, API, admin
       dashboard, authentication and roles, automated tests and documented deployment. The client owns the
       source code and the infrastructure accounts. Existing codebases can be audited and extended.
-  - id: ai-automation
-    name: AI and Automation
-    keywords: [automation, automate, workflow, n8n, document, processing, reporting, extraction, classification, summarisation, summarization, repetitive, manual, data entry, zapier]
-    text: >-
-      Workflow automation and practical AI features for lead handling, document processing, reporting and
-      follow-ups. A process audit comes first. AI is only used where it measurably helps; if a plain rule or
-      script does the job, that is used instead. Includes error handling, monitoring, evaluation on real data
-      and a support window after go-live. Data privacy is designed in, and self-hosted models can be used
-      where required.
   - id: web-development
     name: Web Development
     keywords: [website, web, site, landing, seo, redesign, cms, blog, wordpress, fast, speed, accessibility, marketing, ecommerce, shop, store]
@@ -264,6 +266,12 @@ faq:
   - id: faq-support
     keywords: [support, maintenance, retainer, after launch, post-launch, warranty, bug, help]
     text: Project work includes 30-day post-launch support. Optional monthly retainers (such as the $500 per month Starter plan) cover ongoing improvements and maintenance.
+  - id: faq-ml
+    keywords: [machine learning, ml, model, train, training, fine-tune, finetune, fine tune, computer vision, deep learning, mlops, predictive, neural, data science]
+    text: >-
+      PopupGenix builds AI data analysis and predictive-reporting products (Clarify AI and Klevere AI), and
+      language-model features that answer from a client's own documents (BlackGPT). Computer vision, custom
+      model training and MLOps are not listed services, so anything beyond that is a question for the team.
   - id: faq-ai-or-not
     keywords: [should, need, ai, necessary, worth, right fit, automation or ai, rule]
     text: AI is not always the answer. If a simple rule or script does the job reliably, PopupGenix says so and uses that. AI is added where it measurably helps.
@@ -277,11 +285,15 @@ forbidden_claims:
   - Statistics, revenue figures, conversion numbers or awards about PopupGenix's own work.
   - That Inno AI or the AI Sales Employee are live or finished.
   - That the assistant can sign contracts, take payment or make binding promises.
+  - That PopupGenix offers computer vision, custom model training or fine-tuning, MLOps or voice agents as listed services (voice agents are scoped after a discovery call).
+  - That the company is only a lead-generation or marketing business.
 
 # Positioning: used to shape answers about value, never to quote competitor prices.
 positioning:
-  - PopupGenix is founder-led and builds custom, CRM-integrated systems with a human handoff.
-  - Lead with fit and outcome (never miss a lead, faster follow-up, less manual work), not with price.
+  - PopupGenix is a founder-led AI and software studio. It builds AI agents, data and predictive-analytics products, SaaS platforms, web and mobile apps and automation, and runs its own products.
+  - Lead generation is one product (AutoLead Manager) and one service line (AI sales agents), not the whole company.
+  - Lead with fit and outcome (less manual work, clearer data, software that fits the business), not with price.
+  - Say what a system does in plain verbs. Name limits. Machine learning is limited to predictive reporting and AI data analysis; computer vision, custom model training and MLOps are not listed services.
   - Never compare against or quote named competitors' prices.
 
 # Audience objections and the grounded answer the assistant should follow.
@@ -298,7 +310,7 @@ objections:
   - id: obj-roi
     keywords: [roi, expensive, cost, worth, budget, cheap, cheaper, afford]
     text: >-
-      Frame value as not losing leads to slow follow-up and removing manual work. State the $500 per month
+      Frame value as removing manual work and building software that fits how the business runs. State the $500 per month
       Starter plan and that project work is a custom quote after a short call. Do not invent savings figures.
 
 # Statistics the DAILY CONTENT AGENT may cite, always with the source named and
@@ -320,33 +332,33 @@ stats:
 # 30-day seed list for the daily content agent (rotated by date, skipping topics
 # already published).
 topics:
-  - What an AI sales agent costs for a small business
-  - Speed to lead - why the first few minutes decide who wins the customer
-  - Is AI safe for my customer data? What to ask any vendor
-  - AI chatbot vs AI receptionist - which one does your business need
-  - How we built FluxPOS - lessons from a multi-vendor POS platform
-  - Five automations every small business can run this month
-  - Can AI make mistakes? How a good agent prevents them
-  - A walkthrough of CRM follow-up with an AI agent
-  - Why your website contact form is losing you leads
-  - What small-business AI adoption looks like right now
-  - Custom software or off-the-shelf tools - how to decide
-  - How to write down your sales process so an AI agent can follow it
-  - What a written project scope should contain
-  - Handing a lead from an AI agent to a human without dropping the ball
-  - Automating invoice and document processing without losing control
-  - How to choose between a website chat agent and a voice agent
-  - What to measure to know your AI agent is working
-  - Cleaning up your CRM before you automate anything
-  - Booking meetings automatically - what to connect first
-  - Mobile app or web app - which one should you build first
-  - What happens in the first week of a software project
+  - What an AI agent actually is, and what it is not
+  - When a simple workflow beats an AI agent
+  - Why customer-facing AI agents need a human approval step
+  - How to scope the first task for an AI agent
+  - What goes wrong when an agent reads untrusted web pages or emails
+  - From notebook to production - what changes when a model ships
+  - How to tell whether a language-model feature is working
+  - Why retrieval-based answers still need source checks
+  - Logging and monitoring an AI feature after launch
+  - When a smaller model or a plain rule is enough
+  - Signs a spreadsheet has outgrown itself
+  - How to write a brief a software studio can price
+  - Why a small first release beats a big first plan
+  - Who owns the code, and what to put in the contract
+  - Maintenance after launch and why it is budgeted separately
+  - Native, cross-platform or web app - which to build
+  - What to include in a first mobile release
+  - Point-of-sale software for small shops - questions to ask before you pick one
+  - Multi-vendor marketplaces - the parts that are harder than they look
   - Questions to ask before hiring a software studio
-  - Why owning your code matters
-  - Automating follow-up on missed calls and after-hours enquiries
-  - Practical ways to use AI for small-business lead qualification
-  - How to keep an AI assistant on-brand and on-topic
-  - Cloud costs for small teams - where the money usually goes
-  - Content operations - automating the boring half of publishing
-  - Migrating off spreadsheets - when it is time
+  - Which business process to automate first
+  - Automation that fails quietly - and how to catch it
+  - Cleaning your data before you build on it
+  - Dashboards people actually open
+  - APIs versus moving files by hand
+  - Build, buy or configure - a decision checklist
+  - Why custom software quotes differ so much
+  - What a monthly development retainer should cover
+  - Speed to lead - why the first few minutes decide who wins the customer
   - What a founder-led studio offers that a big agency does not
