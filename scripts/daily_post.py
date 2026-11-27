@@ -30,7 +30,10 @@ IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell"
 CF = f"https://api.cloudflare.com/client/v4/accounts/{os.environ.get('CF_ACCOUNT_ID', '')}/ai/run"
 ALLOWED_TAGS = {"h2", "p", "ul", "li", "strong", "em"}
 
-KNOWLEDGE = json.loads((ROOT / "agent/generated/knowledge.json").read_text())
+try:
+    KNOWLEDGE = json.loads((ROOT / "agent/generated/knowledge.json").read_text())
+except (OSError, ValueError) as e:
+    sys.exit(f"Cannot load agent/generated/knowledge.json ({e}). Run `npm run knowledge` first; nothing was posted.")
 
 BRAND = """You write for PopupGenix, a founder-led studio building AI sales agents, custom software and automation.
 Voice: clear, practical, plain English, no hype, no emojis.
@@ -253,7 +256,10 @@ def main():
         sys.exit(f"Cover render failed ({e}); nothing was posted.")
     print("Drafted:", title)
     if os.environ.get("DRY_RUN"):
-        (ROOT / "daily-draft.html").write_text(f"<h1>{esc(title)}</h1>\n<p><em>{esc(post['excerpt'])}</em></p>\n{post['html']}\n")
+        try:
+            (ROOT / "daily-draft.html").write_text(f"<h1>{esc(title)}</h1>\n<p><em>{esc(post['excerpt'])}</em></p>\n{post['html']}\n")
+        except OSError as e:
+            sys.exit(f"Could not write daily-draft.html ({e}).")
         print(post["excerpt"], "| flagged:", post["problems"] or "no")
         return
     if not os.environ.get("WPCOM_TOKEN"):
@@ -274,7 +280,11 @@ def main():
             except requests.RequestException:
                 pass
         sys.exit(f"WordPress upload failed ({e}); nothing was posted.")
-    print("WordPress post:", p.json().get("link"), "status:", status)
+    try:
+        link = p.json().get("link")
+    except ValueError:
+        link = "(created, but the response was not JSON)"
+    print("WordPress post:", link, "status:", status)
 
 
 if __name__ == "__main__":
