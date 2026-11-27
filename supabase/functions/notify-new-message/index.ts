@@ -78,8 +78,7 @@ const handler = async (req: Request): Promise<Response> => {
         headers: { "Content-Type": "application/json", ...corsHeaders },
       }
     );
-  } catch (caught) {
-      const error = caught as Error;
+  } catch (error: any) {
     console.error("Error in notify-new-message function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),

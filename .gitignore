@@ -34,7 +34,3 @@ dev-server.err.log
 *.sw?
 
 .worktrees/
-daily-cover.png
-__pycache__/
-agent/generated/core.mjs
-daily-draft.html

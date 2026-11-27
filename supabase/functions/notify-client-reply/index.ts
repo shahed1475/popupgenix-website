@@ -57,8 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
         ...corsHeaders,
       },
     });
-  } catch (caught) {
-      const error = caught as Error;
+  } catch (error: any) {
     console.error("Error in notify-client-reply function:", error);
     return new Response(
       JSON.stringify({ error: error.message }),

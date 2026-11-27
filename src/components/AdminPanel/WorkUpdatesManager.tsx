@@ -56,8 +56,7 @@ export default function WorkUpdatesManager() {
 
       if (error) throw error;
       setProjects(data || []);
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -75,9 +74,8 @@ export default function WorkUpdatesManager() {
         .limit(20);
 
       if (error) throw error;
-      setUpdates((data || []) as unknown as WorkUpdate[]);
-    } catch (caught) {
-      const error = caught as Error;
+      setUpdates((data || []) as any);
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -152,8 +150,7 @@ export default function WorkUpdatesManager() {
       setFile(null);
       setSelectedProject("");
       loadUpdates();
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -179,8 +176,7 @@ export default function WorkUpdatesManager() {
       });
 
       loadUpdates();
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,

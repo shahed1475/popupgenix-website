@@ -87,8 +87,7 @@ export default function ClientMessagesManager() {
       }));
 
       setMessages(enrichedMessages || []);
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -108,8 +107,7 @@ export default function ClientMessagesManager() {
 
       if (error) throw error;
       loadMessages();
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       console.error("Error marking as read:", error);
     }
   };
@@ -139,8 +137,7 @@ export default function ClientMessagesManager() {
       setReplyText("");
       setReplyTo(null);
       loadMessages();
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
@@ -161,7 +158,7 @@ export default function ClientMessagesManager() {
     }
     acc[msg.project_id].messages.push(msg);
     return acc;
-  }, {} as Record<string, { project: NonNullable<Message["projects"]>; messages: Message[] }>);
+  }, {} as Record<string, { project: any; messages: Message[] }>);
 
   if (loading) {
     return (

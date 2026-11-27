@@ -22,7 +22,7 @@ interface DashboardStats {
   pendingTestimonials: number;
   totalServices: number;
   recentMessages: number;
-  recentActivity: Awaited<ReturnType<typeof listContactSubmissions>>;
+  recentActivity: any[];
 }
 
 export default function AdminDashboard() {

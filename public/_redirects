@@ -1,4 +1,0 @@
-# Cloudflare Pages: legacy URLs and SPA fallback
-/privacy-policy   /privacy   301
-/blog/admin-login https://shahedalfahad19-xvmtl.wordpress.com/wp-admin/ 302
-/*                /index.html 200

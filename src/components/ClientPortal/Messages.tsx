@@ -70,8 +70,7 @@ export default function Messages() {
 
       if (error) throw error;
       setMessages(data || []);
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       console.error("Error loading messages:", error);
     } finally {
       setLoading(false);
@@ -119,8 +118,7 @@ export default function Messages() {
 
       setMessageText("");
       loadMessages();
-    } catch (caught) {
-      const error = caught as Error;
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
