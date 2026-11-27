@@ -1,39 +1,34 @@
 # PopupGenix Website
 
-Marketing site for [popupgenix.com](https://popupgenix.com): AI sales agents and custom software.
+The marketing website and client portal for PopupGenix, a custom software and AI automation company. Built with React, TypeScript and Supabase.
 
-**Stack:** React 18, Vite, TypeScript, Tailwind, shadcn/ui, framer-motion, React Router, TanStack Query, Supabase.
+## What is on the site
 
-## Develop
+- Service pages: web development, mobile apps, AI and ML, custom software, CRM and SaaS, cloud and DevOps
+- Pricing, contact form, blog and individual blog posts
+- A client portal and an admin panel backed by Supabase
+- Cookie, privacy, terms and refund policy pages
+- Animated landing experience with Framer Motion and a Spline 3D scene
 
-```bash
+## Backend
+
+Supabase provides the database, authentication and edge functions. The functions send notifications for new messages, client replies and client updates. Schema changes live in `supabase/migrations`.
+
+## Tech stack
+
+React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Framer Motion, React Query, React Router, Supabase, Vitest.
+
+## Run it locally
+
+```
+cp .env.example .env
 npm install
-cp .env.example .env   # then fill in values
-npm run dev            # http://localhost:8080
-npm test               # vitest
-npm run build          # build + prerender routes + sitemap.xml
+npm run dev
+npm test
 ```
 
-## Content
+Add your Supabase project URL and public (anon) key to `.env`. Never commit real secrets.
 
-- Pages, services, case studies and pricing live in `src/lib/site.ts`. Edit there, not in the page components.
-- `npm run build` prerenders every route into `dist/<route>/index.html` with its own title, description and canonical URL, and writes `sitemap.xml` (`scripts/postbuild.mjs`).
+## Deployment
 
-## Blog (WordPress)
-
-Posts are written in WordPress.com and read through its public REST API (`src/lib/wordpress.ts`). Publish a post in WordPress and it appears on `/blog` automatically. The site name is set in `SITE.wordpress.site`.
-
-## Newsletter
-
-`NewsletterForm` calls the `subscribe_newsletter` Supabase RPC (migration in `supabase/migrations/`). Subscribers are stored in `newsletter_subscriptions`; sending is not built yet.
-
-## Environment
-
-| Variable | Purpose |
-| --- | --- |
-| `VITE_SUPABASE_URL` | Supabase project URL |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Supabase anon/publishable key |
-
-## Deploy (Cloudflare Pages)
-
-Build command `npm run build`, output directory `dist`. `public/_redirects` provides the SPA fallback and `public/_headers` the security headers. Set the two `VITE_` variables in the Pages project settings.
+The repo includes a Dockerfile with an nginx config for container hosting, and a `.cpanel.yml` for cPanel deployment. `SECURITY_FIX_REPORT.md` records the security review and fixes.

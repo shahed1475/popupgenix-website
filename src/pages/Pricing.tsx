@@ -1,56 +1,157 @@
 import { Check } from "lucide-react";
-import Layout from "@/components/site/Layout";
-import Seo from "@/components/Seo";
-import { ButtonLink, Container, CtaBand, Eyebrow } from "@/components/site/ui";
-import { PRICING, STATIC_ROUTES } from "@/lib/site";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useNavigate, Link } from "react-router-dom";
 
-const meta = STATIC_ROUTES.find((r) => r.path === "/pricing")!;
-const faqs = [
-  ["How do fixed-scope projects work?", "We agree a written scope and quote after a discovery call. You approve it before any build work starts."],
-  ["What does the monthly plan cover?", "A set amount of development and automation work each month, planned together. Unused hours do not turn into surprise invoices."],
-  ["Do I own what you build?", "Yes. You own the source code and the accounts it runs on."],
-  ["How do I pay?", "We invoice by milestone or monthly. Card and bank-transfer options are available."],
-];
+const Pricing = () => {
+  const navigate = useNavigate();
 
-export default function Pricing() {
+  const plans = [
+    {
+      name: "Starter",
+      price: "$500",
+      period: "/month",
+      description: "Perfect for growing businesses looking to leverage AI and SaaS solutions",
+      features: [
+        "Core SaaS integrations (basic API access)",
+        "Standard email support",
+        "Access to documentation & knowledge base",
+        "Basic AI-powered automation tools",
+        "Monthly usage reports",
+        "Community forum access"
+      ],
+      cta: "Get Started",
+      ctaAction: () => navigate("/contact"),
+      highlighted: true
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      period: "Pricing",
+      description: "Tailored solutions for organizations requiring advanced AI and full-scale SaaS products",
+      features: [
+        "Unlimited usage",
+        "Full AI integration (custom workflows, agentic AI support)",
+        "Dedicated account manager",
+        "Tailored SaaS product solutions",
+        "SLA, compliance, and premium onboarding",
+        "Priority 24/7 support",
+        "Custom integrations & API access",
+        "Advanced analytics & reporting"
+      ],
+      cta: "Contact Sales",
+      ctaAction: () => navigate("/contact"),
+      highlighted: false
+    }
+  ];
+
   return (
-    <Layout>
-      <Seo title={meta.title} description={meta.description} path="/pricing" />
-      <section className="py-20">
-        <Container>
-          <div className="mx-auto mb-14 max-w-3xl text-center">
-            <Eyebrow>Pricing</Eyebrow>
-            <h1 className="text-4xl font-bold tracking-tight md:text-6xl">Simple, transparent engagement models</h1>
-            <p className="mt-5 text-lg text-muted-foreground">Pick the model that fits how you work. Every engagement starts with a free discovery call.</p>
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-primary via-primary-glow to-secondary bg-clip-text text-transparent">
+              Simple, Transparent Pricing
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground">
+              Choose the plan that fits your business needs. Scale as you grow with our flexible pricing options.
+            </p>
           </div>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {PRICING.map((p) => (
-              <div key={p.name} className={`flex flex-col rounded-3xl border p-8 ${p.featured ? "border-primary bg-card shadow-elegant" : "border-border bg-card"}`}>
-                {p.featured && <span className="mb-4 w-fit rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">Most popular</span>}
-                <h2 className="text-xl font-semibold">{p.name}</h2>
-                <p className="mt-4"><span className="text-4xl font-bold">{p.price}</span> <span className="text-sm text-muted-foreground">{p.cadence}</span></p>
-                <p className="mt-3 text-sm text-muted-foreground">{p.blurb}</p>
-                <ul className="mt-6 flex-1 space-y-3">
-                  {p.features.map((f) => <li key={f} className="flex gap-3 text-sm"><Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />{f}</li>)}
-                </ul>
-                <div className="mt-8"><ButtonLink to="/contact" variant={p.featured ? "primary" : "ghost"}>{p.cta}</ButtonLink></div>
-              </div>
+
+          {/* Pricing Cards */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {plans.map((plan) => (
+              <Card
+                key={plan.name}
+                className={`p-8 transition-all duration-300 hover:shadow-elegant ${
+                  plan.highlighted
+                    ? "border-primary shadow-glow bg-gradient-to-br from-background to-primary/5"
+                    : "border-border"
+                }`}
+              >
+                {plan.highlighted && (
+                  <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold text-primary-foreground bg-primary rounded-full">
+                    Most Popular
+                  </div>
+                )}
+                
+                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                <div className="flex items-baseline mb-2">
+                  <span className="text-4xl font-bold text-foreground">{plan.price}</span>
+                  <span className="text-muted-foreground ml-2">{plan.period}</span>
+                </div>
+                <p className="text-muted-foreground mb-6">{plan.description}</p>
+
+                <Button
+                  onClick={plan.ctaAction}
+                  className={`w-full mb-8 ${
+                    plan.highlighted
+                      ? "bg-primary hover:bg-primary/90"
+                      : "bg-secondary hover:bg-secondary/90"
+                  }`}
+                  size="lg"
+                >
+                  {plan.cta}
+                </Button>
+
+                <div className="space-y-3">
+                  {plan.features.map((feature, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                      <span className="text-foreground">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
             ))}
           </div>
-          <div className="mx-auto mt-20 max-w-3xl">
-            <h2 className="mb-6 text-2xl font-bold">Pricing questions</h2>
-            <div className="divide-y divide-border rounded-2xl border border-border bg-card">
-              {faqs.map(([q, a]) => (
-                <details key={q} className="group p-6">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium">{q}<span className="text-primary transition group-open:rotate-45" aria-hidden>+</span></summary>
-                  <p className="mt-3 leading-relaxed text-muted-foreground">{a}</p>
-                </details>
-              ))}
+
+          {/* FAQ Section */}
+          <div className="max-w-3xl mx-auto mt-20">
+            <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+            <div className="space-y-6">
+              <Card className="p-6">
+                <h3 className="font-semibold text-lg mb-2">Can I switch plans later?</h3>
+                <p className="text-muted-foreground">
+                  Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
+                </p>
+              </Card>
+              <Card className="p-6">
+                <h3 className="font-semibold text-lg mb-2">What payment methods do you accept?</h3>
+                <p className="text-muted-foreground">
+                  We accept all major credit cards, bank transfers, and digital payment methods through our secure payment processor Paddle.
+                </p>
+              </Card>
+              <Card className="p-6">
+                <h3 className="font-semibold text-lg mb-2">Is there a refund policy?</h3>
+                <p className="text-muted-foreground">
+                  Yes, we offer refunds within 14 days of purchase. Please see our{" "}
+                  <Link to="/refund-policy" className="text-primary hover:underline">
+                    Refund Policy
+                  </Link>{" "}
+                  for more details.
+                </p>
+              </Card>
+              <Card className="p-6">
+                <h3 className="font-semibold text-lg mb-2">How does Enterprise pricing work?</h3>
+                <p className="text-muted-foreground">
+                  Enterprise pricing is customized based on your specific needs, usage requirements, and integration complexity. Contact our sales team for a personalized quote.
+                </p>
+              </Card>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
-      <CtaBand />
-    </Layout>
+
+      <Footer />
+    </div>
   );
-}
+};
+
+export default Pricing;
