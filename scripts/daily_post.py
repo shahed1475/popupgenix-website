@@ -273,7 +273,7 @@ def main():
         p = requests.post(f"{API}/posts", headers=h, timeout=60, json={
             "title": title, "content": post["html"], "excerpt": post["excerpt"], "status": status, "featured_media": media_id})
         p.raise_for_status()
-    except (requests.RequestException, KeyError, ValueError) as e:
+    except (requests.RequestException, KeyError, ValueError, OSError) as e:
         if media_id is not None:  # post failed after upload: remove the orphaned cover
             try:
                 requests.delete(f"{API}/media/{media_id}", headers=h, params={"force": "true"}, timeout=30)
