@@ -26,11 +26,28 @@ const Hero = () => {
         />
       </div>
 
+      {/* Full-bleed visual: robot on capable desktops, animated mesh everywhere else */}
+      <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+        <div className="absolute inset-y-0 right-0 w-full lg:w-[64%]">
+          <HeroVisual
+            className="h-full w-full transition-opacity duration-1000"
+            style={{ opacity: robotReady ? 0.1 : undefined }}
+          />
+          <div className="absolute inset-0 hidden lg:block pointer-events-auto">
+            <RobotScene className="absolute inset-0" onReady={setRobotReady} />
+          </div>
+        </div>
+        {/* Readability: fade the scene into the page behind the headline and at the edges */}
+        <div className="absolute inset-0 bg-background/70 lg:bg-transparent" />
+        <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-background via-background/55 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
+      </div>
+
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 w-full pointer-events-none">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
           {/* Text column */}
-          <div className="text-center lg:text-left">
+          <div className="text-center lg:text-left pointer-events-auto">
             {/* Eyebrow */}
             <m.div
               initial={{ opacity: 0, y: 20 }}
@@ -89,20 +106,8 @@ const Hero = () => {
             </m.div>
           </div>
 
-          {/* Agent mesh — inline SVG, no 3D runtime */}
-          <m.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, ease: [0.23, 1, 0.32, 1] }}
-            className="surface-card relative h-[300px] sm:h-[420px] lg:h-[500px] overflow-hidden rounded-3xl"
-          >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.16),transparent_68%)]" />
-            <HeroVisual
-              className="relative h-full w-full transition-opacity duration-1000"
-              style={{ opacity: robotReady ? 0.12 : 1 }}
-            />
-            <RobotScene className="absolute inset-0 z-10" onReady={setRobotReady} />
-          </m.div>
+          {/* Right column is empty on purpose: the visual is the section background */}
+          <div className="hidden lg:block" aria-hidden="true" />
         </div>
 
         {/* Stats */}
