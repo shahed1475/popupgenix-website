@@ -16,6 +16,14 @@ export interface Env {
   MODEL?: string;
 }
 
+// Exact matches from ALLOWED_ORIGINS, plus Cloudflare Pages preview deployments
+// of this project (https://<hash-or-branch>.popupgenix-website.pages.dev).
+const PREVIEW_ORIGIN = /^https:\/\/[a-z0-9-]+\.popupgenix-website\.pages\.dev$/;
+function originAllowed(origin: string, env: Env): boolean {
+  const allowed = env.ALLOWED_ORIGINS.split(",").map((o) => o.trim());
+  return allowed.includes(origin) || PREVIEW_ORIGIN.test(origin);
+}
+
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_HISTORY = 24;
 const RATE_LIMIT_PER_HOUR = 40;
@@ -63,7 +71,7 @@ const LEAD_TOOL = {
 
 function corsHeaders(origin: string | null, env: Env): Record<string, string> {
   const allowed = env.ALLOWED_ORIGINS.split(",").map((o) => o.trim());
-  const ok = origin && allowed.includes(origin);
+  const ok = origin && originAllowed(origin, env);
   return {
     "Access-Control-Allow-Origin": ok ? origin! : allowed[0] ?? "",
     "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
@@ -169,8 +177,7 @@ export default {
       return json({ error: "Not found" }, 404, cors);
     }
 
-    const allowed = env.ALLOWED_ORIGINS.split(",").map((o) => o.trim());
-    if (!origin || !allowed.includes(origin)) {
+    if (!origin || !originAllowed(origin, env)) {
       return json({ error: "Origin not allowed" }, 403, cors);
     }
 
