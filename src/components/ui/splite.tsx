@@ -48,16 +48,23 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
       setVisible(true)
       return
     }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setVisible(true)
-          observer.disconnect()
-        }
-      },
-      { rootMargin: '200px' }
-    )
-    observer.observe(node)
+    let observer: IntersectionObserver
+    try {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            setVisible(true)
+            observer.disconnect()
+          }
+        },
+        { rootMargin: '200px' }
+      )
+      observer.observe(node)
+    } catch {
+      // Old or unusual browsers: just load the scene.
+      setVisible(true)
+      return
+    }
     return () => observer.disconnect()
   }, [])
 
