@@ -48,7 +48,7 @@ npm run db:init
 **3. Add your Anthropic key as a secret** (never a var — vars are readable)
 
 ```bash
-npx wrangler secret put ANTHROPIC_API_KEY
+npx wrangler secret put OPENAI_API_KEY
 ```
 
 Get the key from console.anthropic.com. Set a monthly spend cap there while

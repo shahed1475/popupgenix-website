@@ -4,16 +4,17 @@
  * POST /api/chat   { sessionId, messages }  -> text/event-stream
  * GET  /api/health                          -> { ok: true }
  *
- * The Anthropic key lives as a Worker secret and never reaches the browser.
+ * The OpenAI key lives as a Worker secret and never reaches the browser.
  */
 
 import { SYSTEM_PROMPT } from "./knowledge";
 
 export interface Env {
-  ANTHROPIC_API_KEY: string;
+  OPENAI_API_KEY: string;
   DB: D1Database;
   ALLOWED_ORIGINS: string;
   MODEL?: string;
+  DAILY_MESSAGE_CAP?: string;
 }
 
 // Exact matches from ALLOWED_ORIGINS, plus Cloudflare Pages preview deployments
@@ -25,17 +26,19 @@ function originAllowed(origin: string, env: Env): boolean {
 }
 
 const MAX_MESSAGE_CHARS = 2000;
-const MAX_HISTORY = 24;
-const RATE_LIMIT_PER_HOUR = 40;
-const MAX_TOOL_ROUNDS = 3;
+const MAX_HISTORY = 10; // fewer past turns = fewer input tokens per call
+const RATE_LIMIT_PER_HOUR = 20;
+const SESSION_MESSAGE_CAP = 30;
+const MAX_OUTPUT_TOKENS = 300; // replies are meant to be 2-3 sentences
+const MAX_TOOL_ROUNDS = 2;
 
-const LEAD_TOOL = {
+const LEAD_FN = {
   name: "capture_lead",
   description:
     "Record a website visitor who wants the PopupGenix team to contact them. " +
     "Call this once per conversation, only when the visitor has shown real " +
     "intent and you have their name plus an email or phone number.",
-  input_schema: {
+  parameters: {
     type: "object" as const,
     properties: {
       name: { type: "string", description: "The visitor's name, as they gave it." },
@@ -99,6 +102,22 @@ async function overRateLimit(env: Env, ip: string): Promise<boolean> {
   return (row?.n ?? 0) >= RATE_LIMIT_PER_HOUR;
 }
 
+/** Hard stop so a bot or a viral day can never drain the OpenAI balance. */
+async function overBudget(env: Env, sessionId: string): Promise<string | null> {
+  const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+  const cap = Number(env.DAILY_MESSAGE_CAP ?? "400");
+  const [day, sess] = await Promise.all([
+    env.DB.prepare("SELECT COUNT(*) AS n FROM chat_messages WHERE created_at > ? AND role = 'user'")
+      .bind(dayAgo).first<{ n: number }>(),
+    env.DB.prepare("SELECT COUNT(*) AS n FROM chat_messages WHERE session_id = ? AND role = 'user'")
+      .bind(sessionId).first<{ n: number }>(),
+  ]);
+  if ((day?.n ?? 0) >= cap || (sess?.n ?? 0) >= SESSION_MESSAGE_CAP) {
+    return "I have to pause here for now. Email hello@popupgenix.com or WhatsApp +8801838580258 and the team will pick this up directly.";
+  }
+  return null;
+}
+
 async function logMessage(
   env: Env,
   sessionId: string,
@@ -151,13 +170,6 @@ async function saveLead(
   return "Lead recorded. Tell the visitor the team has their details and give them the direct email, phone and WhatsApp so they are not left waiting.";
 }
 
-interface AnthropicBlock {
-  type: string;
-  text?: string;
-  id?: string;
-  name?: string;
-  input?: unknown;
-}
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -226,9 +238,13 @@ export default {
       );
     }
 
+
+    const paused = await overBudget(env, sessionId);
+    if (paused) return json({ error: paused }, 429, cors);
+
     await logMessage(env, sessionId, ip, "user", history[history.length - 1].content);
 
-    const model = env.MODEL ?? "claude-sonnet-5-5";
+    const model = env.MODEL ?? "gpt-4o-mini";
     const encoder = new TextEncoder();
 
     const stream = new ReadableStream({
@@ -239,25 +255,27 @@ export default {
           );
         };
 
-        const conversation: { role: "user" | "assistant"; content: unknown }[] = [
+        // System prompt first and byte-identical every call, so OpenAI's
+        // automatic prompt caching bills the repeated prefix at a discount.
+        const conversation: Record<string, unknown>[] = [
+          { role: "system", content: SYSTEM_PROMPT },
           ...history,
         ];
         let fullReply = "";
 
         try {
           for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-            const res = await fetch("https://api.anthropic.com/v1/messages", {
+            const res = await fetch("https://api.openai.com/v1/chat/completions", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "x-api-key": env.ANTHROPIC_API_KEY,
-                "anthropic-version": "2023-06-01",
+                Authorization: `Bearer ${env.OPENAI_API_KEY}`,
               },
               body: JSON.stringify({
                 model,
-                max_tokens: 1024,
-                system: SYSTEM_PROMPT,
-                tools: [LEAD_TOOL],
+                max_tokens: MAX_OUTPUT_TOKENS,
+                temperature: 0.4,
+                tools: [{ type: "function", function: LEAD_FN }],
                 messages: conversation,
                 stream: true,
               }),
@@ -265,7 +283,7 @@ export default {
 
             if (!res.ok || !res.body) {
               const detail = await res.text().catch(() => "");
-              console.error("Anthropic error", res.status, detail.slice(0, 500));
+              console.error("OpenAI error", res.status, detail.slice(0, 500));
               send("error", {
                 message:
                   "I can't reach my brain right now. Email hello@popupgenix.com or WhatsApp +8801838580258 and the team will help you directly.",
@@ -273,9 +291,9 @@ export default {
               return; // `finally` closes the controller
             }
 
-            const blocks: AnthropicBlock[] = [];
-            const partialJson: Record<number, string> = {};
-            let stopReason: string | null = null;
+            let roundText = "";
+            let finish: string | null = null;
+            const calls: { id: string; name: string; args: string }[] = [];
 
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
@@ -294,89 +312,79 @@ export default {
                 const payload = line.slice(6).trim();
                 if (!payload || payload === "[DONE]") continue;
 
-                let evt: Record<string, unknown>;
+                let evt: {
+                  choices?: {
+                    delta?: {
+                      content?: string | null;
+                      tool_calls?: {
+                        index: number;
+                        id?: string;
+                        function?: { name?: string; arguments?: string };
+                      }[];
+                    };
+                    finish_reason?: string | null;
+                  }[];
+                };
                 try {
                   evt = JSON.parse(payload);
                 } catch {
                   continue;
                 }
 
-                const type = evt.type as string;
-
-                if (type === "content_block_start") {
-                  const idx = evt.index as number;
-                  blocks[idx] = { ...(evt.content_block as AnthropicBlock) };
-                  if (blocks[idx].type === "tool_use") partialJson[idx] = "";
-                } else if (type === "content_block_delta") {
-                  const idx = evt.index as number;
-                  const delta = evt.delta as Record<string, unknown>;
-                  if (delta.type === "text_delta") {
-                    const text = delta.text as string;
-                    blocks[idx] = blocks[idx] ?? { type: "text", text: "" };
-                    blocks[idx].text = (blocks[idx].text ?? "") + text;
-                    fullReply += text;
-                    send("delta", { text });
-                  } else if (delta.type === "input_json_delta") {
-                    partialJson[idx] = (partialJson[idx] ?? "") + (delta.partial_json as string);
-                  }
-                } else if (type === "content_block_stop") {
-                  const idx = evt.index as number;
-                  if (blocks[idx]?.type === "tool_use") {
-                    try {
-                      blocks[idx].input = JSON.parse(partialJson[idx] || "{}");
-                    } catch {
-                      blocks[idx].input = {};
-                    }
-                  }
-                } else if (type === "message_delta") {
-                  const delta = evt.delta as Record<string, unknown>;
-                  if (delta.stop_reason) stopReason = delta.stop_reason as string;
+                const choice = evt.choices?.[0];
+                if (!choice) continue;
+                const delta = choice.delta;
+                if (delta?.content) {
+                  roundText += delta.content;
+                  fullReply += delta.content;
+                  send("delta", { text: delta.content });
                 }
+                for (const tc of delta?.tool_calls ?? []) {
+                  const c = (calls[tc.index] ??= { id: "", name: "", args: "" });
+                  if (tc.id) c.id = tc.id;
+                  if (tc.function?.name) c.name += tc.function.name;
+                  if (tc.function?.arguments) c.args += tc.function.arguments;
+                }
+                if (choice.finish_reason) finish = choice.finish_reason;
               }
             }
 
-            const toolUses = blocks.filter((b) => b && b.type === "tool_use");
-
-            if (stopReason !== "tool_use" || toolUses.length === 0) {
+            const toolCalls = calls.filter(Boolean);
+            if (finish !== "tool_calls" || toolCalls.length === 0) {
               break;
             }
 
             send("status", { message: "Passing your details to the team…" });
 
-            // The Messages API rejects empty text blocks, which would 400 the
-            // continuation and surface as a generic failure to the visitor.
             conversation.push({
               role: "assistant",
-              content: blocks.filter(
-                (b) => b && (b.type !== "text" || (b.text ?? "").trim().length > 0)
-              ),
+              content: roundText || null,
+              tool_calls: toolCalls.map((c) => ({
+                id: c.id,
+                type: "function",
+                function: { name: c.name, arguments: c.args || "{}" },
+              })),
             });
 
-            const results = [];
-            for (const tool of toolUses) {
+            for (const c of toolCalls) {
               let text = "Unknown tool.";
-              if (tool.name === "capture_lead") {
+              if (c.name === "capture_lead") {
                 try {
-                  text = await saveLead(
-                    env,
-                    sessionId,
-                    ip,
-                    (tool.input ?? {}) as Record<string, unknown>
-                  );
+                  let input: Record<string, unknown> = {};
+                  try {
+                    input = JSON.parse(c.args || "{}");
+                  } catch {
+                    /* leave empty; saveLead tolerates missing fields */
+                  }
+                  text = await saveLead(env, sessionId, ip, input);
                 } catch (err) {
                   console.error("saveLead failed", err);
                   text =
                     "Saving failed. Apologise briefly and give the visitor the direct email and WhatsApp instead.";
                 }
               }
-              results.push({
-                type: "tool_result",
-                tool_use_id: tool.id,
-                content: text,
-              });
+              conversation.push({ role: "tool", tool_call_id: c.id, content: text });
             }
-
-            conversation.push({ role: "user", content: results });
           }
 
           if (!fullReply.trim()) {

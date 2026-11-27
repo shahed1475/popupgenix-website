@@ -5,7 +5,8 @@ compatibility_date = "2026-11-01"
 # Comma-separated. Add any preview domain you test from.
 [vars]
 ALLOWED_ORIGINS = "https://popupgenix.com,https://www.popupgenix.com,https://popupgenix-website.pages.dev,http://localhost:8080"
-MODEL = "claude-sonnet-5-5"
+MODEL = "gpt-4o-mini"
+DAILY_MESSAGE_CAP = "400"
 
 # Fill database_id from:  npx wrangler d1 create popupgenix-chat
 [[d1_databases]]
@@ -13,5 +14,5 @@ binding = "DB"
 database_name = "popupgenix-chat"
 database_id = "b08561e2-a25c-4098-9d4d-76a6e99bfb9a"
 
-# ANTHROPIC_API_KEY is a secret, never a var:
-#   npx wrangler secret put ANTHROPIC_API_KEY
+# OPENAI_API_KEY is a secret, never a var:
+#   npx wrangler secret put OPENAI_API_KEY
