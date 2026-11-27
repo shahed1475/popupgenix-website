@@ -25,7 +25,7 @@ export function BrandMark({ className, title = "PopupGenix" }: BrandMarkProps) {
 export function BrandWordmark({ className }: { className?: string }) {
   return (
     <span className={className}>
-      <span className="text-foreground">Popup</span>
+      <span className="text-[#0B1220] dark:text-white">Popup</span>
       <span className="text-primary">Genix</span>
     </span>
   );
