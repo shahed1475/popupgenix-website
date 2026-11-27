@@ -147,9 +147,9 @@ export default function Dashboard() {
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/20">
+          <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
             <CardContent className="text-center py-6">
-              <div className="text-3xl font-bold text-purple-400 mb-2">
+              <div className="text-3xl font-bold text-accent mb-2">
                 5+
               </div>
               <div className="text-gray-300">Years Experience</div>

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { SplineScene } from "@/components/ui/splite";
+import { m } from "framer-motion";
+import { HeroVisual } from "@/components/HeroVisual";
 
 const stats = [
   { number: "50+", label: "Projects Delivered" },
@@ -12,10 +12,10 @@ const stats = [
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12">
+    <section id="home" className="grain relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12">
       {/* Single restrained background blob */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
@@ -29,18 +29,18 @@ const Hero = () => {
           {/* Text column */}
           <div className="text-center lg:text-left">
             {/* Eyebrow */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.35em] text-muted-foreground mb-8"
+              className="eyebrow inline-flex items-center gap-2 mb-8"
             >
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               AI &amp; Software Solutions
-            </motion.div>
+            </m.div>
 
             {/* Main Heading */}
-            <motion.h1
+            <m.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
@@ -49,10 +49,10 @@ const Hero = () => {
               <span className="text-foreground">Building Future-Ready</span>
               <br />
               <span className="text-muted-foreground">AI &amp; Software Solutions.</span>
-            </motion.h1>
+            </m.h1>
 
             {/* Description */}
-            <motion.p
+            <m.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -62,10 +62,10 @@ const Hero = () => {
               through innovative technology. We build SaaS platforms, CRM and ERP systems, mobile
               and web applications, and advanced AI/ML solutions including predictive analytics
               and intelligent automation.
-            </motion.p>
+            </m.p>
 
             {/* CTA Buttons */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
@@ -83,32 +83,25 @@ const Hero = () => {
                   View Portfolio
                 </Button>
               </a>
-            </motion.div>
+            </m.div>
           </div>
 
-          {/* 3D Spline scene */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+          {/* Agent mesh — inline SVG, no 3D runtime */}
+          <m.div
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="relative h-[300px] sm:h-[420px] lg:h-[500px] rounded-3xl border border-border/60 bg-gradient-to-br from-primary/5 via-card to-primary/10 overflow-hidden dark:border-white/5 dark:from-primary/10 dark:via-white/[0.02] dark:to-primary/5"
+            transition={{ duration: 0.9, ease: [0.23, 1, 0.32, 1] }}
+            className="surface-card relative h-[300px] sm:h-[420px] lg:h-[500px] overflow-hidden rounded-3xl"
           >
-            {/* Soft brand glow behind the robot so it sits in the page, not on a white box */}
-            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_62%,hsl(var(--primary)/0.2),transparent_65%)]" />
-            {/* On phones the scene ignores touch so the page still scrolls; on desktop it follows the mouse */}
-            <div className="relative h-full w-full pointer-events-none lg:pointer-events-auto touch-pan-y mix-blend-multiply dark:mix-blend-normal">
-              <SplineScene
-                scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-                className="w-full h-full"
-              />
-            </div>
-          </motion.div>
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.16),transparent_68%)]" />
+            <HeroVisual className="relative h-full w-full" />
+          </m.div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 sm:gap-8 max-w-2xl mx-auto mt-12 lg:mt-24">
           {stats.map((stat, index) => (
-            <motion.div
+            <m.div
               key={stat.label}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -117,7 +110,7 @@ const Hero = () => {
             >
               <div className="text-3xl font-black tracking-tight text-foreground mb-1">{stat.number}</div>
               <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">{stat.label}</div>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>

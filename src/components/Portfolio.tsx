@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ExternalLink, ArrowRight } from "lucide-react";
 
 const projects = [
@@ -51,7 +51,7 @@ const Portfolio = () => {
     <section id="portfolio" className="py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -71,12 +71,12 @@ const Portfolio = () => {
             Discover how we've transformed businesses across industries with our
             innovative AI and software solutions that deliver measurable results.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Portfolio Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16 max-w-5xl mx-auto">
           {projects.map((project, index) => (
-            <motion.div
+            <m.div
               key={project.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -105,7 +105,7 @@ const Portfolio = () => {
               </div>
 
               <div className="p-6">
-                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary mb-2">
+                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-2">
                   {project.category}
                 </div>
                 <h3 className="text-xl font-bold mb-3 text-foreground">
@@ -136,12 +136,12 @@ const Portfolio = () => {
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                 </a>
               </div>
-            </motion.div>
+            </m.div>
           ))}
         </div>
 
         {/* CTA */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -168,7 +168,7 @@ const Portfolio = () => {
               </Button>
             </Link>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

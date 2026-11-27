@@ -1,41 +1,61 @@
+import { lazy, Suspense } from "react";
+import { LazyMotion, MotionConfig, domMax } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { ThemeProvider } from "next-themes";
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Portal from "./pages/Portal";
-import AdminPanel from "./pages/AdminPanel";
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Portal = lazy(() => import("./pages/Portal"));
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 
-import Contact from "./pages/Contact";
-import BlogPost from "./pages/BlogPost";
-import WordPressBlog from "./pages/WordPressBlog";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import CookiePolicy from "./pages/CookiePolicy";
-import Pricing from "./pages/Pricing";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import RefundPolicy from "./pages/RefundPolicy";
+const Contact = lazy(() => import("./pages/Contact"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const WordPressBlog = lazy(() => import("./pages/WordPressBlog"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 import ScrollToHash from "@/components/ScrollToHash";
+const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 
 // Service Pages
-import AIAndML from "./pages/services/AIAndML";
-import CustomSoftware from "./pages/services/CustomSoftware";
-import WebDevelopment from "./pages/services/WebDevelopment";
-import MobileApps from "./pages/services/MobileApps";
-import CRMAndSaaS from "./pages/services/CRMAndSaaS";
-import CloudAndDevOps from "./pages/services/CloudAndDevOps";
+const AIAndML = lazy(() => import("./pages/services/AIAndML"));
+const CustomSoftware = lazy(() => import("./pages/services/CustomSoftware"));
+const WebDevelopment = lazy(() => import("./pages/services/WebDevelopment"));
+const MobileApps = lazy(() => import("./pages/services/MobileApps"));
+const CRMAndSaaS = lazy(() => import("./pages/services/CRMAndSaaS"));
+const CloudAndDevOps = lazy(() => import("./pages/services/CloudAndDevOps"));
 import { RouteMeta } from "./components/RouteMeta";
 
 
 
+// Keeps layout stable while a route chunk arrives — no spinner flash, no CLS.
+const RouteFallback = () => <div className="min-h-screen bg-background" />;
+
+// The assistant is for visitors, not for signed-in clients or staff.
+const ChatGate = () => {
+  const { pathname } = useLocation();
+  if (pathname.startsWith("/admin") || pathname.startsWith("/portal")) return null;
+  return (
+    <Suspense fallback={null}>
+      <ChatWidget />
+    </Suspense>
+  );
+};
+
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+    <MotionConfig reducedMotion="user">
+      <LazyMotion features={domMax} strict>
     <Toaster />
     <Sonner />
       <BrowserRouter>
         <ScrollToHash />
         <RouteMeta />
+        <Suspense fallback={<RouteFallback />}>
         <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/contact" element={<Contact />} />
@@ -62,7 +82,11 @@ const App = () => (
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+        </Suspense>
+        <ChatGate />
     </BrowserRouter>
+      </LazyMotion>
+    </MotionConfig>
   </ThemeProvider>
 );
 

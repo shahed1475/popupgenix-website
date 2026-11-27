@@ -132,7 +132,7 @@ const Pricing = () => {
                 <h3 className="font-semibold text-lg mb-2">Is there a refund policy?</h3>
                 <p className="text-muted-foreground">
                   Yes, we offer refunds within 14 days of purchase. Please see our{" "}
-                  <Link to="/refund-policy" className="text-primary hover:underline">
+                  <Link to="/refund-policy" className="text-accent hover:underline">
                     Refund Policy
                   </Link>{" "}
                   for more details.

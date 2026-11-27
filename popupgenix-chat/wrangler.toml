@@ -1,0 +1,17 @@
+name = "popupgenix-chat"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+# Comma-separated. Add any preview domain you test from.
+[vars]
+ALLOWED_ORIGINS = "https://popupgenix.com,https://www.popupgenix.com,https://popupgenix-website.pages.dev,http://localhost:8080"
+MODEL = "claude-sonnet-5-5"
+
+# Fill database_id from:  npx wrangler d1 create popupgenix-chat
+[[d1_databases]]
+binding = "DB"
+database_name = "popupgenix-chat"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+
+# ANTHROPIC_API_KEY is a secret, never a var:
+#   npx wrangler secret put ANTHROPIC_API_KEY

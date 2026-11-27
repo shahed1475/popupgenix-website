@@ -307,7 +307,7 @@ export default function HomepageManager() {
               <div className="text-gray-300 text-sm">Clients</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-400">{content.satisfaction_rate}%</div>
+              <div className="text-2xl font-bold text-accent">{content.satisfaction_rate}%</div>
               <div className="text-gray-300 text-sm">Satisfaction</div>
             </div>
             <div>

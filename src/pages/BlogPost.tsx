@@ -202,9 +202,9 @@ const BlogPost = () => {
               prose-h1:text-6xl prose-h1:leading-tight prose-h1:mb-8 prose-h1:mt-16 prose-h1:pb-6 prose-h1:border-b-2 prose-h1:border-gradient-primary
               prose-h2:text-5xl prose-h2:leading-snug prose-h2:mb-6 prose-h2:mt-14 prose-h2:text-primary prose-h2:font-semibold
               prose-h3:text-4xl prose-h3:leading-snug prose-h3:mb-5 prose-h3:mt-12 prose-h3:text-primary/90 prose-h3:font-medium
-              prose-h4:text-3xl prose-h4:leading-snug prose-h4:mb-4 prose-h4:mt-10 prose-h4:text-primary/80 prose-h4:font-medium
-              prose-h5:text-2xl prose-h5:leading-snug prose-h5:mb-4 prose-h5:mt-8 prose-h5:text-primary/70 prose-h5:font-medium
-              prose-h6:text-xl prose-h6:leading-snug prose-h6:mb-3 prose-h6:mt-6 prose-h6:text-primary/60 prose-h6:font-medium
+              prose-h4:text-3xl prose-h4:leading-snug prose-h4:mb-4 prose-h4:mt-10 prose-h4:text-accent/80 prose-h4:font-medium
+              prose-h5:text-2xl prose-h5:leading-snug prose-h5:mb-4 prose-h5:mt-8 prose-h5:text-accent/70 prose-h5:font-medium
+              prose-h6:text-xl prose-h6:leading-snug prose-h6:mb-3 prose-h6:mt-6 prose-h6:text-accent/60 prose-h6:font-medium
               
               /* Paragraph and Text */
               prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg prose-p:font-light
@@ -212,8 +212,8 @@ const BlogPost = () => {
               prose-em:text-muted-foreground prose-em:italic prose-em:font-medium
               
               /* Links */
-              prose-a:text-primary prose-a:font-medium prose-a:no-underline prose-a:bg-primary/5 prose-a:px-1 prose-a:rounded prose-a:transition-all
-              hover:prose-a:text-primary-glow hover:prose-a:bg-primary/10 hover:prose-a:underline
+              prose-a:text-accent prose-a:font-medium prose-a:no-underline prose-a:bg-primary/5 prose-a:px-1 prose-a:rounded prose-a:transition-all
+              hover:prose-a:text-accent-glow hover:prose-a:bg-primary/10 hover:prose-a:underline
               
               /* Lists */
               prose-ul:my-8 prose-ul:space-y-3 prose-ul:pl-6

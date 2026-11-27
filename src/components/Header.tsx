@@ -2,7 +2,7 @@ import { BrandMark, BrandWordmark } from "@/components/BrandMark";
 import { useEffect, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -66,7 +66,7 @@ const Header = () => {
     >
       {name}
       {hovered === name && (
-        <motion.span
+        <m.span
           layoutId="nav-underline"
           className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary"
           transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -108,7 +108,7 @@ const Header = () => {
                   <span>Services</span>
                   <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   {hovered === "Services" && (
-                    <motion.span
+                    <m.span
                       layoutId="nav-underline"
                       className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -143,7 +143,7 @@ const Header = () => {
                   <span>Legal</span>
                   <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-data-[state=open]:rotate-180" />
                   {hovered === "Legal" && (
-                    <motion.span
+                    <m.span
                       layoutId="nav-underline"
                       className="absolute -bottom-0.5 left-0 right-0 h-px bg-primary"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -194,7 +194,7 @@ const Header = () => {
       {/* Mobile Navigation - Full-screen takeover */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -221,7 +221,7 @@ const Header = () => {
             <div className="flex flex-col h-[calc(100%-5rem)] overflow-y-auto px-6 pb-10">
               <div className="flex flex-col gap-1 pt-6">
                 {navigationBefore.map((item, i) => (
-                  <motion.div
+                  <m.div
                     key={item.name}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -234,10 +234,10 @@ const Header = () => {
                     >
                       {item.name}
                     </Link>
-                  </motion.div>
+                  </m.div>
                 ))}
 
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -258,10 +258,10 @@ const Header = () => {
                       </Link>
                     ))}
                   </div>
-                </motion.div>
+                </m.div>
 
                 {navigationAfter.map((item, i) => (
-                  <motion.div
+                  <m.div
                     key={item.name}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -275,10 +275,10 @@ const Header = () => {
                     >
                       {item.name}
                     </Link>
-                  </motion.div>
+                  </m.div>
                 ))}
 
-                <motion.div
+                <m.div
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -299,10 +299,10 @@ const Header = () => {
                       </Link>
                     ))}
                   </div>
-                </motion.div>
+                </m.div>
 
                 {navigationEnd.map((item, i) => (
-                  <motion.div
+                  <m.div
                     key={item.name}
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -316,11 +316,11 @@ const Header = () => {
                     >
                       {item.name}
                     </Link>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

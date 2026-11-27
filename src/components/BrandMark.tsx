@@ -1,5 +1,5 @@
 // PopupGenix mark: four blocks turning around an open centre.
-// Uses currentColor, so `text-primary` gives #006FE6 in light mode and #007BFF in dark mode.
+// Uses currentColor, so `text-primary` gives emerald #1A7A5E and `text-accent` jade #5FB89A.
 interface BrandMarkProps {
   className?: string;
   title?: string;
@@ -25,7 +25,7 @@ export function BrandMark({ className, title = "PopupGenix" }: BrandMarkProps) {
 export function BrandWordmark({ className }: { className?: string }) {
   return (
     <span className={className}>
-      <span className="text-[#0B1220] dark:text-white">Popup</span>
+      <span className="text-[#0D0F0E] dark:text-white">Popup</span>
       <span className="text-primary">Genix</span>
     </span>
   );

@@ -9,8 +9,8 @@ All colors MUST be HSL.
 @layer base {
   /* ── Light Theme ── */
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 7%;
+    --background: 144 16% 97%;
+    --foreground: 150 7% 5%;
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 7%;
@@ -19,35 +19,35 @@ All colors MUST be HSL.
     --popover-foreground: 0 0% 7%;
 
     /* Apple-blue accent — the only saturated color in the palette */
-    --primary: 211 100% 45%;
+    --primary: 163 65% 29%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 211 90% 58%;
+    --primary-glow: 163 62% 23%;
 
-    --secondary: 240 9% 96%;
+    --secondary: 150 12% 94%;
     --secondary-foreground: 0 0% 7%;
 
-    --muted: 240 9% 96%;
-    --muted-foreground: 240 2% 44%;
+    --muted: 150 12% 94%;
+    --muted-foreground: 152 6% 38%;
 
     /* Accent mirrors primary — monochrome palette, single accent hue */
-    --accent: 211 100% 45%;
+    --accent: 163 65% 29%;
     --accent-foreground: 0 0% 100%;
-    --accent-glow: 211 90% 58%;
+    --accent-glow: 163 62% 23%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 211 100% 45%;
+    --border: 150 10% 88%;
+    --input: 150 10% 88%;
+    --ring: 163 65% 29%;
 
     --radius: 0.75rem;
 
     /* Gradients (kept subtle/monochrome for legacy usages) */
-    --gradient-primary: linear-gradient(135deg, hsl(211 100% 45%) 0%, hsl(211 100% 52%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(240 9% 96%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(163 65% 29%) 0%, hsl(163 60% 35%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(144 16% 97%) 0%, hsl(150 12% 94%) 100%);
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(240 9% 98%) 100%);
-    --gradient-futuristic: linear-gradient(180deg, hsl(0 0% 98%) 0%, hsl(240 9% 96%) 100%);
+    --gradient-futuristic: linear-gradient(180deg, hsl(144 16% 97%) 0%, hsl(150 12% 94%) 100%);
     --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4));
 
     /* Glassmorphism — restrained, used only for nav blur */
@@ -70,40 +70,40 @@ All colors MUST be HSL.
 
   /* ── Dark Theme (default) — near-black, not pure black ── */
   .dark {
-    --background: 240 3% 4%;
-    --foreground: 0 0% 93%;
+    --background: 150 7% 5%;
+    --foreground: 144 16% 94%;
 
-    --card: 240 3% 7%;
-    --card-foreground: 0 0% 93%;
+    --card: 156 7% 9%;
+    --card-foreground: 144 16% 94%;
 
-    --popover: 240 3% 7%;
-    --popover-foreground: 0 0% 93%;
+    --popover: 156 7% 9%;
+    --popover-foreground: 144 16% 94%;
 
-    --primary: 211 100% 50%;
+    --primary: 163 65% 29%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 211 100% 62%;
+    --primary-glow: 160 39% 55%;
 
-    --secondary: 240 2% 9%;
-    --secondary-foreground: 0 0% 93%;
+    --secondary: 156 7% 13%;
+    --secondary-foreground: 144 16% 94%;
 
-    --muted: 240 2% 9%;
-    --muted-foreground: 240 2% 65%;
+    --muted: 156 7% 13%;
+    --muted-foreground: 150 8% 66%;
 
-    --accent: 211 100% 50%;
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 211 100% 62%;
+    --accent: 160 39% 55%;
+    --accent-foreground: 150 7% 5%;
+    --accent-glow: 160 45% 66%;
 
     --destructive: 0 62.8% 50.6%;
     --destructive-foreground: 0 0% 93%;
 
-    --border: 240 3% 13%;
-    --input: 240 3% 13%;
-    --ring: 211 100% 50%;
+    --border: 156 7% 15%;
+    --input: 156 7% 15%;
+    --ring: 160 39% 55%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(211 100% 56%) 100%);
-    --gradient-hero: linear-gradient(180deg, hsl(240 3% 4%) 0%, hsl(240 3% 6%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(240 3% 7%) 0%, hsl(240 3% 8%) 100%);
-    --gradient-futuristic: linear-gradient(180deg, hsl(240 3% 4%) 0%, hsl(240 3% 6%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(163 65% 29%) 0%, hsl(163 58% 37%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(150 7% 5%) 0%, hsl(156 7% 8%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(156 7% 9%) 0%, hsl(156 7% 10%) 100%);
+    --gradient-futuristic: linear-gradient(180deg, hsl(150 7% 5%) 0%, hsl(156 7% 8%) 100%);
     --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
 
     --glass-bg: rgba(255, 255, 255, 0.02);
@@ -270,4 +270,168 @@ All colors MUST be HSL.
     }
   }
 
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Premium layer — surfaces, grain, motion tokens.
+   Added alongside the existing system rather than replacing it, so nothing
+   that already works has to change.
+   ───────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* Motion. Short, ease-out, no bounce on static UI. */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --dur-fast: 140ms;
+    --dur: 200ms;
+    --dur-slow: 320ms;
+
+    /* Surface ladder — elevation by lightness, never by shadow. */
+    --surface-raised: 150 10% 96%;
+    --surface-sunken: 150 12% 93%;
+    --hairline: 150 7% 12%;
+    --hairline-strength: 0.1;
+    --grain-opacity: 0.025;
+  }
+
+  .dark {
+    --surface-raised: 156 7% 9%;
+    --surface-sunken: 156 7% 7%;
+    --hairline: 144 16% 94%;
+    --hairline-strength: 0.08;
+    --grain-opacity: 0.05;
+  }
+
+  /* Inter's optical-size axis: display cut above 32px, automatically. */
+  html {
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Tracking tightens as type grows — the single biggest "expensive type" tell. */
+  h1, .text-display {
+    letter-spacing: -0.028em;
+    line-height: 1.03;
+  }
+  h2 {
+    letter-spacing: -0.021em;
+    line-height: 1.1;
+  }
+  h3 {
+    letter-spacing: -0.014em;
+  }
+
+  /* Body text at 100% white on near-black halates. Dim it. */
+  .dark body {
+    color: hsl(var(--foreground) / 0.86);
+  }
+  .dark h1, .dark h2, .dark h3, .dark h4 {
+    color: hsl(var(--foreground));
+  }
+
+  /* One visible focus style everywhere, in jade. */
+  :focus-visible {
+    outline: 2px solid hsl(var(--accent));
+    outline-offset: 2px;
+  }
+
+  /* Numbers in stats line up. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* Card surface: lightness step + hairline + inner top highlight. */
+  .surface-card {
+    background: hsl(var(--surface-raised));
+    border: 1px solid hsl(var(--hairline) / var(--hairline-strength));
+    box-shadow: inset 0 1px 0 hsl(var(--hairline) / 0.05);
+    transition: border-color var(--dur) var(--ease-out),
+                background-color var(--dur) var(--ease-out);
+  }
+  .surface-card:hover {
+    border-color: hsl(var(--hairline) / calc(var(--hairline-strength) + 0.06));
+  }
+
+  /* Film grain. Kills gradient banding on 8-bit displays. ~0 bytes, no request. */
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Uppercase metadata label — mono, the "engineering shop" signal. */
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Buttons acknowledge the press. */
+  .press:active {
+    transform: scale(0.975);
+  }
+  .press {
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+}
+
+/* ── Hero agent-mesh motion ───────────────────────────────────────────── */
+@layer utilities {
+  @keyframes mesh-spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes mesh-spin-rev {
+    to { transform: rotate(-360deg); }
+  }
+  @keyframes mesh-flow {
+    to { stroke-dashoffset: -56; }
+  }
+  @keyframes mesh-breathe {
+    0%, 100% { opacity: 0.75; transform: scale(1); }
+    50%      { opacity: 1;    transform: scale(1.035); }
+  }
+  @keyframes mesh-pulse {
+    0%, 100% { opacity: 0.68; }
+    50%      { opacity: 1; }
+  }
+
+  .mesh-spin-slow    { animation: mesh-spin 64s linear infinite; }
+  .mesh-spin-reverse { animation: mesh-spin-rev 48s linear infinite; }
+  .mesh-flow         { animation: mesh-flow 3.6s linear infinite; }
+  .mesh-pulse        { animation: mesh-pulse 5.2s var(--ease-in-out) infinite; }
+  .mesh-breathe {
+    animation: mesh-breathe 7s var(--ease-in-out) infinite;
+    transform-origin: 240px 240px;
+  }
+
+  /* Long below-fold sections skip layout until they approach the viewport. */
+}
+
+/* Honour the system setting. Nothing decorative moves. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hover-only flourishes stay off touch screens. */
+@media (hover: none), (pointer: coarse) {
+  .press:active { transform: none; }
 }

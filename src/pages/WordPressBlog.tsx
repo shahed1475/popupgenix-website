@@ -154,7 +154,7 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
             <h1 className="text-3xl font-semibold">Redirecting to WordPress login…</h1>
             <p className="mt-4 text-muted-foreground">
               If you are not redirected,
-              <a href={wordpressUrl} target="_blank" rel="noopener" className="ml-1 underline text-primary">click here</a>.
+              <a href={wordpressUrl} target="_blank" rel="noopener" className="ml-1 underline text-accent">click here</a>.
             </p>
           </section>
         ) : (

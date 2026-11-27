@@ -89,7 +89,7 @@ export default function FilesDocuments() {
       case 'design':
         return <File className="h-5 w-5 text-neon-blue" />;
       case 'invoice':
-        return <Receipt className="h-5 w-5 text-purple-400" />;
+        return <Receipt className="h-5 w-5 text-accent" />;
       default:
         return <File className="h-5 w-5 text-gray-400" />;
     }
@@ -102,7 +102,7 @@ export default function FilesDocuments() {
       case 'design':
         return 'bg-neon-blue/10 text-neon-blue border-neon-blue/20';
       case 'invoice':
-        return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
+        return 'bg-primary/10 text-accent border-primary/20';
       default:
         return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
     }
@@ -195,7 +195,7 @@ export default function FilesDocuments() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Receipt className="h-5 w-5 text-purple-400" />
+                <Receipt className="h-5 w-5 text-accent" />
                 <div>
                   <div className="font-medium text-white">Invoices</div>
                   <div className="text-gray-300">Payment documents and receipts</div>

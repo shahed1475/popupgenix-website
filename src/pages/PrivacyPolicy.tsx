@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
           </CardHeader>
           <CardContent className="space-y-8">
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">1. Information We Collect</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">1. Information We Collect</h3>
               <p className="text-muted-foreground leading-relaxed mb-3">
                 PopupGenix collects the following types of information:
               </p>
@@ -104,7 +104,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">2. How We Use Your Information</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">2. How We Use Your Information</h3>
               <p className="text-muted-foreground mb-3">We use the information we collect for the following purposes:</p>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-4">
                 <li><strong>Service Delivery:</strong> To provide, maintain, and improve our SaaS products and AI-powered services</li>
@@ -118,7 +118,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">3. Third-Party Sharing</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">3. Third-Party Sharing</h3>
               <p className="text-muted-foreground leading-relaxed mb-3">
                 We may share your information with trusted third-party service providers who assist us in operating our business:
               </p>
@@ -136,7 +136,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">4. Data Security & Protection</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">4. Data Security & Protection</h3>
               <p className="text-muted-foreground leading-relaxed mb-3">
                 We implement industry-standard security measures to protect your information, including:
               </p>
@@ -153,7 +153,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">5. Data Retention</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">5. Data Retention</h3>
               <p className="text-muted-foreground leading-relaxed mb-3">
                 We retain your personal information for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. When your data is no longer needed, we securely delete or anonymize it.
               </p>
@@ -165,7 +165,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">6. Your Rights</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">6. Your Rights</h3>
               <p className="text-muted-foreground leading-relaxed mb-3">
                 You have the following rights regarding your personal information:
               </p>
@@ -186,7 +186,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">7. Cookies & Tracking Technologies</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">7. Cookies & Tracking Technologies</h3>
               <p className="text-muted-foreground leading-relaxed mb-3">
                 We use cookies and similar tracking technologies to enhance your experience:
               </p>
@@ -202,7 +202,7 @@ const PrivacyPolicy = () => {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-primary">8. Updates to Privacy Policy</h3>
+              <h3 className="text-xl font-semibold mb-4 text-accent">8. Updates to Privacy Policy</h3>
               <p className="text-muted-foreground leading-relaxed">
                 PopupGenix may update this policy at any time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. Your continued use of our services after any changes constitutes acceptance of the updated Privacy Policy.
               </p>

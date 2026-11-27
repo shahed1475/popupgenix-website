@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Globe,
   Smartphone,
@@ -63,7 +63,7 @@ const Services = () => {
     <section id="services" className="py-24 md:py-32 bg-secondary/30">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Section Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -83,7 +83,7 @@ const Services = () => {
             We deliver comprehensive AI and software solutions that drive innovation,
             enhance efficiency, and accelerate your business growth in the digital age.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -91,7 +91,7 @@ const Services = () => {
             const IconComponent = service.icon;
 
             return (
-              <motion.div
+              <m.div
                 key={service.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -159,7 +159,7 @@ const Services = () => {
                     </div>
                   </DialogContent>
                 </Dialog>
-              </motion.div>
+              </m.div>
             );
           })}
         </div>

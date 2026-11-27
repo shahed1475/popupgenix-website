@@ -1,7 +1,7 @@
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 
 const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
@@ -21,7 +21,7 @@ const ThemeToggle = () => {
     >
       <AnimatePresence mode="wait" initial={false}>
         {isDark ? (
-          <motion.span
+          <m.span
             key="sun"
             initial={{ opacity: 0, rotate: -90, scale: 0.6 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
@@ -30,9 +30,9 @@ const ThemeToggle = () => {
             className="absolute inline-flex"
           >
             <Sun className="h-4 w-4" />
-          </motion.span>
+          </m.span>
         ) : (
-          <motion.span
+          <m.span
             key="moon"
             initial={{ opacity: 0, rotate: 90, scale: 0.6 }}
             animate={{ opacity: 1, rotate: 0, scale: 1 }}
@@ -41,7 +41,7 @@ const ThemeToggle = () => {
             className="absolute inline-flex"
           >
             <Moon className="h-4 w-4" />
-          </motion.span>
+          </m.span>
         )}
       </AnimatePresence>
     </button>

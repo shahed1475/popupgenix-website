@@ -1,0 +1,16 @@
+{
+  "name": "popupgenix-chat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute popupgenix-chat --remote --file=./schema.sql",
+    "db:leads": "wrangler d1 execute popupgenix-chat --remote --command=\"SELECT created_at, name, email, phone, company, service, project FROM chat_leads ORDER BY created_at DESC LIMIT 20\""
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "typescript": "^5.9.3",
+    "wrangler": "^3.90.0"
+  }
+}

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Target,
   Eye,
@@ -60,7 +60,7 @@ const About = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Who We Are */}
         <div className="max-w-4xl mx-auto text-center mb-20">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -70,9 +70,9 @@ const About = () => {
           >
             <span className="h-1.5 w-1.5 rounded-full bg-primary" />
             About PopupGenix
-          </motion.div>
+          </m.div>
 
-          <motion.h2
+          <m.h2
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -81,9 +81,9 @@ const About = () => {
             className="text-4xl md:text-6xl font-black tracking-tighter mb-12 text-foreground"
           >
             Who We Are
-          </motion.h2>
+          </m.h2>
 
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -111,14 +111,14 @@ const About = () => {
               and computer vision. Our mission is simple: to help businesses innovate faster, reduce costs,
               and serve their customers better with the power of technology.
             </p>
-          </motion.div>
+          </m.div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
             {stats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <motion.div
+                <m.div
                   key={stat.label}
                   initial="hidden"
                   whileInView="visible"
@@ -132,7 +132,7 @@ const About = () => {
                   </div>
                   <div className="text-2xl md:text-3xl font-black tracking-tight text-foreground mb-1">{stat.number}</div>
                   <div className="text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground">{stat.label}</div>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
@@ -140,7 +140,7 @@ const About = () => {
 
         {/* Mission & Vision */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-20">
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -158,9 +158,9 @@ const About = () => {
               accessible to organizations of all sizes, delivering solutions that drive measurable
               results and sustainable growth.
             </p>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -177,7 +177,7 @@ const About = () => {
               setting new standards for innovation, quality, and client success
               in the digital transformation landscape.
             </p>
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Core Values */}
@@ -198,7 +198,7 @@ const About = () => {
             {values.map((value, index) => {
               const IconComponent = value.icon;
               return (
-                <motion.div
+                <m.div
                   key={value.title}
                   initial="hidden"
                   whileInView="visible"
@@ -218,19 +218,19 @@ const About = () => {
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {value.description}
                   </p>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
 
           {/* CTA - palette-inverted feature card */}
-          <motion.div
+          <m.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="relative overflow-hidden text-center bg-foreground text-background p-12 md:p-16 rounded-3xl dark:bg-gradient-to-br dark:from-primary dark:to-[#0047A3] dark:text-white"
+            className="relative overflow-hidden text-center bg-foreground text-background p-12 md:p-16 rounded-3xl dark:bg-gradient-to-br dark:from-primary dark:to-[hsl(163_72%_18%)] dark:text-white"
           >
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/30 rounded-full blur-[120px] pointer-events-none" />
             <div className="relative z-10">
@@ -242,13 +242,13 @@ const About = () => {
                 with our innovative AI and software solutions.
               </p>
               <Link to="/contact">
-                <Button className="bg-background text-foreground hover:opacity-90 dark:bg-white dark:text-[#0B1220]">
+                <Button className="bg-background text-foreground hover:opacity-90 dark:bg-white dark:text-[hsl(150_7%_5%)]">
                   Start Your Journey
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>

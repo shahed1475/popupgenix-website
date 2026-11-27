@@ -227,7 +227,7 @@ export default function AdminDashboard() {
               
               <a 
                 href="/admin/services" 
-                className="p-4 bg-gradient-to-r from-green-400/10 to-blue-400/10 border border-green-400/20 rounded-lg hover:border-green-400/40 transition-all"
+                className="p-4 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-lg hover:border-primary/40 transition-all"
               >
                 <h3 className="text-white font-medium">Manage Services</h3>
                 <p className="text-gray-300 text-sm mt-1">Add or edit service offerings</p>
@@ -257,7 +257,7 @@ export default function AdminDashboard() {
               <div className="text-gray-300 text-sm">Testimonials to Review</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-400 mb-2">
+              <div className="text-2xl font-bold text-accent mb-2">
                 {stats.totalServices}
               </div>
               <div className="text-gray-300 text-sm">Active Services</div>

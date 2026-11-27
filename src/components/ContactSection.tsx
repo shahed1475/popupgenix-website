@@ -1,5 +1,5 @@
 import { Mail, MessageCircle, ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 interface ContactSectionProps {
   title?: string;
@@ -18,7 +18,7 @@ const ContactSection = ({
 }: ContactSectionProps) => {
   return (
     <section className={`py-24 md:py-32 bg-secondary/30 ${className}`}>
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -51,7 +51,7 @@ const ContactSection = ({
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </a>
         </div>
-      </motion.div>
+      </m.div>
     </section>
   );
 };
