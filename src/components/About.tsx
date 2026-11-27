@@ -194,7 +194,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-16">
             {values.map((value, index) => {
               const IconComponent = value.icon;
               return (
@@ -205,7 +205,9 @@ const About = () => {
                   viewport={{ once: true }}
                   variants={fadeUp}
                   transition={{ duration: 0.5, delay: index * 0.08 }}
-                  className="p-6 rounded-2xl border border-border bg-card text-center dark:border-white/5 dark:bg-white/[0.02]"
+                  className={`p-6 rounded-2xl border border-border bg-card text-center dark:border-white/5 dark:bg-white/[0.02] md:col-span-2 ${
+                    index === values.length - 1 && values.length % 2 === 1 ? "md:col-start-2 lg:col-start-auto" : ""
+                  } ${index === 3 && values.length === 5 ? "lg:col-start-2" : ""}`}
                 >
                   <div className="inline-flex p-3 rounded-xl bg-primary/10 mb-4">
                     <IconComponent className="w-5 h-5 text-primary" />
@@ -228,19 +230,19 @@ const About = () => {
             viewport={{ once: true }}
             variants={fadeUp}
             transition={{ duration: 0.6 }}
-            className="relative overflow-hidden text-center bg-foreground text-background p-12 md:p-16 rounded-3xl"
+            className="relative overflow-hidden text-center bg-foreground text-background p-12 md:p-16 rounded-3xl dark:bg-gradient-to-br dark:from-primary dark:to-[#0047A3] dark:text-white"
           >
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/30 rounded-full blur-[120px] pointer-events-none" />
             <div className="relative z-10">
               <h3 className="text-3xl md:text-4xl font-black tracking-tighter mb-4">
                 Ready to Experience the PopupGenix Difference?
               </h3>
-              <p className="text-background/70 mb-8 max-w-2xl mx-auto">
+              <p className="text-background/70 dark:text-white/80 mb-8 max-w-2xl mx-auto">
                 Join the growing list of businesses that have transformed their operations
                 with our innovative AI and software solutions.
               </p>
               <Link to="/contact">
-                <Button className="bg-background text-foreground hover:opacity-90">
+                <Button className="bg-background text-foreground hover:opacity-90 dark:bg-white dark:text-[#0B1220]">
                   Start Your Journey
                   <ArrowRight className="w-5 h-5" />
                 </Button>

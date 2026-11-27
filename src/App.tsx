@@ -25,6 +25,7 @@ import WebDevelopment from "./pages/services/WebDevelopment";
 import MobileApps from "./pages/services/MobileApps";
 import CRMAndSaaS from "./pages/services/CRMAndSaaS";
 import CloudAndDevOps from "./pages/services/CloudAndDevOps";
+import { RouteMeta } from "./components/RouteMeta";
 
 
 
@@ -34,6 +35,7 @@ const App = () => (
     <Sonner />
       <BrowserRouter>
         <ScrollToHash />
+        <RouteMeta />
         <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/contact" element={<Contact />} />

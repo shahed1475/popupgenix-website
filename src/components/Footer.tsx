@@ -22,11 +22,12 @@ const Footer = () => {
   ];
 
   const services = [
-    { name: "AI & Machine Learning", href: "/#services" },
-    { name: "Custom Software", href: "/#services" },
-    { name: "Web Development", href: "/#services" },
-    { name: "Mobile Apps", href: "/#services" },
-    { name: "CRM & SaaS Tools", href: "/#services" }
+    { name: "AI & Machine Learning", href: "/services/ai-machine-learning" },
+    { name: "Custom Software", href: "/services/custom-software" },
+    { name: "Web Development", href: "/services/web-development" },
+    { name: "Mobile Apps", href: "/services/mobile-apps" },
+    { name: "CRM & SaaS Tools", href: "/services/crm-saas" },
+    { name: "Cloud & DevOps", href: "/services/cloud-devops" }
   ];
 
   const socialLinks = [
@@ -176,7 +177,7 @@ const Footer = () => {
         <div className="py-8 border-t border-border">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-muted-foreground text-sm">
-              © 2025 PopupGenix.com – All Rights Reserved
+              © {new Date().getFullYear()} PopupGenix.com – All Rights Reserved
             </p>
             <div className="flex items-center gap-6 text-sm">
               <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">

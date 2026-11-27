@@ -82,7 +82,9 @@ const Portfolio = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group relative rounded-3xl border border-border bg-card overflow-hidden dark:border-white/5 dark:bg-white/[0.02]"
+              className={`group relative rounded-3xl border border-border bg-card overflow-hidden dark:border-white/5 dark:bg-white/[0.02] ${
+                index === projects.length - 1 && projects.length % 2 === 1 ? "md:col-span-2 md:w-[calc(50%-0.5rem)] md:justify-self-center" : ""
+              }`}
             >
               <div className="relative h-56 overflow-hidden">
                 <img
