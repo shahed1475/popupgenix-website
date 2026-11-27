@@ -82,7 +82,8 @@ export default function ChatWidget() {
         body: JSON.stringify({ messages: next.slice(1).map(({ role, content }) => ({ role, content })), turnstileToken }),
       });
       if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as { reply: string; handoff?: boolean };
+      const data = (await res.json()) as { reply?: unknown; handoff?: boolean };
+      if (typeof data.reply !== "string" || !data.reply.trim()) throw new Error("bad reply");
       setMsgs([...next, { role: "assistant", content: data.reply, handoff: !!data.handoff }]);
     } catch {
       setFailed(true);

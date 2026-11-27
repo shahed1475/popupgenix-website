@@ -37,6 +37,7 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
   } catch {
     return json({ error: "bad_request" }, 400);
   }
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return json({ error: "bad_request" }, 400);
 
   if (env.TURNSTILE_SECRET && !(await turnstileOk(env.TURNSTILE_SECRET, payload.turnstileToken, ip))) {
     return json({ error: "bot_check_failed" }, 403);
