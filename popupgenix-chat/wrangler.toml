@@ -11,7 +11,7 @@ MODEL = "claude-sonnet-5-5"
 [[d1_databases]]
 binding = "DB"
 database_name = "popupgenix-chat"
-database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+database_id = "b08561e2-a25c-4098-9d4d-76a6e99bfb9a"
 
 # ANTHROPIC_API_KEY is a secret, never a var:
 #   npx wrangler secret put ANTHROPIC_API_KEY
