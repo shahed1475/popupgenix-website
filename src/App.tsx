@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { afterIdle } from "@/lib/capability";
+import { lazyPage } from "@/lib/lazyPage";
 import { LazyMotion, MotionConfig, domMax } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,28 +8,28 @@ import { ThemeProvider } from "next-themes";
 
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Index from "./pages/Index";
-const NotFound = lazy(() => import("./pages/NotFound"));
-const Portal = lazy(() => import("./pages/Portal"));
-const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const NotFound = lazyPage(() => import("./pages/NotFound"));
+const Portal = lazyPage(() => import("./pages/Portal"));
+const AdminPanel = lazyPage(() => import("./pages/AdminPanel"));
 
-const Contact = lazy(() => import("./pages/Contact"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
-const WordPressBlog = lazy(() => import("./pages/WordPressBlog"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
-const Pricing = lazy(() => import("./pages/Pricing"));
-const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
-const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const Contact = lazyPage(() => import("./pages/Contact"));
+const BlogPost = lazyPage(() => import("./pages/BlogPost"));
+const WordPressBlog = lazyPage(() => import("./pages/WordPressBlog"));
+const PrivacyPolicy = lazyPage(() => import("./pages/PrivacyPolicy"));
+const CookiePolicy = lazyPage(() => import("./pages/CookiePolicy"));
+const Pricing = lazyPage(() => import("./pages/Pricing"));
+const TermsAndConditions = lazyPage(() => import("./pages/TermsAndConditions"));
+const RefundPolicy = lazyPage(() => import("./pages/RefundPolicy"));
 import ScrollToHash from "@/components/ScrollToHash";
 const ChatWidget = lazy(() => import("@/components/ChatWidget"));
 
 // Service Pages
-const AIAndML = lazy(() => import("./pages/services/AIAndML"));
-const CustomSoftware = lazy(() => import("./pages/services/CustomSoftware"));
-const WebDevelopment = lazy(() => import("./pages/services/WebDevelopment"));
-const MobileApps = lazy(() => import("./pages/services/MobileApps"));
-const CRMAndSaaS = lazy(() => import("./pages/services/CRMAndSaaS"));
-const CloudAndDevOps = lazy(() => import("./pages/services/CloudAndDevOps"));
+const AIAndML = lazyPage(() => import("./pages/services/AIAndML"));
+const CustomSoftware = lazyPage(() => import("./pages/services/CustomSoftware"));
+const WebDevelopment = lazyPage(() => import("./pages/services/WebDevelopment"));
+const MobileApps = lazyPage(() => import("./pages/services/MobileApps"));
+const CRMAndSaaS = lazyPage(() => import("./pages/services/CRMAndSaaS"));
+const CloudAndDevOps = lazyPage(() => import("./pages/services/CloudAndDevOps"));
 import { RouteMeta } from "./components/RouteMeta";
 
 
@@ -52,20 +53,29 @@ const ChatGate = () => {
 const prefetchPages = () => {
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   if (conn?.saveData) return;
-  const loaders = [
-    () => import("./pages/Contact"), () => import("./pages/Pricing"), () => import("./pages/WordPressBlog"),
-    () => import("./pages/BlogPost"), () => import("./pages/services/AIAndML"), () => import("./pages/services/CustomSoftware"),
-    () => import("./pages/services/WebDevelopment"), () => import("./pages/services/MobileApps"),
-    () => import("./pages/services/CRMAndSaaS"), () => import("./pages/services/CloudAndDevOps"),
-    () => import("./pages/PrivacyPolicy"), () => import("./pages/TermsAndConditions"),
-    () => import("./pages/RefundPolicy"), () => import("./pages/CookiePolicy"),
-  ];
-  loaders.forEach((load, i) => setTimeout(() => { load().catch(() => {}); }, i * 150));
+  const loaders = [Contact, Pricing, WordPressBlog, BlogPost, AIAndML, CustomSoftware, WebDevelopment,
+    MobileApps, CRMAndSaaS, CloudAndDevOps, PrivacyPolicy, TermsAndConditions, RefundPolicy, CookiePolicy];
+  loaders.forEach((page, i) => setTimeout(() => { page.preload().catch(() => {}); }, i * 150));
   fetch("https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1")
     .then((r) => (r.ok ? r.json() : null))
     .then((d) => { if (Array.isArray(d)) localStorage.setItem("pgx-blog-posts-v1", JSON.stringify(d)); })
     .catch(() => {});
 };
+
+// Load the code for the page the visitor opened before React starts, so the
+// pre-built page stays on screen instead of flashing an empty frame.
+export function preloadRoute(pathname: string): Promise<unknown> {
+  const p = pathname.replace(/\/+$/, "") || "/";
+  const map: Record<string, { preload: () => Promise<unknown> }> = {
+    "/contact": Contact, "/pricing": Pricing, "/blog": WordPressBlog, "/privacy": PrivacyPolicy,
+    "/terms-and-conditions": TermsAndConditions, "/refund-policy": RefundPolicy, "/cookie-policy": CookiePolicy,
+    "/services/ai-machine-learning": AIAndML, "/services/custom-software": CustomSoftware,
+    "/services/web-development": WebDevelopment, "/services/mobile-apps": MobileApps,
+    "/services/crm-saas": CRMAndSaaS, "/services/cloud-devops": CloudAndDevOps,
+  };
+  const page = map[p] ?? (p.startsWith("/blog/") ? BlogPost : p.startsWith("/portal") ? Portal : p.startsWith("/admin") ? AdminPanel : null);
+  return page ? page.preload().catch(() => {}) : Promise.resolve();
+}
 
 const App = () => {
   useEffect(() => afterIdle(prefetchPages, 3000), []);
