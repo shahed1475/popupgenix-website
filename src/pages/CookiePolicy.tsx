@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Cookie, Shield, Settings, Info } from "lucide-react";
 import { Link } from "react-router-dom";
 import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
 
 const CookiePolicy = () => {
   return (
@@ -212,6 +213,7 @@ const CookiePolicy = () => {
         title="Still Have Questions?"
         subtitle="Contact us for more information about our cookie policy or data practices."
       />
+      <Footer />
     </div>
   );
 };
