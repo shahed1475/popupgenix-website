@@ -48,6 +48,8 @@ export default function ChatWidget() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const sessionId = useRef<string>("");
+  const messagesRef = useRef<Msg[]>(messages);
+  messagesRef.current = messages;
   // Guards against two sends landing in the same React batch: `busy` is read
   // from a stale closure, a ref is not.
   const inFlight = useRef(false);
@@ -124,13 +126,13 @@ export default function ChatWidget() {
 
     // Append through the updater so a stale `messages` closure cannot drop a
     // turn, and remember where our placeholder landed instead of assuming last.
-    let slot = -1;
-    let history: Msg[] = [];
-    setMessages((m) => {
-      history = [...m, { role: "user", content: trimmed }];
-      slot = history.length;
-      return [...history, { role: "assistant", content: "" }];
-    });
+    // The history is built from a ref, not inside the state updater: React runs
+    // updaters later, so reading a variable set there gave an empty history and
+    // the Worker rejected the request.
+    const history: Msg[] = [...messagesRef.current, { role: "user", content: trimmed }];
+    const slot = history.length;
+    messagesRef.current = [...history, { role: "assistant", content: "" }];
+    setMessages(messagesRef.current);
 
     const writeSlot = (content: string) =>
       setMessages((m) => {
