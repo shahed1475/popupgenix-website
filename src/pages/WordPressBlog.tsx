@@ -2,6 +2,23 @@ import { useEffect, useState } from "react";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+const POSTS_URL = "https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1";
+const POSTS_CACHE_KEY = "pgx-blog-posts-v1";
+// Show the last list instantly, then refresh it from WordPress in the background.
+function readCachedPosts(): WPPost[] {
+  try {
+    const raw = localStorage.getItem(POSTS_CACHE_KEY);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+// WordPress.com can resize images on request. Cards only need about 640px.
+function smallImage(url: string): string {
+  return /wordpress\.com\//.test(url) && !url.includes("?") ? `${url}?w=640` : url;
+}
 import { Button } from "@/components/ui/button";
 
 interface WordPressBlogProps {
@@ -32,8 +49,8 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
     };
   };
 
-  const [posts, setPosts] = useState<WPPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<WPPost[]>(() => readCachedPosts());
+  const [loading, setLoading] = useState(() => readCachedPosts().length === 0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -122,14 +139,14 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
   // Fetch public posts when not admin
   useEffect(() => {
     if (adminLogin) return;
-    setLoading(true);
-    fetch('https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1')
+    fetch(POSTS_URL)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load posts');
         return res.json();
       })
       .then((data: WPPost[]) => {
         setPosts(data);
+        try { localStorage.setItem(POSTS_CACHE_KEY, JSON.stringify(data)); } catch { /* ignore */ }
         setError(null);
       })
       .catch((e: unknown) => {
@@ -203,7 +220,8 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
                       {imageUrl ? (
                         <div className="relative h-48 overflow-hidden">
                           <img
-                            src={imageUrl}
+                            src={smallImage(imageUrl)}
+                            decoding="async"
                             alt={imageAlt}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                             loading="lazy"

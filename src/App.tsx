@@ -1,4 +1,5 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { afterIdle } from "@/lib/capability";
 import { LazyMotion, MotionConfig, domMax } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -46,7 +47,29 @@ const ChatGate = () => {
   );
 };
 
-const App = () => (
+// Warm every public page in the background after the first screen is idle, so
+// tapping a link opens the next page instantly instead of waiting for its code.
+const prefetchPages = () => {
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (conn?.saveData) return;
+  const loaders = [
+    () => import("./pages/Contact"), () => import("./pages/Pricing"), () => import("./pages/WordPressBlog"),
+    () => import("./pages/BlogPost"), () => import("./pages/services/AIAndML"), () => import("./pages/services/CustomSoftware"),
+    () => import("./pages/services/WebDevelopment"), () => import("./pages/services/MobileApps"),
+    () => import("./pages/services/CRMAndSaaS"), () => import("./pages/services/CloudAndDevOps"),
+    () => import("./pages/PrivacyPolicy"), () => import("./pages/TermsAndConditions"),
+    () => import("./pages/RefundPolicy"), () => import("./pages/CookiePolicy"),
+  ];
+  loaders.forEach((load, i) => setTimeout(() => { load().catch(() => {}); }, i * 150));
+  fetch("https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1")
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => { if (Array.isArray(d)) localStorage.setItem("pgx-blog-posts-v1", JSON.stringify(d)); })
+    .catch(() => {});
+};
+
+const App = () => {
+  useEffect(() => afterIdle(prefetchPages, 3000), []);
+  return (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
     <MotionConfig reducedMotion="user">
       <LazyMotion features={domMax} strict>
@@ -88,6 +111,7 @@ const App = () => (
       </LazyMotion>
     </MotionConfig>
   </ThemeProvider>
-);
+  );
+};
 
 export default App;
