@@ -20,7 +20,3 @@
 
 /blog/admin-login
   X-Robots-Tag: noindex, nofollow
-
-/_seed/*
-  Access-Control-Allow-Origin: *
-  X-Robots-Tag: noindex, nofollow
