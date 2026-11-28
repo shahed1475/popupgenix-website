@@ -1,49 +1,62 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { m } from "framer-motion";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight, Lock } from "lucide-react";
 
-const projects = [
+/* Short, brand-matching link for HOM (our lead-finding product). */
+const HOM_URL = "https://autolead-manager.pages.dev/";
+
+type Project = {
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  tags: string[];
+  link?: string;
+  status?: string; // when set, the project is locked (no link)
+};
+
+const projects: Project[] = [
   {
     title: "Clarify AI",
     category: "AI Platform",
-    description: "Advanced AI-powered data analysis platform that transforms complex datasets into actionable insights.",
+    description: "Turns messy data into clear answers, so your team can see what is happening and what to do next.",
     image: "/portfolio/clarify.png",
     tags: ["AI/ML", "Data Analytics", "Python", "React"],
-    link: "https://www.clarify.ai/"
+    link: "https://www.clarify.ai/",
   },
   {
     title: "Klevere AI",
     category: "SaaS Platform",
-    description: "Business intelligence platform leveraging AI for predictive analytics and automated reporting.",
+    description: "A smart reporting tool for business teams. It spots trends, predicts what may happen, and builds reports for you.",
     image: "/portfolio/klevere.png",
     tags: ["AI", "Business Intelligence", "SaaS", "Analytics"],
-    link: "https://www.klevere.ai/"
+    link: "https://www.klevere.ai/",
   },
   {
     title: "BlackGPT",
     category: "AI Chatbot",
-    description: "Advanced conversational AI chatbot with specialized knowledge base and natural language understanding.",
+    description: "An AI chat assistant that answers questions from your own knowledge base, in simple and clear language.",
     image: "/portfolio/blackgpt.png",
     tags: ["AI", "NLP", "Chatbot", "Machine Learning"],
-    link: "https://blackgpt.us/"
+    link: "https://blackgpt.us/",
   },
   {
     title: "Inno AI",
     category: "Compliance Platform",
-    description: "Ingredient compliance checker for EU and US food additive rules, with substitution ideas. Runs live on Cloudflare Workers with a D1 database.",
-    image: "/portfolio/inno.jpg",
+    description: "Checks food ingredients against EU and US additive rules and suggests safer swaps. We are still building it.",
+    image: "/portfolio/inno.webp",
     tags: ["TypeScript", "Cloudflare Workers", "D1", "SQLite"],
-    link: "https://inno-ai.abdullah-al-fahad.workers.dev/"
+    status: "In development",
   },
   {
-    title: "AutoLead Manager",
+    title: "HOM",
     category: "Lead Generation",
-    description: "All-in-one sales growth engine: lead discovery, email campaigns, pipeline and client tracking in one dashboard.",
-    image: "/portfolio/autolead.png",
-    tags: ["Automation", "CRM", "React", "Lead Gen"],
-    link: "https://autolead-manager.pages.dev/"
-  }
+    description: "Finds the right businesses, researches who makes the decisions, and writes personal emails for you to approve.",
+    image: "/portfolio/hom.webp",
+    tags: ["AI", "Lead Gen", "Outreach", "React"],
+    link: HOM_URL,
+  },
 ];
 
 const Portfolio = () => {
@@ -64,12 +77,12 @@ const Portfolio = () => {
           </div>
 
           <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-6 text-foreground">
-            Portfolio Showcase
+            Products We Have Built
           </h2>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover how we've transformed businesses across industries with our
-            innovative AI and software solutions that deliver measurable results.
+            A few of the AI and software products we have designed and built.
+            Each one solves a real business problem.
           </p>
         </m.div>
 
@@ -86,22 +99,33 @@ const Portfolio = () => {
                 index === projects.length - 1 && projects.length % 2 === 1 ? "md:col-span-2 md:w-[calc(50%-0.5rem)] md:justify-self-center" : ""
               }`}
             >
-              <div className="relative h-56 overflow-hidden">
+              <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
                 <img
                   src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt={`${project.title} product screenshot`}
+                  width={1600}
+                  height={1000}
+                  className={`w-full h-full object-cover transition-transform duration-700 ${project.link ? "group-hover:scale-105" : "opacity-80"}`}
                   loading="lazy"
+                  decoding="async"
                 />
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Open ${project.title}`}
-                  className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-background/90 backdrop-blur border border-border opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0"
-                >
-                  <ExternalLink className="w-4 h-4 text-foreground" />
-                </a>
+                {project.status && (
+                  <span className="absolute top-4 left-4 inline-flex items-center gap-2 rounded-full bg-background/90 backdrop-blur border border-border px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-foreground">
+                    <Lock className="w-3 h-3" aria-hidden="true" />
+                    {project.status}
+                  </span>
+                )}
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Open ${project.title}`}
+                    className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-background/90 backdrop-blur border border-border opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 focus-visible:opacity-100"
+                  >
+                    <ExternalLink className="w-4 h-4 text-foreground" />
+                  </a>
+                )}
               </div>
 
               <div className="p-6">
@@ -126,15 +150,25 @@ const Portfolio = () => {
                   ))}
                 </div>
 
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-foreground group/btn"
-                >
-                  View the Project
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                </a>
+                {project.link ? (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-foreground group/btn"
+                  >
+                    View {project.title}
+                    <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                  </a>
+                ) : (
+                  <span
+                    aria-disabled="true"
+                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-muted-foreground cursor-not-allowed"
+                  >
+                    <Lock className="w-4 h-4" aria-hidden="true" />
+                    Coming soon
+                  </span>
+                )}
               </div>
             </m.div>
           ))}
@@ -149,11 +183,10 @@ const Portfolio = () => {
           className="text-center rounded-3xl border border-border bg-card p-12 md:p-16 max-w-4xl mx-auto dark:border-white/5 dark:bg-white/[0.02]"
         >
           <h3 className="text-3xl md:text-4xl font-black tracking-tighter mb-4 text-foreground">
-            Ready to Join Our Success Stories?
+            Have an Idea? Let's Build It.
           </h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Let's create the next breakthrough solution together. Our proven track record
-            speaks for itself – now let's write your success story.
+            Tell us what you need. We will reply with clear next steps and a fair quote.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/contact">
@@ -164,7 +197,7 @@ const Portfolio = () => {
             </Link>
             <Link to="/contact">
               <Button variant="outline" size="lg">
-                Schedule Consultation
+                Talk to Our Team
               </Button>
             </Link>
           </div>

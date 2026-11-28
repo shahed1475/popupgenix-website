@@ -78,10 +78,7 @@ const Hero = () => {
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed"
             >
-              PopupGenix is a custom software and AI solutions company that helps businesses grow
-              through innovative technology. We build SaaS platforms, CRM and ERP systems, mobile
-              and web applications, and advanced AI/ML solutions including predictive analytics
-              and intelligent automation.
+              PopupGenix builds custom software and AI tools that help your business grow. We make websites, mobile apps, CRM and ERP systems, and smart automation that saves you time.
             </m.p>
 
             {/* CTA Buttons */}

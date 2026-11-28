@@ -21,7 +21,7 @@ const WA_CALL_HREF = `https://wa.me/${CONTACT.whatsappClean}`;
 
 /* Trust signals */
 const trustPoints = [
-  { icon: Shield, text: "8+ Years Industry Experience" },
+  { icon: Shield, text: "5+ Years in Business" },
   { icon: Zap, text: "Typical Response Under 2 Hours" },
   { icon: Users, text: "50+ Projects Delivered Worldwide" },
 ];
@@ -227,7 +227,7 @@ const Contact = () => {
               </h2>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left max-w-2xl mx-auto">
                 {[
-                  { color: "bg-primary", text: "Expert team with 8+ years experience" },
+                  { color: "bg-primary", text: "Expert team with 5+ years in business" },
                   { color: "bg-accent", text: "Custom solutions tailored to your needs" },
                   { color: "bg-primary", text: "24/7 support and maintenance" },
                   { color: "bg-accent", text: "Competitive pricing and fast delivery" },

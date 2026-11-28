@@ -18,27 +18,27 @@ const values = [
   {
     icon: Sparkles,
     title: "Innovation",
-    description: "Pushing boundaries with cutting-edge AI and emerging technologies"
+    description: "We try new ideas and the latest AI to solve real problems"
   },
   {
     icon: Shield,
     title: "Security",
-    description: "Building robust, secure solutions that protect and empower businesses"
+    description: "We build safe systems that protect your data and your customers"
   },
   {
     icon: TrendingUp,
     title: "Growth",
-    description: "Delivering scalable solutions that drive sustainable business growth"
+    description: "Our solutions are built to grow as your business grows"
   },
   {
     icon: Heart,
     title: "Trust",
-    description: "Building lasting partnerships through transparency and reliability"
+    description: "We are open and honest, and we keep our promises"
   },
   {
     icon: Award,
     title: "Scalability",
-    description: "Creating future-proof solutions that grow with your business needs"
+    description: "Your software keeps working well as more people use it"
   }
 ];
 
@@ -92,24 +92,17 @@ const About = () => {
             className="rounded-3xl border border-border bg-card p-8 md:p-12 mb-12 text-left space-y-6 dark:border-white/5 dark:bg-white/[0.02]"
           >
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              PopupGenix is a custom software and AI solutions company helping businesses of all sizes
-              transform their ideas into powerful digital products. We design and build everything from
-              websites and mobile apps to advanced AI-driven platforms. Our team focuses on creating
-              scalable, secure, and user-friendly solutions that are designed to grow with your business.
+              PopupGenix is a software and AI company. We help businesses of all sizes turn their ideas into useful digital products, from websites and mobile apps to smart AI platforms. Everything we build is secure, easy to use, and ready to grow with you.
             </p>
 
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              We provide complete enterprise software such as <span className="text-foreground font-semibold">CRM systems</span> (Customer
-              Relationship Management) that help companies manage customer interactions, and <span className="text-foreground font-semibold">ERP
-              systems</span> (Enterprise Resource Planning) that streamline operations like sales, HR, finance,
-              and inventory management.
+              We also build business systems. A <span className="text-foreground font-semibold">CRM</span> (Customer Relationship Management) system helps you keep track of your customers.
+              An <span className="text-foreground font-semibold">ERP</span> (Enterprise Resource Planning) system brings sales, HR, finance and stock into one place.
             </p>
 
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              In addition, we deliver modern <span className="text-foreground font-semibold">SaaS platforms</span>, responsive web applications,
-              and intelligent <span className="text-foreground font-semibold">AI/ML solutions</span> such as predictive analytics, automation,
-              and computer vision. Our mission is simple: to help businesses innovate faster, reduce costs,
-              and serve their customers better with the power of technology.
+              We also make <span className="text-foreground font-semibold">SaaS products</span>, web apps, and <span className="text-foreground font-semibold">AI tools</span> for predictions, automation and image recognition.
+              Our goal is simple: help you move faster, spend less, and serve your customers better.
             </p>
           </m.div>
 
@@ -153,10 +146,7 @@ const About = () => {
             </div>
             <h3 className="text-2xl font-bold mb-4 text-foreground">Our Mission</h3>
             <p className="text-muted-foreground leading-relaxed">
-              To help businesses innovate faster, reduce costs, and serve their customers better
-              with the power of technology. We believe in making advanced AI and enterprise software
-              accessible to organizations of all sizes, delivering solutions that drive measurable
-              results and sustainable growth.
+              To help businesses move faster, spend less, and serve customers better with technology. We make advanced AI and business software easy to use for companies of every size.
             </p>
           </m.div>
 
@@ -173,9 +163,7 @@ const About = () => {
             </div>
             <h3 className="text-2xl font-bold mb-4 text-foreground">Our Vision</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Becoming a global leader in AI-powered custom software solutions,
-              setting new standards for innovation, quality, and client success
-              in the digital transformation landscape.
+              To become a trusted global leader in AI-powered software, known for quality, fresh ideas and happy clients.
             </p>
           </m.div>
         </div>
@@ -190,7 +178,7 @@ const About = () => {
               Our Core Values
             </h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              These principles guide every decision we make and every solution we create
+              The ideas that guide every project we take on
             </p>
           </div>
 
@@ -235,11 +223,10 @@ const About = () => {
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/30 rounded-full blur-[120px] pointer-events-none" />
             <div className="relative z-10">
               <h3 className="text-3xl md:text-4xl font-black tracking-tighter mb-4">
-                Ready to Experience the PopupGenix Difference?
+                Ready to Work With PopupGenix?
               </h3>
               <p className="text-background/70 dark:text-white/80 mb-8 max-w-2xl mx-auto">
-                Join the growing list of businesses that have transformed their operations
-                with our innovative AI and software solutions.
+                Join the businesses that already work smarter with our AI and software.
               </p>
               <Link to="/contact">
                 <Button className="bg-background text-foreground hover:opacity-90 dark:bg-white dark:text-[hsl(150_7%_5%)]">

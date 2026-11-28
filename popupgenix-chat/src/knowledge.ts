@@ -149,14 +149,16 @@ Klevere AI — a business intelligence SaaS platform doing predictive analytics
   and automated reporting.
 BlackGPT — a conversational AI chatbot with a specialised knowledge base.
 Inno AI — an ingredient compliance checker for EU and US food additive rules,
-  with substitution suggestions. Runs on Cloudflare Workers with a D1 database.
-AutoLead Manager — a sales growth engine covering lead discovery, email
-  campaigns, pipeline and client tracking in one dashboard.
+  with substitution suggestions. It is still in development and not open to
+  the public yet — do not send visitors to it; say it is coming soon.
+HOM — a lead-finding product: it searches a market, researches each business
+  to find the decision makers, and drafts personal emails the user approves
+  before anything is sent. (Previously shown as AutoLead Manager.)
 
 ## Practical details
 
 Payments accepted: Stripe, Wise, Visa and Mastercard.
-The site advertises 99.99% uptime and a 30-day refund policy.
+The site advertises a 30-day refund policy.
 There is a client portal at ${COMPANY.site}/portal for existing clients to see
 project updates, messages, files and invoices. If a current client asks about
 their project status, point them there or to their account manager — you cannot

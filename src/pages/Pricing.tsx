@@ -13,7 +13,7 @@ const Pricing = () => {
       name: "Starter",
       price: "$500",
       period: "/month",
-      description: "Perfect for growing businesses looking to leverage AI and SaaS solutions",
+      description: "For growing businesses that want to start with AI and SaaS tools",
       features: [
         "Core SaaS integrations (basic API access)",
         "Standard email support",
@@ -30,7 +30,7 @@ const Pricing = () => {
       name: "Enterprise",
       price: "Custom",
       period: "Pricing",
-      description: "Tailored solutions for organizations requiring advanced AI and full-scale SaaS products",
+      description: "Custom solutions for larger teams that need advanced AI and full SaaS products",
       features: [
         "Unlimited usage",
         "Full AI integration (custom workflows, agentic AI support)",
@@ -60,7 +60,7 @@ const Pricing = () => {
               Simple, Transparent Pricing
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground">
-              Choose the plan that fits your business needs. Scale as you grow with our flexible pricing options.
+              Pick the plan that fits your business. You can change it at any time.
             </p>
           </div>
 
@@ -93,7 +93,7 @@ const Pricing = () => {
                   className={`w-full mb-8 ${
                     plan.highlighted
                       ? "bg-primary hover:bg-primary/90"
-                      : "bg-secondary hover:bg-secondary/90"
+                      : "bg-secondary text-foreground border border-border hover:bg-secondary/80"
                   }`}
                   size="lg"
                 >
@@ -119,19 +119,19 @@ const Pricing = () => {
               <Card className="p-6">
                 <h3 className="font-semibold text-lg mb-2">Can I switch plans later?</h3>
                 <p className="text-muted-foreground">
-                  Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.
+                  Yes. You can move to a bigger or smaller plan at any time. The change starts on your next bill.
                 </p>
               </Card>
               <Card className="p-6">
                 <h3 className="font-semibold text-lg mb-2">What payment methods do you accept?</h3>
                 <p className="text-muted-foreground">
-                  We accept all major credit cards, bank transfers, and digital payment methods through our secure payment processor Paddle.
+                  We accept major credit cards, bank transfers and digital payments through our secure payment partners.
                 </p>
               </Card>
               <Card className="p-6">
                 <h3 className="font-semibold text-lg mb-2">Is there a refund policy?</h3>
                 <p className="text-muted-foreground">
-                  Yes, we offer refunds within 14 days of purchase. Please see our{" "}
+                  Yes. You can ask for a refund within 30 days of purchase. Please read our{" "}
                   <Link to="/refund-policy" className="text-accent hover:underline">
                     Refund Policy
                   </Link>{" "}
@@ -141,7 +141,7 @@ const Pricing = () => {
               <Card className="p-6">
                 <h3 className="font-semibold text-lg mb-2">How does Enterprise pricing work?</h3>
                 <p className="text-muted-foreground">
-                  Enterprise pricing is customized based on your specific needs, usage requirements, and integration complexity. Contact our sales team for a personalized quote.
+                  The price depends on what you need, how much you use, and how many tools we connect. Contact our team and we will send you a clear quote.
                 </p>
               </Card>
             </div>
