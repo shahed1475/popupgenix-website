@@ -1,7 +1,7 @@
 import { BrandMark, BrandWordmark } from "@/components/BrandMark";
 import { useEffect, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
@@ -42,6 +42,18 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  const { pathname } = useLocation();
+
+  // On the home page the logo and "Home" are links to the page you are already
+  // on, so React Router does nothing. Scroll to the top instead.
+  const goHome = (e: React.MouseEvent) => {
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (window.location.hash) window.history.replaceState(null, "", "/");
+      setIsMenuOpen(false);
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -60,6 +72,7 @@ const Header = () => {
   const NavLink = ({ name, href }: { name: string; href: string }) => (
     <Link
       to={href}
+      onClick={href === "/" ? goHome : undefined}
       className={NAV_LINK_CLASS}
       onMouseEnter={() => setHovered(name)}
       onMouseLeave={() => setHovered(null)}
@@ -87,7 +100,7 @@ const Header = () => {
         <nav className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to="/" className="flex shrink-0 items-center space-x-3 mr-6">
+            <Link to="/" onClick={goHome} aria-label="PopupGenix home" className="flex shrink-0 items-center space-x-3 mr-6">
               <BrandMark className="h-9 w-9 text-primary" title="PopupGenix logo" />
               <BrandWordmark className="text-lg font-black tracking-tight" />
             </Link>
@@ -205,8 +218,9 @@ const Header = () => {
             aria-label="Mobile navigation"
           >
             <div className="flex items-center justify-between h-20 px-6">
-              <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-black tracking-tight text-foreground">
-                PopupGenix
+              <Link to="/" onClick={(e) => { goHome(e); setIsMenuOpen(false); }} aria-label="PopupGenix home" className="flex items-center space-x-3">
+                <BrandMark className="h-9 w-9 text-primary" title="PopupGenix logo" />
+                <BrandWordmark className="text-lg font-black tracking-tight" />
               </Link>
               <button
                 onClick={() => setIsMenuOpen(false)}
@@ -230,7 +244,7 @@ const Header = () => {
                     <Link
                       to={item.href}
                       className="block py-3 text-3xl font-bold tracking-tight text-foreground"
-                      onClick={() => setIsMenuOpen(false)}
+                      onClick={(e) => { if (item.href === "/") goHome(e); setIsMenuOpen(false); }}
                     >
                       {item.name}
                     </Link>

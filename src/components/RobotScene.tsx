@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { afterIdle, canRunHeavyVisuals } from '@/lib/capability'
 
 // The Spline runtime is large, so it is a separate chunk that is requested only
-// on capable desktops, after the page has loaded and gone idle.
+// on capable devices, after the page has loaded and gone idle.
 const Spline = lazy(() => import('@splinetool/react-spline'))
 
 const SCENE = 'https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode'
@@ -25,14 +25,16 @@ interface Props {
   className?: string
   // Called when the robot has rendered, so the page can dim the SVG poster.
   onReady?: (ready: boolean) => void
+  // Smallest screen width that gets the robot (default: desktop only).
+  minWidth?: number
 }
 
-export function RobotScene({ className, onReady }: Props) {
+export function RobotScene({ className, onReady, minWidth = 1024 }: Props) {
   const [enabled, setEnabled] = useState(false)
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
-    if (!canRunHeavyVisuals({ minWidth: 1024 })) return
+    if (!canRunHeavyVisuals({ minWidth })) return
     return afterIdle(() => setEnabled(true))
   }, [])
 

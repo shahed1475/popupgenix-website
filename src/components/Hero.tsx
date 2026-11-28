@@ -26,19 +26,22 @@ const Hero = () => {
         />
       </div>
 
-      {/* Full-bleed visual: robot on capable desktops, animated mesh everywhere else */}
+      {/* Full-bleed visual: the 3D robot on capable devices (phones included),
+          the light animated mesh everywhere else */}
       <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
         <div className="absolute inset-y-0 right-0 w-full lg:w-[64%]">
           <HeroVisual
             className="h-full w-full transition-opacity duration-1000"
             style={{ opacity: robotReady ? 0.1 : undefined }}
           />
-          <div className="absolute inset-0 hidden lg:block pointer-events-auto">
-            <RobotScene className="absolute inset-0" onReady={setRobotReady} />
+          {/* On phones the robot sits in the lower part of the hero, behind the
+              buttons and numbers, and never captures touch so the page scrolls. */}
+          <div className="absolute inset-x-0 bottom-0 top-[32%] lg:inset-0 lg:pointer-events-auto">
+            <RobotScene className="absolute inset-0" minWidth={0} onReady={setRobotReady} />
           </div>
         </div>
         {/* Readability: fade the scene into the page behind the headline and at the edges */}
-        <div className="absolute inset-0 bg-background/70 lg:bg-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/70 to-background/25 lg:hidden" />
         <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-background via-background/55 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>

@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState, type FormEvent, type Keyboard
 import { MessageCircle, X, ArrowRight } from "lucide-react";
 import { BrandMark } from "@/components/BrandMark";
 
-const API_URL = import.meta.env.VITE_CHAT_API_URL ?? "";
+// The chat Worker address is public (it is not a secret). It is built in as the
+// default so a missing build variable can never break the chat on the live site.
+const API_URL: string =
+  import.meta.env.VITE_CHAT_API_URL || "https://popupgenix-chat.abdullah-al-fahad.workers.dev";
 
 const OPENER =
   "Hi, I'm Genix. Ask me anything about what PopupGenix builds, or tell me what you have in mind and I'll pass it to the team.";
