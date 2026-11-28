@@ -5,6 +5,7 @@ import { HeroVisual } from "@/components/HeroVisual";
 import { RobotScene } from "@/components/RobotScene";
 import { useEffect, useRef, useState } from "react";
 import { scrollToSection } from "@/components/ScrollToHash";
+import { canRunHeavyVisuals } from "@/lib/capability";
 
 const stats = [
   { number: "50+", label: "Projects Delivered" },
@@ -58,6 +59,22 @@ const Hero = () => {
   }, []);
 
   const [robotReady, setRobotReady] = useState(false);
+  // The still robot picture is only a fallback: shown when the device cannot run
+  // the live 3D scene, when it fails, or when it takes too long. Capable devices
+  // never see it, so there is no swap between two different robots.
+  const [showPoster, setShowPoster] = useState(false);
+  useEffect(() => {
+    if (!canRunHeavyVisuals({ minWidth: 0 })) {
+      setShowPoster(true);
+      return;
+    }
+    const t = window.setTimeout(() => setShowPoster(true), 15000);
+    return () => window.clearTimeout(t);
+  }, []);
+  const onRobot = (ready: boolean) => {
+    setRobotReady(ready);
+    if (!ready) setShowPoster(true);
+  };
   return (
     <section id="home" className="grain relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12">
       {/* Single restrained background blob */}
@@ -73,14 +90,14 @@ const Hero = () => {
             className="h-full w-full transition-opacity duration-1000"
             style={{ opacity: robotReady ? 0.1 : undefined }}
           />
-          {/* Poster image shows instantly (about 12 KB). The live 3D robot is
-              only loaded on capable devices, after the page is idle, and
-              fades in over the poster. Weak devices and data-saver users keep the poster. */}
+          {/* Fallback robot picture, only for devices that cannot run the live 3D scene. */}
           <div
             className="robot-float absolute inset-x-0 bottom-0 top-[50%] lg:inset-0 transition-opacity duration-1000"
-            style={{ opacity: robotReady ? 0 : 1, perspective: "900px" }}
+            style={{ opacity: showPoster && !robotReady ? 1 : 0, perspective: "900px" }}
           >
             <div ref={tiltRef} className="absolute inset-0" style={{ transformStyle: "preserve-3d", transition: "transform 220ms ease-out" }}>
+            {showPoster && (
+              <>
             <img
               src="/hero/robot-dark.webp"
               alt=""
@@ -99,10 +116,12 @@ const Hero = () => {
               decoding="async"
               className="dark:hidden absolute bottom-0 left-1/2 -translate-x-1/2 h-full max-h-full w-auto max-w-none object-contain lg:left-auto lg:right-[4%] lg:translate-x-0"
             />
+              </>
+            )}
             </div>
           </div>
           <div className="absolute inset-x-0 bottom-0 top-[38%] pointer-events-none lg:inset-0 lg:pointer-events-auto">
-            <RobotScene className="absolute inset-0" minWidth={0} onReady={setRobotReady} />
+            <RobotScene className="absolute inset-0" minWidth={0} onReady={onRobot} />
           </div>
         </div>
         {/* Readability: fade the scene into the page behind the headline and at the edges */}

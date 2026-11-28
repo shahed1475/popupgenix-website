@@ -43,7 +43,11 @@ export function RobotScene({ className, onReady, minWidth = 1024 }: Props) {
   return (
     <div
       className={className}
-      style={{ opacity: shown ? 1 : 0, transition: 'opacity 900ms cubic-bezier(0.23,1,0.32,1)' }}
+      style={{
+        opacity: shown ? 1 : 0,
+        transform: shown ? 'none' : 'translateY(10px) scale(0.985)',
+        transition: 'opacity 1200ms cubic-bezier(0.23,1,0.32,1), transform 1400ms cubic-bezier(0.23,1,0.32,1)',
+      }}
       aria-hidden="true"
     >
       <Boundary onFail={() => onReady?.(false)}>
@@ -51,8 +55,14 @@ export function RobotScene({ className, onReady, minWidth = 1024 }: Props) {
           <Spline
             scene={SCENE}
             onLoad={() => {
-              setShown(true)
-              onReady?.(true)
+              // Loading the file is not the same as drawing it: wait for two
+              // painted frames so the robot never fades in half-initialised.
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => {
+                  setShown(true)
+                  onReady?.(true)
+                })
+              )
             }}
             style={{ width: '100%', height: '100%' }}
           />
