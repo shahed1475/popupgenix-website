@@ -18,7 +18,6 @@ Business hours: Monday to Friday, 9:00 AM to 6:00 PM MST. Weekends by appointmen
 - [Cloud & DevOps](https://popupgenix.com/services/cloud-devops): cloud migration, CI/CD and reliable infrastructure.
 
 ## More
-- [Pricing](https://popupgenix.com/pricing): Starter plan from $500 per month, custom Enterprise plan.
 - [Contact](https://popupgenix.com/contact)
 - [Blog](https://popupgenix.com/blog)
 - [Refund Policy](https://popupgenix.com/refund-policy): refunds within 30 days of purchase.

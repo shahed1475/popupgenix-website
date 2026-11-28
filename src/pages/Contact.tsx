@@ -1,5 +1,4 @@
 import { Mail, Phone, MapPin, Clock, MessageCircle, PhoneCall, ArrowRight, Shield, Zap, Users } from "lucide-react";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 /* Contact config — single source of truth */
@@ -30,7 +29,6 @@ const trustPoints = [
 const Contact = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
-      <Header />
 
       <main className="pt-20">
         {/* ── Hero / CTA Section (above the fold) ── */}

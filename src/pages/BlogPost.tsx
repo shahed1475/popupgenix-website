@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, ExternalLink } from "lucide-react";
@@ -106,7 +105,6 @@ const BlogPost = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="pt-20">
           <div className="container mx-auto px-4 py-16">
             <div className="text-center py-12">
@@ -123,7 +121,6 @@ const BlogPost = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
         <main className="pt-20">
           <div className="container mx-auto px-4 py-16">
             <div className="text-center py-12">
@@ -153,7 +150,6 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <main className="pt-20">
         <article className="container mx-auto px-4 py-16 max-w-4xl">

@@ -68,35 +68,6 @@
   "kind": "service",
   "service": "Cloud & DevOps"
  },
- "/pricing": {
-  "title": "Pricing | PopupGenix",
-  "description": "Simple pricing from PopupGenix. The Starter plan is $500 per month, and the Enterprise plan is custom. Change plans at any time.",
-  "h1": "Simple, Transparent Pricing",
-  "intro": "Pick the plan that fits your business. You can change it at any time.",
-  "points": [
-   "Starter: $500 per month. Basic API access and core SaaS integrations, standard email support, documentation, basic AI automation tools, monthly usage reports.",
-   "Enterprise: custom pricing. Unlimited usage, full AI integration, a dedicated account manager, SLA and premium onboarding, priority 24/7 support."
-  ],
-  "kind": "pricing",
-  "faq": [
-   [
-    "Can I switch plans later?",
-    "Yes. You can move to a bigger or smaller plan at any time. The change starts on your next bill."
-   ],
-   [
-    "What payment methods do you accept?",
-    "We accept major credit cards, bank transfers and digital payments through our secure payment partners."
-   ],
-   [
-    "Is there a refund policy?",
-    "Yes. You can ask for a refund within 30 days of purchase. Please read our Refund Policy for details."
-   ],
-   [
-    "How does Enterprise pricing work?",
-    "The price depends on what you need, how much you use, and how many tools we connect. Contact our team and we will send you a clear quote."
-   ]
-  ]
- },
  "/contact": {
   "title": "Contact PopupGenix | Start Your Project",
   "description": "Talk to PopupGenix about your software, AI, web or mobile project. Call or WhatsApp +880 1838 580258, or email hello@popupgenix.com.",

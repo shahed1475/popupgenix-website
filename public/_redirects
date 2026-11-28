@@ -10,3 +10,6 @@
 /process          /#services    301
 /process/         /#services    301
 /how-we-work      /#services    301
+
+# Pricing page removed for now
+/pricing /  301

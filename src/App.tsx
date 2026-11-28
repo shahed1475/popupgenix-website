@@ -17,7 +17,6 @@ const BlogPost = lazyPage(() => import("./pages/BlogPost"));
 const WordPressBlog = lazyPage(() => import("./pages/WordPressBlog"));
 const PrivacyPolicy = lazyPage(() => import("./pages/PrivacyPolicy"));
 const CookiePolicy = lazyPage(() => import("./pages/CookiePolicy"));
-const Pricing = lazyPage(() => import("./pages/Pricing"));
 const TermsAndConditions = lazyPage(() => import("./pages/TermsAndConditions"));
 const RefundPolicy = lazyPage(() => import("./pages/RefundPolicy"));
 import ScrollToHash from "@/components/ScrollToHash";
@@ -31,6 +30,7 @@ const MobileApps = lazyPage(() => import("./pages/services/MobileApps"));
 const CRMAndSaaS = lazyPage(() => import("./pages/services/CRMAndSaaS"));
 const CloudAndDevOps = lazyPage(() => import("./pages/services/CloudAndDevOps"));
 import { RouteMeta } from "./components/RouteMeta";
+import Header from "./components/Header";
 
 
 
@@ -53,6 +53,14 @@ const RouteFade = ({ children }: { children: React.ReactNode }) => {
 // Keeps layout stable while a route chunk arrives — no spinner flash, no CLS.
 const RouteFallback = () => <div className="min-h-screen bg-background" />;
 
+// One navbar for the whole site. It lives outside the page fade, so it never
+// disappears or jumps while you move between pages.
+const SiteHeader = () => {
+  const { pathname } = useLocation();
+  if (pathname.startsWith("/admin") || pathname.startsWith("/portal") || pathname === "/blog/admin-login") return null;
+  return <Header />;
+};
+
 // The assistant is for visitors, not for signed-in clients or staff.
 const ChatGate = () => {
   const { pathname } = useLocation();
@@ -69,7 +77,7 @@ const ChatGate = () => {
 const prefetchPages = () => {
   const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   if (conn?.saveData) return;
-  const loaders = [Contact, Pricing, WordPressBlog, BlogPost, AIAndML, CustomSoftware, WebDevelopment,
+  const loaders = [Contact, WordPressBlog, BlogPost, AIAndML, CustomSoftware, WebDevelopment,
     MobileApps, CRMAndSaaS, CloudAndDevOps, PrivacyPolicy, TermsAndConditions, RefundPolicy, CookiePolicy];
   loaders.forEach((page, i) => setTimeout(() => { page.preload().catch(() => {}); }, i * 150));
   fetch("https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1")
@@ -83,7 +91,7 @@ const prefetchPages = () => {
 export function preloadRoute(pathname: string): Promise<unknown> {
   const p = pathname.replace(/\/+$/, "") || "/";
   const map: Record<string, { preload: () => Promise<unknown> }> = {
-    "/contact": Contact, "/pricing": Pricing, "/blog": WordPressBlog, "/privacy": PrivacyPolicy,
+    "/contact": Contact, "/blog": WordPressBlog, "/privacy": PrivacyPolicy,
     "/terms-and-conditions": TermsAndConditions, "/refund-policy": RefundPolicy, "/cookie-policy": CookiePolicy,
     "/services/ai-machine-learning": AIAndML, "/services/custom-software": CustomSoftware,
     "/services/web-development": WebDevelopment, "/services/mobile-apps": MobileApps,
@@ -104,12 +112,13 @@ const App = () => {
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ScrollToHash />
         <RouteMeta />
+        <SiteHeader />
         <Suspense fallback={<RouteFallback />}>
         <RouteFade>
         <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/pricing" element={<Navigate to="/" replace />} />
          <Route path="/blog" element={<WordPressBlog />} />
          <Route path="/blog/:slug" element={<BlogPost />} />
          <Route path="/blog/admin-login" element={<WordPressBlog adminLogin={true} />} />

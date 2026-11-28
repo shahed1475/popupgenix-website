@@ -1,11 +1,9 @@
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 
 const TermsAndConditions = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <section className="relative py-20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />

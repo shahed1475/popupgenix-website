@@ -42,11 +42,10 @@ function graph(route, p) {
   g.push({ "@type": "WebPage", "@id": `${SITE}${route}#webpage`, url: SITE + route, name: p.title, description: p.description, isPartOf: { "@id": `${SITE}/#website` }, inLanguage: "en" });
   if (p.kind === "service") g.push({ "@type": "Service", name: p.service, description: p.intro, serviceType: p.service, provider: { "@id": `${SITE}/#organization` }, areaServed: "Worldwide", url: SITE + route });
   if (p.faq) g.push({ "@type": "FAQPage", mainEntity: p.faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) });
-  if (p.kind === "pricing") g.push({ "@type": "Service", name: "PopupGenix Starter plan", provider: { "@id": `${SITE}/#organization` }, offers: { "@type": "Offer", price: "500", priceCurrency: "USD", priceSpecification: { "@type": "UnitPriceSpecification", price: "500", priceCurrency: "USD", unitText: "MONTH" }, url: `${SITE}/pricing` } });
   return { "@context": "https://schema.org", "@graph": g };
 }
 
-const NAV = [["/", "Home"], ["/services/ai-machine-learning", "AI & Machine Learning"], ["/services/custom-software", "Custom Software"], ["/services/web-development", "Web Development"], ["/services/mobile-apps", "Mobile Apps"], ["/services/crm-saas", "CRM & SaaS"], ["/services/cloud-devops", "Cloud & DevOps"], ["/pricing", "Pricing"], ["/blog", "Blog"], ["/contact", "Contact"]];
+const NAV = [["/", "Home"], ["/services/ai-machine-learning", "AI & Machine Learning"], ["/services/custom-software", "Custom Software"], ["/services/web-development", "Web Development"], ["/services/mobile-apps", "Mobile Apps"], ["/services/crm-saas", "CRM & SaaS"], ["/services/cloud-devops", "Cloud & DevOps"], ["/blog", "Blog"], ["/contact", "Contact"]];
 
 function body(route, p) {
   const pts = (p.points || []).map((x) => `<li>${esc(x)}</li>`).join("");
@@ -76,7 +75,7 @@ function render(route, p, extra = {}) {
 const urls = [];
 for (const [route, p] of Object.entries(pages)) {
   render(route, p);
-  if (p.kind !== "legal" || true) urls.push({ loc: SITE + (route === "/" ? "/" : route), pri: route === "/" ? "1.0" : p.kind === "service" || route === "/contact" || route === "/pricing" ? "0.8" : "0.5" });
+  if (p.kind !== "legal" || true) urls.push({ loc: SITE + (route === "/" ? "/" : route), pri: route === "/" ? "1.0" : p.kind === "service" || route === "/contact" ? "0.8" : "0.5" });
 }
 
 // Blog posts from WordPress (optional: skipped if the site cannot be reached).

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const POSTS_URL = "https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1";
@@ -163,8 +162,7 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      {!adminLogin && <Header />}
-
+      
       <main className={`wordpress-container ${!adminLogin ? 'pt-20' : ''}`}>
         {adminLogin ? (
           <section className="container mx-auto px-4 py-24 text-center">

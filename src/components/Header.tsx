@@ -56,6 +56,11 @@ const Header = () => {
     }
   };
 
+  // The header now stays mounted between pages, so close the mobile menu on navigation.
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();

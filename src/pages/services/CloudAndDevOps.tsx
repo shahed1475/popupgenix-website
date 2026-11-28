@@ -1,4 +1,3 @@
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -24,7 +23,6 @@ const CloudAndDevOps = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
       
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
