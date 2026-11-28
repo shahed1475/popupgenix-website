@@ -12,6 +12,12 @@
   X-Frame-Options: SAMEORIGIN
   Permissions-Policy: geolocation=(), microphone=(), camera=()
 
+/favicon*
+  Cache-Control: public, max-age=3600
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=3600
+
 /portal/*
   X-Robots-Tag: noindex, nofollow
 
