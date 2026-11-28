@@ -74,8 +74,8 @@ const Hero = () => {
             style={{ opacity: robotReady ? 0.1 : undefined }}
           />
           {/* Poster image shows instantly (about 12 KB). The live 3D robot is
-              only loaded on capable desktops, after the page is idle, and
-              fades in over the poster. Phones never download the 3D scene. */}
+              only loaded on capable devices, after the page is idle, and
+              fades in over the poster. Weak devices and data-saver users keep the poster. */}
           <div
             className="robot-float absolute inset-x-0 bottom-0 top-[50%] lg:inset-0 transition-opacity duration-1000"
             style={{ opacity: robotReady ? 0 : 1, perspective: "900px" }}
@@ -101,12 +101,12 @@ const Hero = () => {
             />
             </div>
           </div>
-          <div className="absolute inset-0 hidden lg:block lg:pointer-events-auto">
-            <RobotScene className="absolute inset-0" onReady={setRobotReady} />
+          <div className="absolute inset-x-0 bottom-0 top-[38%] pointer-events-none lg:inset-0 lg:pointer-events-auto">
+            <RobotScene className="absolute inset-0" minWidth={0} onReady={setRobotReady} />
           </div>
         </div>
         {/* Readability: fade the scene into the page behind the headline and at the edges */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/75 to-background/40 lg:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-background/10 lg:hidden" />
         <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-background via-background/55 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>
