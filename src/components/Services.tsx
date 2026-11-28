@@ -27,7 +27,7 @@ const services = [
     title: "Custom Software Development",
     description: "Software built around how your business works: ERP, CRM, SaaS products and automation.",
     features: ["ERP Systems", "CRM Solutions", "SaaS Platforms", "Business Automation"],
-    learnMore: "Every business has unique processes, challenges, and goals—your software should reflect that. PopupGenix specializes in building custom ERP systems, CRM solutions, SaaS platforms, and business automation tools tailored to your exact requirements. Our team ensures that every solution integrates seamlessly with your existing operations, optimizes workflows, and provides real-time insights. Whether you need scalable enterprise applications or specialized tools for niche processes, our bespoke software increases productivity, reduces manual work, and accelerates growth."
+    learnMore: "Every business has unique processes, challenges, and goals, and your software should reflect that. PopupGenix specializes in building custom ERP systems, CRM solutions, SaaS platforms, and business automation tools tailored to your exact requirements. Our team ensures that every solution integrates seamlessly with your existing operations, optimizes workflows, and provides real-time insights. Whether you need scalable enterprise applications or specialized tools for niche processes, our bespoke software increases productivity, reduces manual work, and accelerates growth."
   },
   {
     icon: Globe,
@@ -41,7 +41,7 @@ const services = [
     title: "Mobile Apps",
     description: "iPhone and Android apps, with AI features when you need them.",
     features: ["iOS Development", "Android Development", "Cross-platform", "AI-powered Apps"],
-    learnMore: "PopupGenix creates native and cross-platform mobile applications designed to engage users and elevate business performance. Our mobile solutions span iOS and Android development, hybrid apps, and AI-powered applications that deliver personalized experiences. We focus on intuitive design, high performance, and seamless integration with backend systems. By leveraging AI within mobile apps, we help businesses enhance user engagement, provide smarter interactions, and gain actionable insights from user behavior—all while maintaining high security and scalability."
+    learnMore: "PopupGenix creates native and cross-platform mobile applications designed to engage users and elevate business performance. Our mobile solutions span iOS and Android development, hybrid apps, and AI-powered applications that deliver personalized experiences. We focus on intuitive design, high performance, and seamless integration with backend systems. By leveraging AI within mobile apps, we help businesses enhance user engagement, provide smarter interactions, and gain actionable insights from user behavior, all while maintaining high security and scalability."
   },
   {
     icon: Users,

@@ -17,7 +17,7 @@ const AIAndML = () => {
   ];
 
   const benefits = [
-    { icon: Users, title: "Who Needs It?", description: "Businesses that rely on large volumes of data, customer interactions, or automation — such as finance, healthcare, retail, and e-commerce." },
+    { icon: Users, title: "Who Needs It?", description: "Businesses that rely on large volumes of data, customer interactions, or automation, such as finance, healthcare, retail, and e-commerce." },
     { icon: TrendingUp, title: "Why They Need It?", description: "Traditional methods of analyzing and processing data are slow and limited. AI allows companies to uncover hidden insights, detect trends, and act in real time." },
     { icon: CheckCircle2, title: "How It Helps?", description: "AI improves efficiency through automation, enhances customer experiences with personalization, and provides predictive models for smarter decisions. From chatbots to fraud detection, it creates measurable growth and competitive advantage." }
   ];

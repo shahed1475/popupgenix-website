@@ -19,7 +19,7 @@ const CRMAndSaaS = () => {
   const benefits = [
     { icon: Target, title: "Who Needs It?", description: "Businesses that manage customer relationships, sales pipelines, or SaaS startups delivering software to clients." },
     { icon: TrendingUp, title: "Why They Need It?", description: "Customer data scattered across spreadsheets or outdated systems slows growth. A modern CRM or SaaS tool centralizes everything." },
-    { icon: CheckCircle2, title: "How It Helps?", description: "It streamlines workflows, improves customer experiences, and enables automation. SaaS platforms provide scalability, while CRMs strengthen sales and service — helping businesses increase efficiency and maximize revenue." }
+    { icon: CheckCircle2, title: "How It Helps?", description: "It streamlines workflows, improves customer experiences, and enables automation. SaaS platforms provide scalability, while CRMs strengthen sales and service, helping businesses increase efficiency and maximize revenue." }
   ];
 
   return (

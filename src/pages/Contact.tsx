@@ -11,11 +11,11 @@ const CONTACT = {
   whatsapp: "+8801838580258",
   whatsappClean: "8801838580258",
   address: "1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110, USA",
-  hours: "Mon – Fri: 9:00 AM – 6:00 PM MST",
+  hours: "Mon to Fri: 9:00 AM to 6:00 PM MST",
 } as const;
 
 /* Pre-built action URLs */
-const EMAIL_HREF = `mailto:${CONTACT.email}?subject=${encodeURIComponent("New Project Inquiry – PopupGenix")}&body=${encodeURIComponent("Name:\nCompany:\nBudget:\nProject Details:\n")}`;
+const EMAIL_HREF = `mailto:${CONTACT.email}?subject=${encodeURIComponent("New Project Inquiry - PopupGenix")}&body=${encodeURIComponent("Name:\nCompany:\nBudget:\nProject Details:\n")}`;
 const WA_CHAT_HREF = `https://wa.me/${CONTACT.whatsappClean}?text=${encodeURIComponent("Hello PopupGenix, I'd like to discuss a project.")}`;
 const WA_CALL_HREF = `https://wa.me/${CONTACT.whatsappClean}`;
 
@@ -49,7 +49,7 @@ const Contact = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-4 max-w-2xl mx-auto">
-              Skip the forms — reach out directly and get a response within hours, not days.
+              Skip the forms. Reach out directly and get a reply within hours, not days.
             </p>
             <p className="text-sm text-muted-foreground/70 mb-12">
               No sign-ups. No waiting. Just a real conversation about your project.

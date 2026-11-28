@@ -14,7 +14,7 @@ const RefundPolicy = () => {
             30-Day Refund Policy
           </h1>
           <p className="text-center text-muted-foreground mb-12">
-            Last updated: {new Date().toLocaleDateString()}
+            Last updated: 28 November 2026
           </p>
 
           <div className="space-y-8">

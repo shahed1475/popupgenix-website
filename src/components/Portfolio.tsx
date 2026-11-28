@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { ExternalLink, ArrowRight, Lock } from "lucide-react";
 
-/* Short, brand-matching link for HOM (our lead-finding product). */
-const HOM_URL = "https://autolead-manager.pages.dev/";
+/* Short link that matches the product name. */
+const HOM_URL = "https://hom.popupgenix.com";
 
 type Project = {
   title: string;

@@ -69,7 +69,7 @@ const PrivacyPolicy = () => {
             Privacy Policy
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            PopupGenix.com – Secure. Reliable. Trusted.
+            PopupGenix.com: Secure. Reliable. Trusted.
           </p>
         </div>
       </section>
@@ -292,7 +292,7 @@ const PrivacyPolicy = () => {
           </p>
           <div className="mt-6 pt-6 border-t border-border/30">
             <p className="text-sm text-muted-foreground">
-              © 2025 PopupGenix.com – All Rights Reserved
+              © {new Date().getFullYear()} PopupGenix.com. All rights reserved.
             </p>
           </div>
         </div>

@@ -15,7 +15,7 @@ export default function PortalMigrationPending({ featureName }: PortalMigrationP
             <Wrench className="h-12 w-12 text-neon-purple mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-white mb-2">{featureName} is being upgraded</h2>
             <p className="text-gray-300">
-              We're moving this feature to our new infrastructure. It will be back shortly — thanks for your
+              We're moving this feature to our new infrastructure. It will be back shortly. Thanks for your
               patience in the meantime.
             </p>
           </CardContent>

@@ -118,6 +118,11 @@ async function overBudget(env: Env, sessionId: string): Promise<string | null> {
   return null;
 }
 
+/** Last line of defence: no em or en dashes ever reach a visitor. */
+function noDashes(t: string): string {
+  return t.replace(/\s*[\u2014\u2013]\s*/g, (m) => (/^\s/.test(m) ? ", " : ",")).replace(/,\s*,/g, ",");
+}
+
 async function logMessage(
   env: Env,
   sessionId: string,
@@ -335,9 +340,10 @@ export default {
                 if (!choice) continue;
                 const delta = choice.delta;
                 if (delta?.content) {
-                  roundText += delta.content;
-                  fullReply += delta.content;
-                  send("delta", { text: delta.content });
+                  const clean = noDashes(delta.content);
+                  roundText += clean;
+                  fullReply += clean;
+                  send("delta", { text: clean });
                 }
                 for (const tc of delta?.tool_calls ?? []) {
                   const c = (calls[tc.index] ??= { id: "", name: "", args: "" });

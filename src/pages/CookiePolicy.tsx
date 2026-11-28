@@ -23,7 +23,7 @@ const CookiePolicy = () => {
               </h1>
             </div>
             <p className="text-xl text-white/90 mb-8">
-              Understanding How We Use Cookies – PopupGenix.com
+              Understanding How We Use Cookies at PopupGenix.com
             </p>
             <Link to="/">
               <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-primary">

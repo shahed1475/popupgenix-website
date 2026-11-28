@@ -177,7 +177,7 @@ const Footer = () => {
         <div className="py-8 border-t border-border">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} PopupGenix.com – All Rights Reserved
+              © {new Date().getFullYear()} PopupGenix.com. All rights reserved.
             </p>
             <div className="flex items-center gap-6 text-sm">
               <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">

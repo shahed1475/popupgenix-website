@@ -9,7 +9,7 @@ interface ContactSectionProps {
   className?: string;
 }
 
-const EMAIL_HREF = `mailto:popupitcompany@gmail.com?subject=${encodeURIComponent("New Project Inquiry – PopupGenix")}&body=${encodeURIComponent("Name:\nCompany:\nBudget:\nProject Details:\n")}`;
+const EMAIL_HREF = `mailto:popupitcompany@gmail.com?subject=${encodeURIComponent("New Project Inquiry - PopupGenix")}&body=${encodeURIComponent("Name:\nCompany:\nBudget:\nProject Details:\n")}`;
 const WA_CHAT_HREF = `https://wa.me/8801838580258?text=${encodeURIComponent("Hello PopupGenix, I'd like to discuss a project.")}`;
 
 const ContactSection = ({

@@ -5,7 +5,7 @@ import { BrandMark } from "@/components/BrandMark";
 const API_URL = import.meta.env.VITE_CHAT_API_URL ?? "";
 
 const OPENER =
-  "Hi — I'm Genix. Ask me anything about what PopupGenix builds, or tell me what you have in mind and I'll get it to the team.";
+  "Hi, I'm Genix. Ask me anything about what PopupGenix builds, or tell me what you have in mind and I'll pass it to the team.";
 
 const FALLBACK_CONTACT =
   "I couldn't reach the team's server. Email hello@popupgenix.com or WhatsApp +8801838580258 and someone will pick it up.";
