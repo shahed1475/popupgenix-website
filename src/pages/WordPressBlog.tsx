@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 const POSTS_URL = "https://public-api.wordpress.com/wp/v2/sites/shahedalfahad19-xvmtl.wordpress.com/posts?per_page=10&_embed=1";
 const POSTS_CACHE_KEY = "pgx-blog-posts-v1";
 // Show the last list instantly, then refresh it from WordPress in the background.
-function readCachedPosts(): WPPost[] {
+function readCachedPosts<T>(): T[] {
   try {
     const raw = localStorage.getItem(POSTS_CACHE_KEY);
     const data = raw ? JSON.parse(raw) : [];
@@ -49,8 +49,8 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
     };
   };
 
-  const [posts, setPosts] = useState<WPPost[]>(() => readCachedPosts());
-  const [loading, setLoading] = useState(() => readCachedPosts().length === 0);
+  const [posts, setPosts] = useState<WPPost[]>(() => readCachedPosts<WPPost>());
+  const [loading, setLoading] = useState(() => readCachedPosts<WPPost>().length === 0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
