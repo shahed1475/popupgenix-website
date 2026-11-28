@@ -32,7 +32,7 @@ const Hero = () => {
               only loaded on capable desktops, after the page is idle, and
               fades in over the poster. Phones never download the 3D scene. */}
           <div
-            className="absolute inset-x-0 bottom-0 top-[38%] lg:inset-0 transition-opacity duration-1000"
+            className="absolute inset-x-0 bottom-0 top-[50%] lg:inset-0 transition-opacity duration-1000"
             style={{ opacity: robotReady ? 0 : 1 }}
           >
             <img
