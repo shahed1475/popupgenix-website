@@ -1,7 +1,7 @@
 {
  "/": {
   "title": "PopupGenix | AI & Custom Software Solutions",
-  "description": "PopupGenix builds custom software, SaaS platforms, CRM and ERP systems, web and mobile apps, and AI tools that help businesses grow.",
+  "description": "PopupGenix builds custom software, SaaS platforms, CRM and ERP systems, websites, mobile apps and AI tools that help your business grow.",
   "h1": "Building Future-Ready AI & Software Solutions",
   "intro": "PopupGenix builds custom software and AI tools that help your business grow. We make websites, mobile apps, CRM and ERP systems, and smart automation that saves you time.",
   "points": [
@@ -34,7 +34,7 @@
  },
  "/services/web-development": {
   "title": "Web Development | PopupGenix",
-  "description": "Fast, modern websites and web apps, from company sites to online stores and progressive web apps.",
+  "description": "Fast, modern websites and web apps from PopupGenix, from company sites to online stores and progressive web apps.",
   "h1": "Modern Web Solutions That Convert",
   "intro": "Build your digital presence with high-performance, responsive websites and web applications that engage users and drive business growth.",
   "points": [],
@@ -52,7 +52,7 @@
  },
  "/services/crm-saas": {
   "title": "CRM & SaaS Tools | PopupGenix",
-  "description": "CRM systems and SaaS tools with sales automation, customer analytics and AI dashboards.",
+  "description": "CRM systems and SaaS tools from PopupGenix with sales automation, customer analytics and clear AI dashboards for your team.",
   "h1": "Intelligent CRM & SaaS Platforms",
   "intro": "Build customer relationship management systems and scalable SaaS platforms with AI-powered insights and automation.",
   "points": [],
@@ -70,7 +70,7 @@
  },
  "/pricing": {
   "title": "Pricing | PopupGenix",
-  "description": "Simple pricing for AI and software tools. Starter plan from $500 per month, or a custom Enterprise plan.",
+  "description": "Simple pricing from PopupGenix. The Starter plan is $500 per month, and the Enterprise plan is custom. Change plans at any time.",
   "h1": "Simple, Transparent Pricing",
   "intro": "Pick the plan that fits your business. You can change it at any time.",
   "points": [
@@ -112,7 +112,7 @@
  },
  "/blog": {
   "title": "Blog | PopupGenix",
-  "description": "Articles from PopupGenix on AI, software development and growing a business with technology.",
+  "description": "Read articles from PopupGenix on AI, software development and using technology to grow your business, written in plain English.",
   "h1": "PopupGenix Blog",
   "intro": "Insights and updates from the PopupGenix team on AI, software and business growth.",
   "points": [],
@@ -120,7 +120,7 @@
  },
  "/privacy": {
   "title": "Privacy Policy | PopupGenix",
-  "description": "How PopupGenix collects, uses and protects your information.",
+  "description": "Read how PopupGenix collects, uses and protects your personal information, and the choices you have about your data.",
   "h1": "Privacy Policy",
   "intro": "How PopupGenix collects, uses and protects your information.",
   "points": [],
@@ -128,7 +128,7 @@
  },
  "/terms-and-conditions": {
   "title": "Terms and Conditions | PopupGenix",
-  "description": "Terms and conditions for using PopupGenix services.",
+  "description": "Read the terms and conditions for using PopupGenix websites, software and services, including payments, use of services and liability.",
   "h1": "Terms and Conditions",
   "intro": "Terms and conditions for using PopupGenix services.",
   "points": [],
@@ -136,7 +136,7 @@
  },
  "/refund-policy": {
   "title": "Refund Policy | PopupGenix",
-  "description": "PopupGenix refund policy: refunds within 30 days of purchase.",
+  "description": "PopupGenix refund policy: you can ask for a refund within 30 days of purchase. See what is covered and how to request one.",
   "h1": "Refund Policy",
   "intro": "PopupGenix refund policy: refunds within 30 days of purchase.",
   "points": [],
@@ -144,7 +144,7 @@
  },
  "/cookie-policy": {
   "title": "Cookie Policy | PopupGenix",
-  "description": "How PopupGenix uses cookies on this website.",
+  "description": "Learn which cookies PopupGenix uses on this website, why we use them, and how you can control or turn them off in your browser.",
   "h1": "Cookie Policy",
   "intro": "How PopupGenix uses cookies on this website.",
   "points": [],
