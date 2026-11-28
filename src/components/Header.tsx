@@ -38,6 +38,15 @@ const legalItems = [
 const NAV_LINK_CLASS =
   "relative text-xs font-bold uppercase tracking-[0.15em] text-foreground/70 transition-colors duration-300 hover:text-foreground py-2";
 
+// The mobile menu locks page scroll while open; wait for it to unlock.
+function scrollToTopWhenFree(tries = 0) {
+  if (document.body.style.overflow === "hidden" && tries < 40) {
+    setTimeout(() => scrollToTopWhenFree(tries + 1), 25);
+    return;
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -49,9 +58,9 @@ const Header = () => {
   const goHome = (e: React.MouseEvent) => {
     if (pathname === "/") {
       e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
       if (window.location.hash) window.history.replaceState(null, "", "/");
       setIsMenuOpen(false);
+      scrollToTopWhenFree();
     }
   };
 
