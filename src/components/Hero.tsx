@@ -108,7 +108,7 @@ const Hero = () => {
         {/* Readability: fade the scene into the page behind the headline and at the edges */}
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-background/10 lg:hidden" />
         <div className="absolute inset-0 hidden lg:block bg-gradient-to-r from-background via-background/55 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-56 lg:h-40 bg-gradient-to-t from-background via-background/70 lg:via-transparent to-transparent" />
       </div>
 
       {/* Content */}
