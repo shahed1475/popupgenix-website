@@ -1,0 +1,153 @@
+{
+ "/": {
+  "title": "PopupGenix | AI & Custom Software Solutions",
+  "description": "PopupGenix builds custom software, SaaS platforms, CRM and ERP systems, web and mobile apps, and AI tools that help businesses grow.",
+  "h1": "Building Future-Ready AI & Software Solutions",
+  "intro": "PopupGenix builds custom software and AI tools that help your business grow. We make websites, mobile apps, CRM and ERP systems, and smart automation that saves you time.",
+  "points": [
+   "AI & Machine Learning: smart tools that read text, understand images, predict trends and keep systems safe.",
+   "Custom Software Development: software built around how your business works, including ERP, CRM, SaaS and automation.",
+   "Web Development: fast, modern websites and web apps, from company sites to online stores.",
+   "Mobile Apps: iPhone and Android apps, with AI features when you need them.",
+   "CRM & SaaS Tools: easy tools that automate sales and show your numbers clearly.",
+   "Cloud & DevOps: move to the cloud, release updates safely and keep systems reliable."
+  ],
+  "kind": "home"
+ },
+ "/services/ai-machine-learning": {
+  "title": "AI & Machine Learning Services | PopupGenix",
+  "description": "AI solutions including language AI, computer vision, predictions and AI security, built by PopupGenix.",
+  "h1": "Transform Your Business with AI",
+  "intro": "Harness Artificial Intelligence and Machine Learning to automate processes, uncover insights and drive innovation across your organization.",
+  "points": [],
+  "kind": "service",
+  "service": "AI & Machine Learning"
+ },
+ "/services/custom-software": {
+  "title": "Custom Software Development | PopupGenix",
+  "description": "Custom enterprise software built around your business: ERP systems, CRM, SaaS platforms and automation.",
+  "h1": "Bespoke Software Built for Your Business",
+  "intro": "From ERP systems to CRM solutions, we build custom software that fits your business processes and scales with your growth.",
+  "points": [],
+  "kind": "service",
+  "service": "Custom Software Development"
+ },
+ "/services/web-development": {
+  "title": "Web Development | PopupGenix",
+  "description": "Fast, modern websites and web apps, from company sites to online stores and progressive web apps.",
+  "h1": "Modern Web Solutions That Convert",
+  "intro": "Build your digital presence with high-performance, responsive websites and web applications that engage users and drive business growth.",
+  "points": [],
+  "kind": "service",
+  "service": "Web Development"
+ },
+ "/services/mobile-apps": {
+  "title": "Mobile App Development | PopupGenix",
+  "description": "iPhone and Android apps, native or cross-platform, with AI features when you need them.",
+  "h1": "Mobile Apps That Engage & Convert",
+  "intro": "Create powerful native and cross-platform mobile applications that connect you with customers anytime, anywhere, on iOS and Android.",
+  "points": [],
+  "kind": "service",
+  "service": "Mobile App Development"
+ },
+ "/services/crm-saas": {
+  "title": "CRM & SaaS Tools | PopupGenix",
+  "description": "CRM systems and SaaS tools with sales automation, customer analytics and AI dashboards.",
+  "h1": "Intelligent CRM & SaaS Platforms",
+  "intro": "Build customer relationship management systems and scalable SaaS platforms with AI-powered insights and automation.",
+  "points": [],
+  "kind": "service",
+  "service": "CRM & SaaS Tools"
+ },
+ "/services/cloud-devops": {
+  "title": "Cloud & DevOps Services | PopupGenix",
+  "description": "Cloud migration, CI/CD pipelines, Kubernetes and scalable infrastructure from PopupGenix.",
+  "h1": "Scalable Cloud & DevOps Solutions",
+  "intro": "Modernize your infrastructure with cloud migration, CI/CD automation and DevOps practices for reliability, security and fast deployment.",
+  "points": [],
+  "kind": "service",
+  "service": "Cloud & DevOps"
+ },
+ "/pricing": {
+  "title": "Pricing | PopupGenix",
+  "description": "Simple pricing for AI and software tools. Starter plan from $500 per month, or a custom Enterprise plan.",
+  "h1": "Simple, Transparent Pricing",
+  "intro": "Pick the plan that fits your business. You can change it at any time.",
+  "points": [
+   "Starter: $500 per month. Basic API access and core SaaS integrations, standard email support, documentation, basic AI automation tools, monthly usage reports.",
+   "Enterprise: custom pricing. Unlimited usage, full AI integration, a dedicated account manager, SLA and premium onboarding, priority 24/7 support."
+  ],
+  "kind": "pricing",
+  "faq": [
+   [
+    "Can I switch plans later?",
+    "Yes. You can move to a bigger or smaller plan at any time. The change starts on your next bill."
+   ],
+   [
+    "What payment methods do you accept?",
+    "We accept major credit cards, bank transfers and digital payments through our secure payment partners."
+   ],
+   [
+    "Is there a refund policy?",
+    "Yes. You can ask for a refund within 30 days of purchase. Please read our Refund Policy for details."
+   ],
+   [
+    "How does Enterprise pricing work?",
+    "The price depends on what you need, how much you use, and how many tools we connect. Contact our team and we will send you a clear quote."
+   ]
+  ]
+ },
+ "/contact": {
+  "title": "Contact PopupGenix | Start Your Project",
+  "description": "Talk to PopupGenix about your software, AI, web or mobile project. Call or WhatsApp +880 1838 580258, or email hello@popupgenix.com.",
+  "h1": "Let's Build Something Great Together",
+  "intro": "Reach out directly and get a reply within hours, not days.",
+  "points": [
+   "Phone and WhatsApp: +880 1838 580258",
+   "Email: hello@popupgenix.com",
+   "Address: 1209 Mountain Road PL NE, Ste R, Albuquerque, NM 87110, USA",
+   "Business hours: Monday to Friday, 9:00 AM to 6:00 PM MST. Weekends by appointment."
+  ],
+  "kind": "contact"
+ },
+ "/blog": {
+  "title": "Blog | PopupGenix",
+  "description": "Articles from PopupGenix on AI, software development and growing a business with technology.",
+  "h1": "PopupGenix Blog",
+  "intro": "Insights and updates from the PopupGenix team on AI, software and business growth.",
+  "points": [],
+  "kind": "blog"
+ },
+ "/privacy": {
+  "title": "Privacy Policy | PopupGenix",
+  "description": "How PopupGenix collects, uses and protects your information.",
+  "h1": "Privacy Policy",
+  "intro": "How PopupGenix collects, uses and protects your information.",
+  "points": [],
+  "kind": "legal"
+ },
+ "/terms-and-conditions": {
+  "title": "Terms and Conditions | PopupGenix",
+  "description": "Terms and conditions for using PopupGenix services.",
+  "h1": "Terms and Conditions",
+  "intro": "Terms and conditions for using PopupGenix services.",
+  "points": [],
+  "kind": "legal"
+ },
+ "/refund-policy": {
+  "title": "Refund Policy | PopupGenix",
+  "description": "PopupGenix refund policy: refunds within 30 days of purchase.",
+  "h1": "Refund Policy",
+  "intro": "PopupGenix refund policy: refunds within 30 days of purchase.",
+  "points": [],
+  "kind": "legal"
+ },
+ "/cookie-policy": {
+  "title": "Cookie Policy | PopupGenix",
+  "description": "How PopupGenix uses cookies on this website.",
+  "h1": "Cookie Policy",
+  "intro": "How PopupGenix uses cookies on this website.",
+  "points": [],
+  "kind": "legal"
+ }
+}

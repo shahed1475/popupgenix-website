@@ -1,0 +1,24 @@
+# PopupGenix
+
+> PopupGenix is a software and AI company. We build custom software, SaaS platforms, CRM and ERP systems, websites, mobile apps and AI tools for businesses of all sizes.
+
+Website: https://popupgenix.com
+Email: hello@popupgenix.com
+Phone and WhatsApp: +880 1838 580258
+Address: 1209 Mountain Road PL NE, Ste R, Albuquerque, NM 87110, USA
+Business hours: Monday to Friday, 9:00 AM to 6:00 PM MST. Weekends by appointment.
+
+## Services
+- [AI & Machine Learning](https://popupgenix.com/services/ai-machine-learning): language AI, computer vision, predictions, AI security.
+- [Custom Software Development](https://popupgenix.com/services/custom-software): ERP, CRM, SaaS platforms and automation.
+- [Web Development](https://popupgenix.com/services/web-development): websites, web apps and online stores.
+- [Mobile Apps](https://popupgenix.com/services/mobile-apps): iPhone and Android apps.
+- [CRM & SaaS Tools](https://popupgenix.com/services/crm-saas): sales automation and analytics dashboards.
+- [Cloud & DevOps](https://popupgenix.com/services/cloud-devops): cloud migration, CI/CD and reliable infrastructure.
+
+## More
+- [Pricing](https://popupgenix.com/pricing): Starter plan from $500 per month, custom Enterprise plan.
+- [Contact](https://popupgenix.com/contact)
+- [Blog](https://popupgenix.com/blog)
+- [Refund Policy](https://popupgenix.com/refund-policy): refunds within 30 days of purchase.
+- [Privacy Policy](https://popupgenix.com/privacy)

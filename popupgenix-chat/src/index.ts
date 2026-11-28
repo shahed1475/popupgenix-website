@@ -397,7 +397,7 @@ export default {
             // Either the tool-round budget ran out mid-call, or the turn was
             // tool-use only. Never leave the visitor staring at a blank bubble.
             const fallback =
-              "I've passed what I have to the team. For anything urgent, email hello@popupgenix.com, call +1 479 689 1012, or WhatsApp +8801838580258.";
+              "I've passed what I have to the team. For anything urgent, email hello@popupgenix.com, or call or WhatsApp +880 1838 580258.";
             send("delta", { text: fallback });
             fullReply = fallback;
           }

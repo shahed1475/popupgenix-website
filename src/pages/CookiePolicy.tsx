@@ -191,7 +191,7 @@ const CookiePolicy = () => {
                 </p>
                 <div className="space-y-2 text-sm">
                   <p><strong>Email:</strong> hello@popupgenix.com</p>
-                  <p><strong>Phone:</strong> +1 479 689 1012</p>
+                  <p><strong>Phone:</strong> +880 1838 580258</p>
                   <p><strong>Address:</strong> 1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110, USA</p>
                 </div>
               </CardContent>

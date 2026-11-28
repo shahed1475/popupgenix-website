@@ -12,7 +12,7 @@ export const COMPANY = {
   site: "https://popupgenix.com",
   email: "hello@popupgenix.com",
   emailAlt: "popupitcompany@gmail.com",
-  phone: "+1 479 689 1012",
+  phone: "+880 1838 580258",
   whatsapp: "+8801838580258",
   address: "1209 Mountain Road Pl NE, Ste R, Albuquerque, NM 87110, USA",
   hours: "Monday to Friday, 9:00 AM to 6:00 PM MST. Weekends by appointment.",
@@ -84,7 +84,7 @@ Rules for using it:
 
 Email ${COMPANY.email} (or ${COMPANY.emailAlt})
 Phone ${COMPANY.phone}
-WhatsApp ${COMPANY.whatsapp}: fastest for clients outside US hours
+WhatsApp ${COMPANY.whatsapp}: the same number as the phone line
 Office ${COMPANY.address}
 Hours ${COMPANY.hours}
 Contact page ${COMPANY.site}/contact

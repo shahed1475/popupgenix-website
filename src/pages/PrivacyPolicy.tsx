@@ -268,7 +268,7 @@ const PrivacyPolicy = () => {
                   <Phone className="w-5 h-5 text-accent mt-1" />
                   <div>
                     <h4 className="font-semibold">Phone Support</h4>
-                    <p className="text-muted-foreground">+1 479 689 1012</p>
+                    <p className="text-muted-foreground">+880 1838 580258</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">

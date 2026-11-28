@@ -6,8 +6,8 @@ import Footer from "@/components/Footer";
 const CONTACT = {
   email: "popupitcompany@gmail.com",
   emailAlt: "hello@popupgenix.com",
-  phone: "+1 479 689 1012",
-  phoneClean: "+14796891012",
+  phone: "+880 1838 580258",
+  phoneClean: "+8801838580258",
   whatsapp: "+8801838580258",
   whatsappClean: "8801838580258",
   address: "1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110, USA",
@@ -17,7 +17,7 @@ const CONTACT = {
 /* Pre-built action URLs */
 const EMAIL_HREF = `mailto:${CONTACT.email}?subject=${encodeURIComponent("New Project Inquiry - PopupGenix")}&body=${encodeURIComponent("Name:\nCompany:\nBudget:\nProject Details:\n")}`;
 const WA_CHAT_HREF = `https://wa.me/${CONTACT.whatsappClean}?text=${encodeURIComponent("Hello PopupGenix, I'd like to discuss a project.")}`;
-const WA_CALL_HREF = `https://wa.me/${CONTACT.whatsappClean}`;
+const CALL_HREF = `tel:${CONTACT.phoneClean}`;
 
 /* Trust signals */
 const trustPoints = [
@@ -89,19 +89,17 @@ const Contact = () => {
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
 
-              {/* WhatsApp Call */}
+              {/* Phone call */}
               <a
-                href={WA_CALL_HREF}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Call PopupGenix on WhatsApp"
+                href={CALL_HREF}
+                aria-label="Call PopupGenix"
                 className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold text-foreground border border-border transition-all duration-500 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:-translate-y-1 hover:scale-[1.03] bg-card hover:border-green-500/50"
                 style={{
                   boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
                 }}
               >
                 <PhoneCall className="w-5 h-5 shrink-0" />
-                Call on WhatsApp
+                Call Us
               </a>
             </div>
 
@@ -125,7 +123,7 @@ const Contact = () => {
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {/* Phone (US — no WhatsApp) */}
+              {/* Phone and WhatsApp (same number) */}
               <div
                 className="backdrop-blur-xl rounded-2xl border p-6 transition-all duration-500 hover:scale-[1.03]"
                 style={{
@@ -141,8 +139,8 @@ const Contact = () => {
                 <a href={`tel:${CONTACT.phoneClean}`} className="text-muted-foreground hover:text-accent transition-colors text-sm block">
                   {CONTACT.phone}
                 </a>
-                <a href={`tel:${CONTACT.whatsapp}`} className="text-muted-foreground hover:text-accent transition-colors text-sm block mt-1">
-                  {CONTACT.whatsapp} (WhatsApp)
+                <a href={WA_CHAT_HREF} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-accent transition-colors text-sm block mt-1">
+                  Message us on WhatsApp
                 </a>
               </div>
 
