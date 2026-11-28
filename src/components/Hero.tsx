@@ -183,7 +183,7 @@ const Hero = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-8 max-w-2xl mx-auto mt-12 lg:mt-24">
+        <div className="grid grid-cols-3 gap-3 sm:gap-8 max-w-2xl mx-auto mt-12 lg:mt-24 rounded-2xl bg-background/75 px-2 py-4 lg:bg-transparent lg:p-0">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-3xl font-black tracking-tight text-foreground mb-1">{stat.number}</div>
