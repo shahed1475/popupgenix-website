@@ -6,7 +6,7 @@ const HEADER_OFFSET = 72;
 // Scroll to a position and make sure we really get there. Waits while the
 // mobile menu still locks the page, then re-checks twice in case the browser
 // was busy or the layout moved. Stops if the visitor scrolls on their own.
-export function scrollToTarget(getTop: () => number | null, smooth = true) {
+export function scrollToTarget(getTop: () => number | null, smooth = true, maxSmoothDistance = Infinity) {
   let userMoved = false;
   const stop = () => { userMoved = true; };
   const opts = { passive: true } as AddEventListenerOptions;
@@ -27,14 +27,17 @@ export function scrollToTarget(getTop: () => number | null, smooth = true) {
       cleanup();
       return;
     }
-    window.scrollTo({ top, behavior: smooth ? "smooth" : "auto" });
+    // A long smooth scroll takes about a second and renders every section on
+    // the way. For far-away targets, jump straight there instead.
+    const animate = smooth && Math.abs(top - window.scrollY) <= maxSmoothDistance;
+    window.scrollTo({ top, behavior: animate ? "smooth" : "auto" });
     const check = (last: boolean) => () => {
       if (userMoved) return last && cleanup();
       const again = getTop();
       if (again !== null && Math.abs(again - window.scrollY) > 24) window.scrollTo({ top: again, behavior: "auto" });
       if (last) cleanup();
     };
-    setTimeout(check(false), smooth ? 1000 : 350);
+    setTimeout(check(false), animate ? 1000 : 350);
     setTimeout(check(true), 2200);
   };
   setTimeout(go, 0);
@@ -44,7 +47,7 @@ export function scrollToSection(id: string, smooth = true) {
   scrollToTarget(() => {
     const el = document.getElementById(id);
     return el ? Math.max(0, el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET) : null;
-  }, smooth);
+  }, smooth, window.innerHeight * 1.5);
 }
 
 export function scrollToTop() {

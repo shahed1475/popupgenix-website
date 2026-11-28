@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { m } from "framer-motion";
+import { useEffect } from "react";
+import { afterIdle } from "@/lib/capability";
 import { ExternalLink, ArrowRight, Lock } from "lucide-react";
 
 /* Short link that matches the product name. */
@@ -60,6 +62,13 @@ const projects: Project[] = [
 ];
 
 const Portfolio = () => {
+  // Warm the (small) project pictures once the page is idle, so they are
+  // already there when someone jumps straight to this section.
+  useEffect(() => {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conn?.saveData) return;
+    return afterIdle(() => projects.forEach((p) => { new Image().src = p.image; }));
+  }, []);
   return (
     <section id="portfolio" className="py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
