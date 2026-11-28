@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { BrandMark } from "./components/BrandMark";
 import { afterIdle } from "@/lib/capability";
 import { lazyPage } from "@/lib/lazyPage";
 import { LazyMotion, MotionConfig, domMax } from "framer-motion";
@@ -51,7 +52,25 @@ const RouteFade = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Keeps layout stable while a route chunk arrives — no spinner flash, no CLS.
-const RouteFallback = () => <div className="min-h-screen bg-background" />;
+// If a page takes longer than 300 ms (slow network), show a small branded
+// loading mark so people know it is working. Fast pages never show it.
+const RouteFallback = () => {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setSlow(true), 300);
+    return () => window.clearTimeout(t);
+  }, []);
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center" role="status" aria-live="polite">
+      {slow && (
+        <div className="flex flex-col items-center gap-3 route-fade">
+          <BrandMark className="h-10 w-10 text-primary route-pulse" />
+          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Loading</span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // One navbar for the whole site. It lives outside the page fade, so it never
 // disappears or jumps while you move between pages.

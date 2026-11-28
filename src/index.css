@@ -459,3 +459,8 @@ All colors MUST be HSL.
    Each rule has a vh fallback first, then the dynamic viewport unit. */
 .min-h-screen { min-height: 100vh; min-height: 100dvh; }
 .chat-panel { height: min(560px, calc(100vh - 8rem)); height: min(560px, calc(100dvh - 8rem)); }
+
+/* Loading mark shown only when a page is slow to arrive */
+@keyframes route-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.94); } }
+.route-pulse { animation: route-pulse 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .route-pulse { animation: none; } }
