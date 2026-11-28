@@ -163,7 +163,7 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
   return (
     <div className="min-h-screen bg-background">
       
-      <main className={`wordpress-container ${!adminLogin ? 'pt-20' : ''}`}>
+      <main id="main-content" className={`wordpress-container ${!adminLogin ? 'pt-20' : ''}`}>
         {adminLogin ? (
           <section className="container mx-auto px-4 py-24 text-center">
             <h1 className="text-3xl font-semibold">Redirecting to WordPress login…</h1>

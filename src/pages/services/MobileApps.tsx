@@ -23,6 +23,7 @@ const MobileApps = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <main id="main-content">
       
       <section className="pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
@@ -181,6 +182,7 @@ const MobileApps = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

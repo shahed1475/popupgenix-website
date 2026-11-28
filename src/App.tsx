@@ -58,7 +58,17 @@ const RouteFallback = () => <div className="min-h-screen bg-background" />;
 const SiteHeader = () => {
   const { pathname } = useLocation();
   if (pathname.startsWith("/admin") || pathname.startsWith("/portal") || pathname === "/blog/admin-login") return null;
-  return <Header />;
+  return (
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-primary-foreground"
+      >
+        Skip to main content
+      </a>
+      <Header />
+    </>
+  );
 };
 
 // The assistant is for visitors, not for signed-in clients or staff.

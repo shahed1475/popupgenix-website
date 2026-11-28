@@ -238,7 +238,7 @@ const Header = () => {
               </button>
             </div>
 
-            <div className="flex flex-col h-[calc(100%-5rem)] overflow-y-auto px-6 pb-10">
+            <div className="flex flex-col h-[calc(100%-5rem)] overflow-y-auto overscroll-contain px-6 pb-10">
               <div className="flex flex-col gap-1 pt-6">
                 {navigationBefore.map((item, i) => (
                   <m.div

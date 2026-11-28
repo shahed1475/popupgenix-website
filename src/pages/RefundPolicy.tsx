@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 const RefundPolicy = () => {
   return (
     <div className="min-h-screen bg-background">
+      <main id="main-content">
       
       <section className="relative py-20">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
@@ -121,6 +122,7 @@ const RefundPolicy = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

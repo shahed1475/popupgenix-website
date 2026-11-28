@@ -453,3 +453,9 @@ All colors MUST be HSL.
 @media (prefers-reduced-motion: reduce) {
   .route-fade, .robot-float { animation: none; }
 }
+
+
+/* iPhone Safari: 100vh is taller than the visible page while the toolbar shows.
+   Each rule has a vh fallback first, then the dynamic viewport unit. */
+.min-h-screen { min-height: 100vh; min-height: 100dvh; }
+.chat-panel { height: min(560px, calc(100vh - 8rem)); height: min(560px, calc(100dvh - 8rem)); }

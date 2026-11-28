@@ -105,7 +105,7 @@ const BlogPost = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <main className="pt-20">
+        <main id="main-content" className="pt-20">
           <div className="container mx-auto px-4 py-16">
             <div className="text-center py-12">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
@@ -121,7 +121,7 @@ const BlogPost = () => {
   if (error || !post) {
     return (
       <div className="min-h-screen bg-background">
-        <main className="pt-20">
+        <main id="main-content" className="pt-20">
           <div className="container mx-auto px-4 py-16">
             <div className="text-center py-12">
               <h1 className="text-3xl font-bold mb-4">Post Not Found</h1>
@@ -151,7 +151,7 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen bg-background">
       
-      <main className="pt-20">
+      <main id="main-content" className="pt-20">
         <article className="container mx-auto px-4 py-16 max-w-4xl">
           {/* Back to Blog */}
           <div className="mb-8">

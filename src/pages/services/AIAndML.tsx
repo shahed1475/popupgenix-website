@@ -23,6 +23,7 @@ const AIAndML = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <main id="main-content">
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 relative overflow-hidden">
@@ -189,6 +190,7 @@ const AIAndML = () => {
         </div>
       </section>
 
+      </main>
       <Footer />
     </div>
   );

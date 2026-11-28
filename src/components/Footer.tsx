@@ -165,10 +165,6 @@ const Footer = () => {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-                  <span>99.99% Uptime Guaranteed</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full" />
                   <span>30-Day Refund Policy</span>
                 </div>
               </div>

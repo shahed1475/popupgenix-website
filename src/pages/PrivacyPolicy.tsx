@@ -53,6 +53,7 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <main id="main-content">
       
       {/* Hero Section */}
       <section className="pt-20 pb-16 px-4 relative overflow-hidden">
@@ -296,6 +297,7 @@ const PrivacyPolicy = () => {
         </div>
       </div>
 
+      </main>
       <Footer />
     </div>
   );

@@ -30,7 +30,7 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
 
-      <main className="pt-20">
+      <main id="main-content" className="pt-20">
         {/* ── Hero / CTA Section (above the fold) ── */}
         <section className="relative py-24 md:py-32 overflow-hidden" aria-labelledby="contact-heading">
           {/* Ambient glow */}

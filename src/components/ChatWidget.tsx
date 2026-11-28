@@ -251,7 +251,7 @@ export default function ChatWidget() {
           role="dialog"
           aria-modal="false"
           aria-label="Chat with PopupGenix"
-          className="fixed bottom-24 right-6 z-50 flex h-[min(560px,calc(100vh-8rem))] w-[min(380px,calc(100vw-3rem))] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-elegant animate-slide-up"
+          className="fixed bottom-24 right-6 z-50 chat-panel flex w-[min(380px,calc(100vw-3rem))] flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-elegant animate-slide-up"
         >
           <div className="flex items-center gap-3 bg-primary px-5 py-4">
             <BrandMark className="h-5 w-5 text-primary-foreground" />
@@ -320,7 +320,7 @@ export default function ChatWidget() {
               onKeyDown={onKeyDown}
               maxLength={2000}
               placeholder="Ask about your project…"
-              className="max-h-28 flex-1 resize-none rounded-lg bg-transparent px-2 py-2 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+              className="max-h-28 flex-1 resize-none rounded-lg bg-transparent px-2 py-2 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
             />
             <button
               type="submit"

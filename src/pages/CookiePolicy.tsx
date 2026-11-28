@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 const CookiePolicy = () => {
   return (
     <div className="min-h-screen bg-background">
+      <main id="main-content">
       {/* Hero Section */}
       <section className="relative py-24 bg-gradient-hero overflow-hidden">
         <div className="absolute inset-0">
@@ -213,6 +214,7 @@ const CookiePolicy = () => {
         title="Still Have Questions?"
         subtitle="Contact us for more information about our cookie policy or data practices."
       />
+      </main>
       <Footer />
     </div>
   );
