@@ -165,20 +165,20 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
                 PopupGenix Blog
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Stay updated with the latest insights, tips, and industry updates from our experts
+                Insights and updates from the PopupGenix team on AI, software and business growth.
               </p>
             </div>
 
             {loading && (
               <div className="text-center py-12">
                 <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4"></div>
-                <p className="text-muted-foreground">Loading amazing content...</p>
+                <p className="text-muted-foreground">Loading articles...</p>
               </div>
             )}
             
             {error && (
               <div className="text-center py-12">
-                <p className="text-destructive text-lg">Failed to load posts: {error}</p>
+                <p className="text-destructive text-lg">We could not load the articles right now. Please try again in a moment.</p>
               </div>
             )}
 
@@ -243,7 +243,7 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
                         {/* Excerpt */}
                         <div 
                           className="text-muted-foreground line-clamp-3 prose prose-sm prose-invert max-w-none"
-                          dangerouslySetInnerHTML={{ __html: post.excerpt.rendered || "Click to read this exciting post..." }}
+                          dangerouslySetInnerHTML={{ __html: post.excerpt.rendered || "Read the full article." }}
                         />
 
                         {/* Read More Button */}
@@ -277,9 +277,9 @@ const WordPressBlog = ({ adminLogin = false }: WordPressBlogProps) => {
             {/* No Posts Message */}
             {!loading && !error && posts.length === 0 && (
               <div className="text-center py-16">
-                <div className="text-6xl mb-4">📝</div>
-                <h3 className="text-2xl font-semibold mb-2">No Posts Yet</h3>
-                <p className="text-muted-foreground">Check back soon for amazing content!</p>
+                <h2 className="text-2xl font-semibold mb-2">New articles are coming soon</h2>
+                <p className="text-muted-foreground max-w-md mx-auto mb-6">We are writing about AI, software and growing a business with technology. In the meantime, you can talk to our team about your project.</p>
+                <a href="/contact" className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">Contact Us</a>
               </div>
             )}
           </section>
