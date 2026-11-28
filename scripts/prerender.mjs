@@ -67,7 +67,7 @@ function render(route, p, extra = {}) {
   rep(/<meta name="twitter:title"[^>]*>/, `<meta name="twitter:title" content="${esc(p.title)}" />\n    <meta name="twitter:description" content="${esc(p.description)}" />\n    <meta name="robots" content="index, follow, max-image-preview:large" />`);
   rep(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, ld(extra.graph || graph(route, p)));
   rep(/<div id="root"><\/div>/, `<div id="root">${extra.body || body(route, p)}</div>`);
-  const out = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.slice(1) + ".html");
+  const out = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.slice(1), "index.html");
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, h);
 }
