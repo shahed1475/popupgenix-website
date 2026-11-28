@@ -6,7 +6,7 @@ const HEADER_OFFSET = 72;
 // Scroll to a position and make sure we really get there. Waits while the
 // mobile menu still locks the page, then re-checks twice in case the browser
 // was busy or the layout moved. Stops if the visitor scrolls on their own.
-export function scrollToTarget(getTop: () => number | null, smooth = true, maxSmoothDistance = Infinity) {
+export function scrollToTarget(getTop: () => number | null, smooth = true, maxSmoothDistance = Infinity, onInstant?: () => void) {
   let userMoved = false;
   const stop = () => { userMoved = true; };
   const opts = { passive: true } as AddEventListenerOptions;
@@ -31,6 +31,7 @@ export function scrollToTarget(getTop: () => number | null, smooth = true, maxSm
     // the way. For far-away targets, jump straight there instead.
     const animate = smooth && Math.abs(top - window.scrollY) <= maxSmoothDistance;
     window.scrollTo({ top, behavior: animate ? "smooth" : "auto" });
+    if (!animate) onInstant?.();
     const check = (last: boolean) => () => {
       if (userMoved) return last && cleanup();
       const again = getTop();
@@ -43,11 +44,32 @@ export function scrollToTarget(getTop: () => number | null, smooth = true, maxSm
   setTimeout(go, 0);
 }
 
+// After an instant jump, the section's fade-in animations would start from
+// invisible and take about half a second, which looks like a blank section.
+// Show what is on screen straight away; the class is removed once the
+// animations have finished, so nothing pops back.
+function revealNow(id: string) {
+  requestAnimationFrame(() => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    const vh = window.innerHeight;
+    const shown: Element[] = [];
+    sec.querySelectorAll<HTMLElement>("[style*='opacity']").forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom > -100 && r.top < vh + 100) {
+        el.classList.add("reveal-now");
+        shown.push(el);
+      }
+    });
+    window.setTimeout(() => shown.forEach((el) => el.classList.remove("reveal-now")), 1500);
+  });
+}
+
 export function scrollToSection(id: string, smooth = true) {
   scrollToTarget(() => {
     const el = document.getElementById(id);
     return el ? Math.max(0, el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET) : null;
-  }, smooth, window.innerHeight * 1.5);
+  }, smooth, window.innerHeight * 1.5, () => revealNow(id));
 }
 
 export function scrollToTop() {

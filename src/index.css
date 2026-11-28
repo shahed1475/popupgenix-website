@@ -464,3 +464,6 @@ All colors MUST be HSL.
 @keyframes route-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.94); } }
 .route-pulse { animation: route-pulse 1.2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .route-pulse { animation: none; } }
+
+/* Content already on screen after a section jump: show it now, skip the fade-in */
+.reveal-now { opacity: 1 !important; transform: none !important; transition: none !important; }
