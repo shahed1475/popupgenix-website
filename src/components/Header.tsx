@@ -1,6 +1,7 @@
 import { BrandMark, BrandWordmark } from "@/components/BrandMark";
 import { useEffect, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { scrollToTop } from "@/components/ScrollToHash";
 import { Link, useLocation } from "react-router-dom";
 import { m, AnimatePresence } from "framer-motion";
 import {
@@ -38,15 +39,6 @@ const legalItems = [
 const NAV_LINK_CLASS =
   "relative text-xs font-bold uppercase tracking-[0.15em] text-foreground/70 transition-colors duration-300 hover:text-foreground py-2";
 
-// The mobile menu locks page scroll while open; wait for it to unlock.
-function scrollToTopWhenFree(tries = 0) {
-  if (document.body.style.overflow === "hidden" && tries < 40) {
-    setTimeout(() => scrollToTopWhenFree(tries + 1), 25);
-    return;
-  }
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -60,7 +52,7 @@ const Header = () => {
       e.preventDefault();
       if (window.location.hash) window.history.replaceState(null, "", "/");
       setIsMenuOpen(false);
-      scrollToTopWhenFree();
+      scrollToTop();
     }
   };
 
