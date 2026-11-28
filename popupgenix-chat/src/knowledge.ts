@@ -85,7 +85,7 @@ Rules for using it:
 Email ${COMPANY.email} (or ${COMPANY.emailAlt})
 Phone ${COMPANY.phone}
 WhatsApp ${COMPANY.whatsapp}: the same number as the phone line
-Office ${COMPANY.address}
+Offices: USA, ${COMPANY.address}. Bangladesh, Rajshahi
 Hours ${COMPANY.hours}
 Contact page ${COMPANY.site}/contact
 

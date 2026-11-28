@@ -63,7 +63,11 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center gap-3 text-foreground text-sm font-medium">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span>1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110, USA</span>
+                  <span>USA: 1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110</span>
+                </div>
+                <div className="flex items-center gap-3 text-foreground text-sm font-medium">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  <span>Bangladesh: Rajshahi</span>
                 </div>
               </div>
 

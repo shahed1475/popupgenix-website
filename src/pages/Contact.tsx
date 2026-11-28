@@ -11,6 +11,7 @@ const CONTACT = {
   whatsapp: "+8801838580258",
   whatsappClean: "8801838580258",
   address: "1209 MOUNTAIN ROAD PL NE, STE R, ALBUQUERQUE, NM 87110, USA",
+  addressBd: "Rajshahi, Bangladesh",
   hours: "Mon to Fri: 9:00 AM to 6:00 PM MST",
 } as const;
 
@@ -177,15 +178,31 @@ const Contact = () => {
                 <div className="p-3 bg-secondary/50 rounded-xl w-fit mb-4">
                   <MapPin className="h-6 w-6 text-foreground" aria-hidden="true" />
                 </div>
-                <h3 className="font-semibold text-foreground mb-1">Address</h3>
-                <a
-                  href={`https://maps.google.com/?q=${encodeURIComponent(CONTACT.address)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-accent transition-colors text-sm"
-                >
-                  {CONTACT.address}
-                </a>
+                <h3 className="font-semibold text-foreground mb-1">Addresses</h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground/60">USA office</div>
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent(CONTACT.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-accent transition-colors"
+                    >
+                      {CONTACT.address}
+                    </a>
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground/60">Bangladesh office</div>
+                    <a
+                      href={`https://maps.google.com/?q=${encodeURIComponent(CONTACT.addressBd)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-accent transition-colors"
+                    >
+                      {CONTACT.addressBd}
+                    </a>
+                  </div>
+                </div>
               </div>
 
               {/* Hours */}
