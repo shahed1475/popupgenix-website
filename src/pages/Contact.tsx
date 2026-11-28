@@ -63,8 +63,8 @@ const Contact = () => {
                 aria-label="Email PopupGenix at popupitcompany@gmail.com"
                 className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold text-white transition-all duration-500 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:-translate-y-1 hover:scale-[1.03]"
                 style={{
-                  background: "linear-gradient(135deg, hsl(270,80%,55%), hsl(220,90%,55%))",
-                  boxShadow: "0 0 25px rgba(138,43,226,0.4), 0 6px 20px rgba(0,0,0,0.2)",
+                  background: "linear-gradient(135deg, #1A7A5E, #146349)",
+                  boxShadow: "0 0 25px rgba(26,122,94,0.35), 0 6px 20px rgba(0,0,0,0.2)",
                 }}
               >
                 <Mail className="w-5 h-5 shrink-0" />
