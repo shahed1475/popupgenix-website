@@ -1,35 +1,37 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
+// Scrolls to "#section" links reliably, also on phones: it waits until the
+// section exists and the mobile menu has released the page scroll, then
+// scrolls with room for the fixed header. Runs on every click (location.key),
+// so tapping "About" twice still works.
+export function scrollToSection(id: string, smooth = true) {
+  let tries = 0;
+  const attempt = () => {
+    const el = document.getElementById(id);
+    const locked = document.body.style.overflow === "hidden";
+    if (el && !locked) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 72;
+      window.scrollTo({ top: Math.max(0, top), behavior: smooth ? "smooth" : "auto" });
+      return;
+    }
+    if (tries++ < 60) setTimeout(attempt, 50);
+  };
+  requestAnimationFrame(attempt);
+}
 
 const ScrollToHash = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Ensure we keep client-side routing when user clicks links with just a hash (e.g., from footer)
-    // If we're not on home and only a hash was provided, push to "/#..."
-    if (!location.pathname.startsWith("/") && location.hash) {
-      navigate(`/${location.hash}`, { replace: true });
-    }
-
     if (location.hash) {
-      const id = location.hash.replace("#", "");
-      // Wait a tick to ensure the DOM is ready after route transitions
-      const timer = setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 0);
-      return () => clearTimeout(timer);
+      scrollToSection(decodeURIComponent(location.hash.slice(1)));
     } else {
-      // Scroll to top on route changes without hash
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "auto" });
     }
-  }, [location.pathname, location.hash, navigate]);
+  }, [location.pathname, location.hash, location.key]);
 
   return null;
 };
 
 export default ScrollToHash;
-

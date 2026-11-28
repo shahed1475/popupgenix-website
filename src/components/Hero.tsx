@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { HeroVisual } from "@/components/HeroVisual";
 import { RobotScene } from "@/components/RobotScene";
 import { useState } from "react";
+import { scrollToSection } from "@/components/ScrollToHash";
 
 const stats = [
   { number: "50+", label: "Projects Delivered" },
@@ -103,7 +104,7 @@ const Hero = () => {
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <a href="#portfolio" className="w-full sm:w-auto">
+              <a href="#portfolio" onClick={(e) => { e.preventDefault(); history.replaceState(null, "", "#portfolio"); scrollToSection("portfolio"); }} className="w-full sm:w-auto">
                 <Button variant="outline" size="xl" className="group w-full sm:w-auto">
                   <Zap className="w-5 h-5" />
                   View Portfolio
