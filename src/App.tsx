@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { afterIdle } from "@/lib/capability";
 import { lazyPage } from "@/lib/lazyPage";
 import { LazyMotion, MotionConfig, domMax } from "framer-motion";
@@ -33,6 +33,22 @@ const CloudAndDevOps = lazyPage(() => import("./pages/services/CloudAndDevOps"))
 import { RouteMeta } from "./components/RouteMeta";
 
 
+
+// A short fade-in when you move between pages. Skipped on the very first page
+// (so it never delays the first paint) and for people who prefer less motion.
+const RouteFade = ({ children }: { children: React.ReactNode }) => {
+  const { pathname } = useLocation();
+  const first = useRef(true);
+  const animate = !first.current;
+  useEffect(() => {
+    first.current = false;
+  }, []);
+  return (
+    <div key={pathname} className={animate ? "route-fade" : undefined}>
+      {children}
+    </div>
+  );
+};
 
 // Keeps layout stable while a route chunk arrives — no spinner flash, no CLS.
 const RouteFallback = () => <div className="min-h-screen bg-background" />;
@@ -85,10 +101,11 @@ const App = () => {
       <LazyMotion features={domMax} strict>
     <Toaster />
     <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <ScrollToHash />
         <RouteMeta />
         <Suspense fallback={<RouteFallback />}>
+        <RouteFade>
         <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/contact" element={<Contact />} />
@@ -115,6 +132,7 @@ const App = () => {
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+        </RouteFade>
         </Suspense>
         <ChatGate />
     </BrowserRouter>

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigationType } from "react-router-dom";
 
 const HEADER_OFFSET = 72;
 
@@ -51,21 +51,50 @@ export function scrollToTop() {
   scrollToTarget(() => 0, true);
 }
 
-// Scrolls to "#section" links on every click (location.key), so tapping
-// "About" twice still works. Smooth on the same page, instant from another page.
+// Remembers where you were on every page and puts you back there on Back and
+// Forward. New pages open at the top, "#section" links scroll to the section.
+const positions = new Map<string, number>();
+let lastKey = "default";
+
 const ScrollToHash = () => {
   const location = useLocation();
+  const navType = useNavigationType();
   const prevPath = useRef<string | null>(null);
+
+  useEffect(() => {
+    // We restore scroll ourselves; the browser's own restore fights lazy pages.
+    if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+    const save = () => positions.set(lastKey, window.scrollY);
+    window.addEventListener("scroll", save, { passive: true });
+    window.addEventListener("pagehide", save);
+    return () => {
+      window.removeEventListener("scroll", save);
+      window.removeEventListener("pagehide", save);
+    };
+  }, []);
 
   useEffect(() => {
     const samePage = prevPath.current === location.pathname;
     prevPath.current = location.pathname;
+    lastKey = location.key;
+
+    if (navType === "POP" && !location.hash) {
+      const y = positions.get(location.key) ?? 0;
+      // The page may still be growing (images, lazy content): keep trying briefly.
+      let tries = 0;
+      const restore = () => {
+        window.scrollTo({ top: y, behavior: "auto" });
+        if (Math.abs(window.scrollY - y) > 4 && tries++ < 20) setTimeout(restore, 50);
+      };
+      restore();
+      return;
+    }
     if (location.hash) {
       scrollToSection(decodeURIComponent(location.hash.slice(1)), samePage);
     } else {
       window.scrollTo({ top: 0, behavior: "auto" });
     }
-  }, [location.pathname, location.hash, location.key]);
+  }, [location.pathname, location.hash, location.key, navType]);
 
   return null;
 };

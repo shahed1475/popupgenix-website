@@ -3,7 +3,7 @@ import { ArrowRight, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroVisual } from "@/components/HeroVisual";
 import { RobotScene } from "@/components/RobotScene";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { scrollToSection } from "@/components/ScrollToHash";
 
 const stats = [
@@ -13,6 +13,50 @@ const stats = [
 ];
 
 const Hero = () => {
+  // The robot picture follows your finger (or mouse) with a small 3D tilt, so
+  // it feels alive on phones where the heavy live 3D scene is not loaded.
+  const tiltRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = tiltRef.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const tilt = (cx: number, cy: number) => {
+      const x = (cx / window.innerWidth - 0.5) * 2;
+      const y = (cy / window.innerHeight - 0.5) * 2;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        el.style.transform = `rotateY(${(x * 16).toFixed(1)}deg) rotateX(${(-y * 10).toFixed(1)}deg)`;
+      });
+    };
+    const reset = () => {
+      cancelAnimationFrame(raf);
+      el.style.transform = "";
+    };
+    const onTouch = (e: TouchEvent) => tilt(e.touches[0].clientX, e.touches[0].clientY);
+    const onMouse = (e: MouseEvent) => {
+      if (window.scrollY < window.innerHeight) tilt(e.clientX, e.clientY);
+    };
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (e.gamma == null || e.beta == null || window.scrollY > window.innerHeight) return;
+      const x = Math.max(-1, Math.min(1, e.gamma / 30));
+      const y = Math.max(-1, Math.min(1, (e.beta - 50) / 30));
+      el.style.transform = `rotateY(${(x * 14).toFixed(1)}deg) rotateX(${(-y * 8).toFixed(1)}deg)`;
+    };
+    window.addEventListener("touchstart", onTouch, { passive: true });
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    window.addEventListener("touchend", reset, { passive: true });
+    window.addEventListener("mousemove", onMouse, { passive: true });
+    window.addEventListener("deviceorientation", onOrient, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("touchend", reset);
+      window.removeEventListener("mousemove", onMouse);
+      window.removeEventListener("deviceorientation", onOrient);
+    };
+  }, []);
+
   const [robotReady, setRobotReady] = useState(false);
   return (
     <section id="home" className="grain relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12">
@@ -33,9 +77,10 @@ const Hero = () => {
               only loaded on capable desktops, after the page is idle, and
               fades in over the poster. Phones never download the 3D scene. */}
           <div
-            className="absolute inset-x-0 bottom-0 top-[50%] lg:inset-0 transition-opacity duration-1000"
-            style={{ opacity: robotReady ? 0 : 1 }}
+            className="robot-float absolute inset-x-0 bottom-0 top-[50%] lg:inset-0 transition-opacity duration-1000"
+            style={{ opacity: robotReady ? 0 : 1, perspective: "900px" }}
           >
+            <div ref={tiltRef} className="absolute inset-0" style={{ transformStyle: "preserve-3d", transition: "transform 220ms ease-out" }}>
             <img
               src="/hero/robot-dark.webp"
               alt=""
@@ -54,6 +99,7 @@ const Hero = () => {
               decoding="async"
               className="dark:hidden absolute bottom-0 left-1/2 -translate-x-1/2 h-full max-h-full w-auto max-w-none object-contain lg:left-auto lg:right-[4%] lg:translate-x-0"
             />
+            </div>
           </div>
           <div className="absolute inset-0 hidden lg:block lg:pointer-events-auto">
             <RobotScene className="absolute inset-0" onReady={setRobotReady} />
