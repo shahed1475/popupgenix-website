@@ -1,4 +1,4 @@
-import { Component, Suspense, lazy, useEffect, useState } from 'react'
+import { Component, Suspense, lazy, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { afterIdle, canRunHeavyVisuals } from '@/lib/capability'
 
@@ -32,6 +32,24 @@ interface Props {
 export function RobotScene({ className, onReady, minWidth = 1024 }: Props) {
   const [enabled, setEnabled] = useState(false)
   const [shown, setShown] = useState(false)
+  const box = useRef<HTMLDivElement>(null)
+  const app = useRef<{ stop?: () => void; play?: () => void } | null>(null)
+
+  // Pause the 3D render loop while the robot is scrolled out of view, so it
+  // does not use the GPU (and slow down scrolling and page changes) for nothing.
+  useEffect(() => {
+    const el = box.current
+    if (!el || !shown || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) app.current?.play?.()
+      else app.current?.stop?.()
+    })
+    io.observe(el)
+    return () => {
+      io.disconnect()
+      app.current?.play?.()
+    }
+  }, [shown])
 
   useEffect(() => {
     if (!canRunHeavyVisuals({ minWidth })) return
@@ -42,6 +60,7 @@ export function RobotScene({ className, onReady, minWidth = 1024 }: Props) {
 
   return (
     <div
+      ref={box}
       className={className}
       style={{
         opacity: shown ? 1 : 0,
@@ -54,7 +73,8 @@ export function RobotScene({ className, onReady, minWidth = 1024 }: Props) {
         <Suspense fallback={null}>
           <Spline
             scene={SCENE}
-            onLoad={() => {
+            onLoad={(a) => {
+              app.current = a
               // Loading the file is not the same as drawing it: wait for two
               // painted frames so the robot never fades in half-initialised.
               requestAnimationFrame(() =>
